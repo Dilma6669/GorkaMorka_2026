@@ -1,0 +1,246 @@
+using System;
+using UnityEngine;
+using System.Collections.Generic; // Required for List and Dictionary
+
+// Phase 2.1 (Revised for GameObject Hexes and Visual Control): HexGridVisualizer Class
+// Purpose: Instantiates visual hexagon GameObjects for a SimpleHexGrid.
+// Now also manages references to individual HexVisualTiles for color manipulation.
+public class HexGridVisualizer : MonoBehaviour
+{
+    [Header("Visuals Settings")]
+    [Tooltip("The prefab GameObject to use for each hexagon (must have a HexVisualTile component and a Renderer).")]
+    public GameObject hexPrefab;
+   
+    public GameObject HexagonsContainer;
+    
+    [Tooltip("The SimpleHexGrid data source this visualizer will represent.")]
+    private SimpleHexGrid targetGrid;
+
+    [Tooltip("The desired vertical scale (thickness) of the visual hexagon meshes.")]
+    public float hexVisualHeight = 0.1f; // New parameter for controlling thickness
+    
+    // --- NEW: Storage for Visual Tiles ---
+    // A dictionary to quickly find a HexVisualTile by its axial coordinates
+    private Dictionary<Vector2Int, HexVisualTile> visualTiles;
+    // --- END NEW ---
+
+    private Dictionary<Vector2Int, HexVisualTile> currentColouredTiles;
+
+    private bool edgeHexagonsVisible;
+    
+    void Awake()
+    {
+        targetGrid = GetComponent<SimpleHexGrid>();
+        
+        if (targetGrid == null)
+        {
+            Debug.LogError($"HexGridVisualizer on '{name}': Target Grid is not assigned!", this);
+        }
+    }
+
+    private void Start()
+    {
+        GenerateVisualGrid();
+    }
+
+    /// <summary>
+    /// Instantiates visual hex GameObjects for the target SimpleHexGrid.
+    /// Now initializes and stores HexVisualTile components.
+    /// </summary>
+    [ContextMenu("Generate Visual Grid")] // Allows manual triggering from Inspector
+    public void GenerateVisualGrid()
+    {
+        // Clear any existing visual hexes before generating new ones
+        ClearVisualGrid();
+
+        if (hexPrefab == null)
+        {
+            Debug.LogError("HexGridVisualizer: Hex Prefab is not assigned!");
+            return;
+        }
+        if (targetGrid == null)
+        {
+            Debug.LogError("HexGridVisualizer: Target Grid is not assigned!");
+            return;
+        }
+        if (targetGrid.HexagonsInGrid == null || targetGrid.HexagonsInGrid.Count == 0)
+        {
+            Debug.LogWarning("HexGridVisualizer: Target grid has no hex data. Generating grid first.");
+            return;
+        }
+
+        visualTiles = new Dictionary<Vector2Int, HexVisualTile>(); // Initialize the dictionary
+        currentColouredTiles = new Dictionary<Vector2Int, HexVisualTile>();  // Initialize the dictionary
+        
+       // Debug.Log("fuck targetGrid.HexagonsInGrid.Count = " + targetGrid.HexagonsInGrid.Count);
+        
+        // Iterate through all hexes in the data grid and create their visual counterparts
+        foreach (KeyValuePair<Vector2Int, HexData> hexDataPair in targetGrid.HexagonsInGrid)
+        {
+            Vector2Int coords = hexDataPair.Key;
+            Vector3 worldPos = targetGrid.GetHexWorldPosition(coords, hexDataPair.Value.Height);
+
+            GameObject hexInstance = Instantiate(hexPrefab, worldPos, Quaternion.identity);
+            // Debug.Log("fuck hexInstance = " + hexInstance);
+            // Debug.Log("fuck hexInstance = " + hexInstance);
+            // Debug.Log("fuck HexagonsContainer = " + HexagonsContainer);
+            hexInstance.transform.SetParent(HexagonsContainer.transform); // Parent to visualizer for organization
+            hexInstance.name = $"Hex_{coords.x},{coords.y}"; // Name for easier debugging
+
+            // Automatically resize the hex based on the targetGrid's hexSize
+            // Unity's default Cylinder primitive (at scale 1,1,1) has a radius of 0.5.
+            // Our hexSize is the desired outer radius (e.g., 1.0).
+            // So, we need to scale the prefab by (hexSize / 0.5) in X and Z, which simplifies to hexSize * 2.
+            float scaleFactorXZ = targetGrid.hexSize * 2f;
+            hexInstance.transform.localScale = new Vector3(scaleFactorXZ, hexVisualHeight, scaleFactorXZ);
+            
+            // --- NEW: Get and Initialize HexVisualTile ---
+            HexVisualTile visualTile = hexInstance.GetComponent<HexVisualTile>();
+            if (visualTile != null)
+            {
+                visualTile.Initialize(targetGrid, coords, hexDataPair.Value.Height, hexDataPair.Value.isWalkable, hexDataPair.Value.isClimbable);
+                visualTiles.Add(coords, visualTile); // Store the reference
+            }
+            else
+            {
+                Debug.LogWarning($"HexGridVisualizer: Hex Prefab '{hexPrefab.name}' is missing a HexVisualTile component! Cannot control its visuals.", hexPrefab);
+            }
+            // --- NEW LOGIC: Visual Feedback for Unwalkable Tiles ---
+            if (!hexDataPair.Value.GetIsWalkable())
+            {
+                visualTile.SetColor(Color.red);
+                visualTile.ColourLocked = true; // Prevents other systems from resetting it
+            }
+            // -------------------------------------------------------
+        }
+        Debug.Log($"Generated visual grid for '{targetGrid.name}' with {visualTiles.Count} hex tiles.");
+    }
+
+    /// <summary>
+    /// Destroys all currently instantiated visual hex GameObjects.
+    /// </summary>
+    [ContextMenu("Clear Visual Grid")]
+    public void ClearVisualGrid()
+    {
+        if (visualTiles != null)
+        {
+            foreach (HexVisualTile tile in visualTiles.Values)
+            {
+                if (tile != null && tile.gameObject != null)
+                {
+                    DestroyImmediate(tile.gameObject); // Use DestroyImmediate for editor context menu
+                }
+            }
+            visualTiles.Clear();
+            Debug.Log($"Cleared visual grid for '{targetGrid.name}'.");
+        }
+    }
+
+    // --- NEW: Public Methods for Color Control ---
+
+    /// <summary>
+    /// Highlights a specific hexagon by changing its color.
+    /// </summary>
+    /// <param name="coords">The axial coordinates of the hex to highlight.</param>
+    /// <param name="color">The color to apply.</param>
+    /// <param name="lockColour"></param>
+    public void HighlightHex(Vector2Int coords, Color color, bool lockColour = false)
+    {
+        if (visualTiles != null && visualTiles.TryGetValue(coords, out HexVisualTile tile))
+        {
+            tile.SetColor(color);
+            tile.ColourLocked = lockColour;
+
+            currentColouredTiles.TryAdd(coords, tile);
+        }
+    }
+    
+    public void VisualizeEdgeHexes()
+    {
+        bool showEdges = !edgeHexagonsVisible;
+        
+        Debug.Log("fuck VisualizeEdgeHexes for grid " + targetGrid.gameObject.name + " to " + showEdges);
+        // Get the hex grid data
+        var hexGridData = targetGrid.HexagonsInGrid;
+
+        // A distinct color for the edges, for example, yellow
+        Color edgeColor = Color.yellow;
+    
+        foreach (var entry in hexGridData)
+        {
+            Vector2Int coords = entry.Key;
+            // Check if this hex is an edge hex using the method we added
+            if (targetGrid.IsEdgeHex(coords))
+            {
+                if (visualTiles.ContainsKey(coords))
+                {
+                    HexVisualTile tile = visualTiles[coords];
+                    if (showEdges)
+                    {
+                        tile.SetColor(edgeColor);
+                    }
+                    else
+                    {
+                        // If we're not showing edges, reset to the original color
+                        tile.ResetColor();
+                    }
+                }
+            }
+            else
+            {
+                // Reset non-edge tiles if we are in 'showEdges' mode to avoid old colors
+                if (showEdges)
+                {
+                    if (visualTiles.ContainsKey(coords))
+                    {
+                        visualTiles[coords].ResetColor();
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resets the color of a specific hexagon to its original color.
+    /// </summary>
+    /// <param name="coords">The axial coordinates of the hex to reset.</param>
+    public void ResetHexColor(Vector2Int coords)
+    {
+        if (visualTiles != null && visualTiles.TryGetValue(coords, out HexVisualTile tile))
+        {
+            tile.ResetColor();
+
+          //  currentColouredTiles.Remove(coords);
+        }
+    }
+
+    public void ResetCurrentColouredHexs()
+    {
+        foreach (var entry in currentColouredTiles)
+        {
+            ResetHexColor(entry.Key);
+        }
+    }
+
+    /// <summary>
+    /// Resets the color of all hexagons in this visual grid to their original colors.
+    /// </summary>
+    public void ResetAllHexColors()
+    {
+        if (visualTiles != null)
+        {
+            foreach (HexVisualTile tile in visualTiles.Values)
+            {
+                if (tile != null) // Ensure tile wasn't destroyed mid-loop
+                {
+                    tile.ResetColor();
+                }
+            }
+        }
+    }
+
+    void OnDestroy()
+    {
+        ClearVisualGrid(); // Clean up spawned hexes when this component is destroyed
+    }
+}
