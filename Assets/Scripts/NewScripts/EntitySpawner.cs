@@ -59,7 +59,7 @@ public class EntitySpawner : MonoBehaviour
         }
 
         // This rotates the car to face the positive X-axis upon creation.
-        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 90, 0);
+        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
         
         GameObject spawnedGameObject = Instantiate(unitPrefab, transform.position, rotationToMatchGridCreation);
         
@@ -112,7 +112,7 @@ public class EntitySpawner : MonoBehaviour
         }
         
         // This rotates the car to face the positive X-axis upon creation.
-        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 90, 0);
+        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
 
         GameObject spawnedGameObject = Instantiate(vehiclePrefab, transform.position, rotationToMatchGridCreation);
        
@@ -167,7 +167,7 @@ public class EntitySpawner : MonoBehaviour
         }
 
         // This rotates the car to face the positive X-axis upon creation.
-        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 90, 0);
+        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
         
         GameObject spawnedGameObject = Instantiate(craftPrefab, transform.position, rotationToMatchGridCreation);
        

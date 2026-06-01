@@ -12,8 +12,151 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7774e23bb9314204ab10f138452b80ab, type: 3}
   m_Name: CarGridTest2
   m_EditorClassIdentifier: 
-  shapeRows:
-  - .....___9__...
-  - ....._9999_....
-  - ...._99899...
-  - ....999999....
+  Rows:
+  - Tiles:
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 1
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 5
+      IsWalkable: 0
+      IsClimbable: 0
+      IsEnabled: 0
+  - Tiles:
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 1
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 1
+      IsEnabled: 1
+    - Height: 5
+      IsWalkable: 0
+      IsClimbable: 0
+      IsEnabled: 0
+  - Tiles:
+    - Height: 5
+      IsWalkable: 0
+      IsClimbable: 0
+      IsEnabled: 0
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 1
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 1
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 1
+      IsEnabled: 1
+  - Tiles:
+    - Height: 5
+      IsWalkable: 0
+      IsClimbable: 0
+      IsEnabled: 0
+    - Height: 5
+      IsWalkable: 0
+      IsClimbable: 0
+      IsEnabled: 0
+    - Height: 1
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 1
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 1
+      IsEnabled: 1
+  - Tiles:
+    - Height: 5
+      IsWalkable: 0
+      IsClimbable: 0
+      IsEnabled: 0
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 1
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 1
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 1
+      IsEnabled: 1
+  - Tiles:
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 1
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 1
+      IsEnabled: 1
+    - Height: 5
+      IsWalkable: 0
+      IsClimbable: 0
+      IsEnabled: 0
+  - Tiles:
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 2
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 1
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 0
+      IsWalkable: 1
+      IsClimbable: 0
+      IsEnabled: 1
+    - Height: 5
+      IsWalkable: 0
+      IsClimbable: 0
+      IsEnabled: 0

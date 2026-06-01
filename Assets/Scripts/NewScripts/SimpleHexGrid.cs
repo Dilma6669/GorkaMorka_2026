@@ -207,6 +207,8 @@ public class SimpleHexGrid : MonoBehaviour
                 HexagonsInGrid.Add(gridCoords, new HexData(gridCoords,0, true, true));
             }
         }
+        
+        CenterGridOnTransform();
 
         UpdateHexWorldPositions();
        // Debug.Log($"Generated SimpleHexGrid: DEFAULT Circular with radius {gridRadius}. Total hexes: {HexagonsInGrid.Count} at {transform.position}");
@@ -220,40 +222,42 @@ public class SimpleHexGrid : MonoBehaviour
         }
         HexagonsInGrid.Clear();
 
-        if (customGridShape == null || customGridShape.shapeRows == null || customGridShape.shapeRows.Length == 0)
+        // Check against the new 'Rows' list
+        if (customGridShape == null || customGridShape.Rows == null || customGridShape.Rows.Count == 0)
         {
             Debug.LogError("Grid shape is null or empty. Cannot generate grid.");
             GenerateDefaultGrid();
             return;
         }
 
-        for (int q = 0; q < customGridShape.shapeRows.Length; q++)
+        for (int q = 0; q < customGridShape.Rows.Count; q++)
         {
-            string rowString = customGridShape.shapeRows[q];
-            string cleanedRowString = rowString.Replace(".", "");
             int rowOffset = q / 2;
+            var currentRow = customGridShape.Rows[q];
 
-            for (int r = 0; r < cleanedRowString.Length; r++)
+            for (int r = 0; r < currentRow.Tiles.Count; r++)
             {
-                char character = cleanedRowString[r];
+                var tile = currentRow.Tiles[r];
 
-                if (character == '_') continue;
-
-                if (char.IsDigit(character))
+                // THE SKIP LOGIC:
+                if (!tile.IsEnabled) 
                 {
-                    int val = int.Parse(character.ToString());
-    
-                    // Logic: 0-5 are physical heights. 6+ are special markers.
-                    float hexHeight = (val <= 5) ? val * singleHexHeightAdjustment : 0f;
-                    bool isWalkable = (val != NOTWALKABLEINDEX); // Still keep 9 as your "wall"
-                    bool isClimbable = (val == NOTCLIMBABLEINDEX); // Still keep 9 as your "wall"
-    
-                    // You can even define '8' as your climbable marker here
-                    // No need to store '8' as height anymore.
-    
-                    Vector2Int hexCoords = new Vector2Int(q, r - rowOffset);
-                    HexagonsInGrid.Add(hexCoords, new HexData(hexCoords, hexHeight, isWalkable, isClimbable));
+                    continue; // Skips adding this coordinate to the dictionary
                 }
+                
+                // Use the new tile properties
+                float hexHeight = tile.Height * singleHexHeightAdjustment;
+                bool isWalkable = tile.IsWalkable;
+                bool isClimbable = tile.IsClimbable;
+
+                // Only create the hex if it's 'walkable' or has a type (or keep it if you want to allow gaps)
+                // If you want to skip empty tiles, check for a 'none' state here.
+            
+                Vector2Int hexCoords = new Vector2Int(q, r - rowOffset);
+            
+                // Pass the data to your HexData constructor
+                HexagonsInGrid.Add(hexCoords, new HexData(hexCoords, hexHeight, isWalkable, isClimbable));
+                Debug.Log($"Row(q): {q} | Col(r): {r} | Calculated Offset: {rowOffset} | Final Coords: {q}, {r - rowOffset}");
             }
         }
     
@@ -308,12 +312,14 @@ public class SimpleHexGrid : MonoBehaviour
     /// Centers the grid around the parent GameObject's world position.
     /// This should be called after the grid has been fully generated.
     /// </summary>
-    private void CenterGridOnTransform()
+    public void CenterGridOnTransform()
     {
         if (HexagonsInGrid == null || HexagonsInGrid.Count == 0)
         {
             return;
         }
+        
+        transform.localPosition = Vector3.zero;
 
         // Step 1: Find the bounding box of the generated hexes
         float minX = float.MaxValue;

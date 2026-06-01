@@ -183,7 +183,7 @@ public class MultiGridPathfinder : MonoBehaviour
             Vector3 neighbourWorldPos = currentNode.GridReference.GetHexWorldPosition(coords, neighbourHexData.Height);
 
             // Check if otherHex is walkable
-            if (neighbourHexData.GetIsWalkable() == false) continue;
+            if (!neighbourHexData.GetIsWalkable() && !neighbourHexData.IsClimbable()) continue;
 
             // If its a vehicle we want to not allow the vehicle to pathfind over itself 
             if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle &&
@@ -240,7 +240,8 @@ public class MultiGridPathfinder : MonoBehaviour
 
                 // 2. Is the current tile a "portal" (Ladder/Stair)?
                 // This is the GATE: If I am not on a climbable tile, I cannot initiate a jump.
-                if (!currentHexData.IsClimbable()) continue;
+                if (!otherHexData.IsClimbable()) continue;
+
 
                 Vector3 otherHexWorldPos =
                     otherGrid.GetHexWorldPosition(otherHexData.GridCoordinates, otherHexData.Height);
@@ -376,6 +377,8 @@ public class MultiGridPathfinder : MonoBehaviour
     //
     //     return neighbors;
     // }
+    
+    
 
 
     /// <summary>
