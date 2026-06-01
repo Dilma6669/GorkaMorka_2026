@@ -4,6 +4,7 @@ public class HexVisualTile : MonoBehaviour
 {
     [HideInInspector] public SimpleHexGrid GridReference;
     
+    public Renderer pathOverlayRenderer;
     private Renderer hexRenderer;
     private MaterialPropertyBlock propBlock;
     // Use "_BaseColor" if you are using URP/HDRP shaders, use "_Color" for standard Legacy shaders
@@ -29,7 +30,7 @@ public class HexVisualTile : MonoBehaviour
         hexRenderer.SetPropertyBlock(null);
     }
 
-    public void SetColor(Color newColor)
+    public void SetBaseColor(Color newColor)
     {
         if (ColourLocked || hexRenderer == null) return;
         
@@ -39,12 +40,24 @@ public class HexVisualTile : MonoBehaviour
         hexRenderer.SetPropertyBlock(propBlock);
     }
 
-    public void ResetColor()
+    public void ResetBaseColor()
     {
         if (ColourLocked || hexRenderer == null) return;
         
         // Setting the property block to null removes the override, 
         // reverting the tile to the material's default color.
         hexRenderer.SetPropertyBlock(null);
+    }
+    
+
+    public void SetHighlightColour(Color color, bool active)
+    {
+        if (pathOverlayRenderer == null) return;
+    
+        pathOverlayRenderer.enabled = active;
+        if (active)
+        {
+            pathOverlayRenderer.material.color = color;
+        }
     }
 }

@@ -136,7 +136,7 @@ public void UpdateUnwalkableHexagons(SimpleHexGrid higherGrid, SimpleHexGrid low
         hexData.SetIsWalkable(true);
         lowerGrid.HexagonsInGrid[hexCoords] = hexData;
         // Reset visualization to a default color if you have one.
-         lowerGrid.HexGridVisualiser.HighlightHex(hexCoords, Color.white, false);
+         lowerGrid.HexGridVisualiser.HighlightHexOverlay(hexCoords, Color.white, false);
     }
     
     // Step 2: Iterate through every hex on the floating grid.
@@ -165,7 +165,7 @@ public void UpdateUnwalkableHexagons(SimpleHexGrid higherGrid, SimpleHexGrid low
                 HexData hexToModify = lowerGrid.HexagonsInGrid[lowerHexData.GridCoordinates];
                 hexToModify.SetIsWalkable(false);
                 lowerGrid.HexagonsInGrid[lowerHexData.GridCoordinates] = hexToModify;
-                lowerGrid.HexGridVisualiser.HighlightHex(lowerHexData.GridCoordinates, Color.red, true);
+                lowerGrid.HexGridVisualiser.HighlightHexOverlay(lowerHexData.GridCoordinates, Color.red, true);
             }
         }
     }

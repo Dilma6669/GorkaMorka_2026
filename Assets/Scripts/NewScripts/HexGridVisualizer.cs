@@ -23,12 +23,8 @@ public class HexGridVisualizer : MonoBehaviour
     public Color unwalkableColor = Color.red;
     public Color climbableColor = Color.blue;
     
-    // --- NEW: Storage for Visual Tiles ---
     // A dictionary to quickly find a HexVisualTile by its axial coordinates
     private Dictionary<Vector2Int, HexVisualTile> visualTiles;
-    // --- END NEW ---
-
-    private Dictionary<Vector2Int, HexVisualTile> currentColouredTiles;
 
     private bool edgeHexagonsVisible;
     
@@ -74,7 +70,6 @@ public class HexGridVisualizer : MonoBehaviour
         }
 
         visualTiles = new Dictionary<Vector2Int, HexVisualTile>(); // Initialize the dictionary
-        currentColouredTiles = new Dictionary<Vector2Int, HexVisualTile>();  // Initialize the dictionary
         
        // Debug.Log("fuck targetGrid.HexagonsInGrid.Count = " + targetGrid.HexagonsInGrid.Count);
         
@@ -114,20 +109,20 @@ public class HexGridVisualizer : MonoBehaviour
             if (!hexDataPair.Value.GetIsWalkable())
             {
                 visualTile.ColourLocked = false; // Ensure we can change it
-                visualTile.SetColor(unwalkableColor); 
+                visualTile.SetBaseColor(unwalkableColor); 
                 visualTile.ColourLocked = true;
             }
             else if (hexDataPair.Value.isClimbable)
             {
                 visualTile.ColourLocked = false;
-                visualTile.SetColor(climbableColor);
+                visualTile.SetBaseColor(climbableColor);
                 visualTile.ColourLocked = true;
             }
             else
             {
                 // Explicitly reset the color for normal tiles
                 visualTile.ColourLocked = false;
-                visualTile.ResetColor();
+                visualTile.ResetBaseColor();
             }
         }
        // Debug.Log($"Generated visual grid for '{targetGrid.name}' with {visualTiles.Count} hex tiles.");
@@ -176,14 +171,24 @@ public class HexGridVisualizer : MonoBehaviour
     /// <param name="coords">The axial coordinates of the hex to highlight.</param>
     /// <param name="color">The color to apply.</param>
     /// <param name="lockColour"></param>
-    public void HighlightHex(Vector2Int coords, Color color, bool lockColour = false)
+    public void HighlightHexOverlay(Vector2Int coords, Color color, bool lockColour = false)
     {
         if (visualTiles != null && visualTiles.TryGetValue(coords, out HexVisualTile tile))
         {
-            tile.SetColor(color);
-            tile.ColourLocked = lockColour;
-
-            currentColouredTiles.TryAdd(coords, tile);
+            // Highlight via overlay, NOT core tile color
+            tile.SetHighlightColour(color, true); 
+        
+            // You no longer need to worry about ColourLocked for pathfinding!
+        }
+    }
+    
+    public void ClearOverlayHighlights()
+    {
+        if (visualTiles == null) return;
+        foreach (var tile in visualTiles.Values)
+        {
+            // Simply turn off the overlay
+            tile.SetHighlightColour(Color.clear, false);
         }
     }
     
@@ -208,12 +213,12 @@ public class HexGridVisualizer : MonoBehaviour
                     HexVisualTile tile = visualTiles[coords];
                     if (showEdges)
                     {
-                        tile.SetColor(edgeColor);
+                        tile.SetBaseColor(edgeColor);
                     }
                     else
                     {
                         // If we're not showing edges, reset to the original color
-                        tile.ResetColor();
+                        tile.ResetBaseColor();
                     }
                 }
             }
@@ -224,7 +229,7 @@ public class HexGridVisualizer : MonoBehaviour
                 {
                     if (visualTiles.ContainsKey(coords))
                     {
-                        visualTiles[coords].ResetColor();
+                        visualTiles[coords].ResetBaseColor();
                     }
                 }
             }
@@ -235,28 +240,20 @@ public class HexGridVisualizer : MonoBehaviour
     /// Resets the color of a specific hexagon to its original color.
     /// </summary>
     /// <param name="coords">The axial coordinates of the hex to reset.</param>
-    public void ResetHexColor(Vector2Int coords)
+    public void ResetHexBaseColor(Vector2Int coords)
     {
         if (visualTiles != null && visualTiles.TryGetValue(coords, out HexVisualTile tile))
         {
-            tile.ResetColor();
+            tile.ResetBaseColor();
 
           //  currentColouredTiles.Remove(coords);
-        }
-    }
-
-    public void ResetCurrentColouredHexs()
-    {
-        foreach (var entry in currentColouredTiles)
-        {
-            ResetHexColor(entry.Key);
         }
     }
 
     /// <summary>
     /// Resets the color of all hexagons in this visual grid to their original colors.
     /// </summary>
-    public void ResetAllHexColors()
+    public void ResetAllHexBaseColors()
     {
         if (visualTiles != null)
         {
@@ -264,7 +261,7 @@ public class HexGridVisualizer : MonoBehaviour
             {
                 if (tile != null) // Ensure tile wasn't destroyed mid-loop
                 {
-                    tile.ResetColor();
+                    tile.ResetBaseColor();
                 }
             }
         }

@@ -130,7 +130,7 @@ public class EntitySelectionManager : MonoBehaviour
                         entityCommander.CommandUnitToMove();
                         
                         // Highlight TargetHex
-                        clickedHexagon.SetColor(TargetHexagonHighlightedColour);
+                        clickedHexagon.SetHighlightColour(TargetHexagonHighlightedColour, true);
                     }
                     else
                     {
@@ -200,7 +200,7 @@ public class EntitySelectionManager : MonoBehaviour
                 foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
                 {
                     HexGridVisualizer gridVisualizer = otherGrid.HexGridVisualiser;
-                    gridVisualizer.ResetCurrentColouredHexs();
+                    gridVisualizer.ClearOverlayHighlights();
                 }
                 
                 hoveredHexGrid = hexGrid;
@@ -278,13 +278,13 @@ public class EntitySelectionManager : MonoBehaviour
                                 {
                                     if (pathNode.GridReference == otherGrid)
                                     {
-                                        otherGrid.HexGridVisualiser.HighlightHex(pathNode.GridCoordinates, PathHexagonHighlightedColour);
+                                        otherGrid.HexGridVisualiser.HighlightHexOverlay(pathNode.GridCoordinates, PathHexagonHighlightedColour);
                                     }
                                 }
                             }
         
                             // Highlight the target hex
-                            gridVisualizer.HighlightHex(targetCoords, TargetHexagonHighlightedColour);
+                            gridVisualizer.HighlightHexOverlay(targetCoords, TargetHexagonHighlightedColour);
                         }
                     }
                 }
