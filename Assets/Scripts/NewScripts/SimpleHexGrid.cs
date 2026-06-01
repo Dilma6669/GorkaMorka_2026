@@ -226,7 +226,7 @@ public class SimpleHexGrid : MonoBehaviour
         if (customGridShape == null || customGridShape.Rows == null || customGridShape.Rows.Count == 0)
         {
             Debug.LogError("Grid shape is null or empty. Cannot generate grid.");
-            GenerateDefaultGrid();
+           // GenerateDefaultGrid();
             return;
         }
 

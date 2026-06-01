@@ -80,6 +80,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -112,7 +115,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &483423417749441771
@@ -124,7 +127,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3977866189444063779}
-  - component: {fileID: 7816445951948503454}
   - component: {fileID: 400044292179581954}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -150,42 +152,6 @@ Transform:
   - {fileID: 1512451682051198606}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7816445951948503454
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 483423417749441771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 1512451682051198606}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -2.6, y: -1000, z: 4.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 2276435652761535200}
-  - {fileID: 5419353464602456209}
-  - {fileID: 8413911484029832072}
-  - {fileID: 332391886553225686}
-  - {fileID: 2583068759314186843}
-  - {fileID: 5861423585830293596}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 8551613725994301133}
-  HexBottomSpriteRenderer: {fileID: 5547978323316527450}
-  HexagonEvents: 
 --- !u!64 &400044292179581954
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -257,6 +223,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -289,7 +258,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &684769675526093063
@@ -301,7 +270,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4626597132054256118}
-  - component: {fileID: 2428396385138968981}
   - component: {fileID: 77305124235935140}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -327,42 +295,6 @@ Transform:
   - {fileID: 1906492245792326978}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2428396385138968981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 684769675526093063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 1906492245792326978}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 1.7, y: -1000, z: 0}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 3681843863374549394}
-  - {fileID: 0}
-  - {fileID: 988962578854367411}
-  - {fileID: 5614123596584654492}
-  - {fileID: 231832037898035100}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 7732049866235264120}
-  HexBottomSpriteRenderer: {fileID: 6224223923860136349}
-  HexagonEvents: 
 --- !u!64 &77305124235935140
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -465,6 +397,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -497,7 +432,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &816833049496737397
@@ -509,7 +444,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4326962587919094925}
-  - component: {fileID: 5614123596584654492}
   - component: {fileID: 6083996371489497739}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -535,42 +469,6 @@ Transform:
   - {fileID: 772619466187068745}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5614123596584654492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 816833049496737397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 772619466187068745}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 0, y: -1000, z: 0}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 2428396385138968981}
-  - {fileID: 988962578854367411}
-  - {fileID: 4990905563214913354}
-  - {fileID: 9049929383779646795}
-  - {fileID: 3359250822789829810}
-  - {fileID: 231832037898035100}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 2835798748475837778}
-  HexBottomSpriteRenderer: {fileID: 8395943717986162303}
-  HexagonEvents: 
 --- !u!64 &6083996371489497739
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -651,6 +549,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -718,7 +619,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7401328394990150213}
-  - component: {fileID: 332391886553225686}
   - component: {fileID: 3763787572659458131}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -744,42 +644,6 @@ Transform:
   - {fileID: 938752693968545451}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &332391886553225686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1023014905866619734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 938752693968545451}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -4.3, y: -1000, z: 4.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 7816445951948503454}
-  - {fileID: 8413911484029832072}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 2583068759314186843}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 678506340021984907}
-  HexBottomSpriteRenderer: {fileID: 4352092834955752361}
-  HexagonEvents: 
 --- !u!64 &3763787572659458131
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -882,6 +746,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -914,7 +781,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1264338645211113633
@@ -988,7 +855,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7523297379662573610}
-  - component: {fileID: 3344791176660114424}
   - component: {fileID: 2600720696516739705}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -1014,42 +880,6 @@ Transform:
   - {fileID: 8857105184151298537}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3344791176660114424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1337091834300116434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 8857105184151298537}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 6.1, y: -1000, z: 1.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 8092130450997544726}
-  - {fileID: 9024548107583388238}
-  - {fileID: 5532382169748816481}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 2757971595857573026}
-  HexBottomSpriteRenderer: {fileID: 1619078883790211136}
-  HexagonEvents: 
 --- !u!64 &2600720696516739705
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1121,6 +951,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1153,7 +986,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1437893319746021370
@@ -1205,6 +1038,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1237,7 +1073,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1497034191150734258
@@ -1249,7 +1085,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1059971040068480068}
-  - component: {fileID: 2583068759314186843}
   - component: {fileID: 8498788808969832466}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -1275,42 +1110,6 @@ Transform:
   - {fileID: 3158126803133194235}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2583068759314186843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1497034191150734258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 3158126803133194235}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -3.5, y: -1000, z: 3}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 5861423585830293596}
-  - {fileID: 7816445951948503454}
-  - {fileID: 332391886553225686}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 8079991669551866207}
-  HexBottomSpriteRenderer: {fileID: 8530759474890399204}
-  HexagonEvents: 
 --- !u!64 &8498788808969832466
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1382,6 +1181,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1414,7 +1216,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1560587157303536406
@@ -1426,7 +1228,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2798078114497426016}
-  - component: {fileID: 3681843863374549394}
   - component: {fileID: 727816171327889698}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -1452,42 +1253,6 @@ Transform:
   - {fileID: 5917745781861440113}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3681843863374549394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1560587157303536406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 5917745781861440113}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 3.5, y: -1000, z: 0}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 9024548107583388238}
-  - {fileID: 8092130450997544726}
-  - {fileID: 0}
-  - {fileID: 2428396385138968981}
-  - {fileID: 0}
-  - {fileID: 616181658645161095}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 7065688722457185773}
-  HexBottomSpriteRenderer: {fileID: 6312022146701068354}
-  HexagonEvents: 
 --- !u!64 &727816171327889698
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1519,7 +1284,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8494184687997104819}
-  - component: {fileID: 1106042500458483662}
   - component: {fileID: 3814689463057377116}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -1545,42 +1309,6 @@ Transform:
   - {fileID: 7055833773445985365}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1106042500458483662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1604444089003465039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 7055833773445985365}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -3.5, y: -1000, z: -3}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 3276123933037926729}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 6763038466922867364}
-  - {fileID: 2990920757086443165}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 1548089278379853546}
-  HexBottomSpriteRenderer: {fileID: 7597171660507510384}
-  HexagonEvents: 
 --- !u!64 &3814689463057377116
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1652,6 +1380,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1684,7 +1415,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1816996116032348798
@@ -1736,6 +1467,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1768,7 +1502,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1831273841735255280
@@ -1882,6 +1616,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1914,7 +1651,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2071779592162981716
@@ -1966,6 +1703,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1998,7 +1738,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2108123520731224640
@@ -2010,7 +1750,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7626204006127558202}
-  - component: {fileID: 8092130450997544726}
   - component: {fileID: 3099671093965107259}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -2036,42 +1775,6 @@ Transform:
   - {fileID: 7827658603885033958}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8092130450997544726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2108123520731224640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 7827658603885033958}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 4.3, y: -1000, z: 1.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 3344791176660114424}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 3681843863374549394}
-  - {fileID: 9024548107583388238}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 5729078401514591066}
-  HexBottomSpriteRenderer: {fileID: 8614445471021878449}
-  HexagonEvents: 
 --- !u!64 &3099671093965107259
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2152,6 +1855,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2261,6 +1967,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2293,7 +2002,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2208791755805790342
@@ -2345,6 +2054,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2377,7 +2089,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2210881796019445607
@@ -2429,6 +2141,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2461,7 +2176,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2427527683017216647
@@ -2513,6 +2228,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2545,7 +2263,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2470473951869164456
@@ -2597,6 +2315,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2629,7 +2350,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2476211608498098227
@@ -2906,6 +2627,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2938,7 +2662,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3079586281133199195
@@ -3023,6 +2747,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3055,7 +2782,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3145372167843716858
@@ -3067,7 +2794,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2327236178313876608}
-  - component: {fileID: 5419353464602456209}
   - component: {fileID: 1865326553130638645}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -3093,42 +2819,6 @@ Transform:
   - {fileID: 6967657867607978883}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5419353464602456209
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3145372167843716858}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 6967657867607978883}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -1.7, y: -1000, z: 6}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 8413911484029832072}
-  - {fileID: 7816445951948503454}
-  - {fileID: 2276435652761535200}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 7606592072020248814}
-  HexBottomSpriteRenderer: {fileID: 8791774762270860220}
-  HexagonEvents: 
 --- !u!64 &1865326553130638645
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3160,7 +2850,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7475015783359763677}
-  - component: {fileID: 3359250822789829810}
   - component: {fileID: 4671936093175089124}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -3186,42 +2875,6 @@ Transform:
   - {fileID: 7669454103178675565}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3359250822789829810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3199082515621707127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 7669454103178675565}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -0.9, y: -1000, z: -1.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 231832037898035100}
-  - {fileID: 5614123596584654492}
-  - {fileID: 9049929383779646795}
-  - {fileID: 0}
-  - {fileID: 3276123933037926729}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 8569667410879225585}
-  HexBottomSpriteRenderer: {fileID: 3939783533285495756}
-  HexagonEvents: 
 --- !u!64 &4671936093175089124
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3293,6 +2946,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3325,7 +2981,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3348070090532743846
@@ -3472,6 +3128,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3504,7 +3163,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3975684156921121018
@@ -3622,6 +3281,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3654,7 +3316,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &4183639319433621698
@@ -3697,7 +3359,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5567825545040425357}
-  - component: {fileID: 5532382169748816481}
   - component: {fileID: 8044910308967526829}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -3723,42 +3384,6 @@ Transform:
   - {fileID: 3176050027068045464}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5532382169748816481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4197982353833230741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 3176050027068045464}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 6.9, y: -1000, z: 0}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 3344791176660114424}
-  - {fileID: 9024548107583388238}
-  - {fileID: 570192893106015476}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 5802440629017007175}
-  HexBottomSpriteRenderer: {fileID: 7269818909405645930}
-  HexagonEvents: 
 --- !u!64 &8044910308967526829
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3830,6 +3455,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3862,7 +3490,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &4249167261967991622
@@ -4011,6 +3639,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4043,7 +3674,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &4627487626476063839
@@ -4154,7 +3785,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4707373530827172971}
-  - component: {fileID: 3276123933037926729}
   - component: {fileID: 6518656065502277878}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -4180,42 +3810,6 @@ Transform:
   - {fileID: 5400777634722631135}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3276123933037926729
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4759945535873276457}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 5400777634722631135}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -1.7, y: -1000, z: -3}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 3359250822789829810}
-  - {fileID: 0}
-  - {fileID: 1106042500458483662}
-  - {fileID: 2990920757086443165}
-  - {fileID: 4878551339523428238}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 5735050567423672711}
-  HexBottomSpriteRenderer: {fileID: 3512446313078665178}
-  HexagonEvents: 
 --- !u!64 &6518656065502277878
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4381,6 +3975,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4413,7 +4010,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5034074995139609628
@@ -4425,7 +4022,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3963988550450382346}
-  - component: {fileID: 231832037898035100}
   - component: {fileID: 4179789078123849369}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -4451,42 +4047,6 @@ Transform:
   - {fileID: 6150643889140061561}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &231832037898035100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5034074995139609628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 6150643889140061561}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 0.9, y: -1000, z: -1.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 2428396385138968981}
-  - {fileID: 5614123596584654492}
-  - {fileID: 3359250822789829810}
-  - {fileID: 0}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 9106880719239072499}
-  HexBottomSpriteRenderer: {fileID: 9172010225159634280}
-  HexagonEvents: 
 --- !u!64 &4179789078123849369
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4518,7 +4078,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1886247828644481529}
-  - component: {fileID: 988962578854367411}
   - component: {fileID: 4069718936976848440}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -4544,42 +4103,6 @@ Transform:
   - {fileID: 8666392810485772522}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &988962578854367411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5046406625883216196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 8666392810485772522}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 0.9, y: -1000, z: 1.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 4990905563214913354}
-  - {fileID: 5614123596584654492}
-  - {fileID: 2428396385138968981}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 2217007635096248065}
-  HexBottomSpriteRenderer: {fileID: 1558651114536007031}
-  HexagonEvents: 
 --- !u!64 &4069718936976848440
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4744,6 +4267,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4776,7 +4302,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5334873533776847851
@@ -4828,6 +4354,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4860,7 +4389,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5338538658279605562
@@ -4943,6 +4472,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4975,7 +4507,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5474771791464281391
@@ -5082,7 +4614,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3992990441279831910}
-  - component: {fileID: 9024548107583388238}
   - component: {fileID: 7665794478213117395}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -5108,42 +4639,6 @@ Transform:
   - {fileID: 3396867959997978170}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9024548107583388238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5627224736005450530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 3396867959997978170}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 5.2, y: -1000, z: 0}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 5532382169748816481}
-  - {fileID: 3344791176660114424}
-  - {fileID: 8092130450997544726}
-  - {fileID: 3681843863374549394}
-  - {fileID: 616181658645161095}
-  - {fileID: 570192893106015476}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 2815567025792954651}
-  HexBottomSpriteRenderer: {fileID: 3901538911665882219}
-  HexagonEvents: 
 --- !u!64 &7665794478213117395
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5280,6 +4775,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5312,7 +4810,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5763592826539573169
@@ -5395,6 +4893,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5427,7 +4928,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5997338705466690185
@@ -5439,7 +4940,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9213098332463209023}
-  - component: {fileID: 5663219861867841644}
   - component: {fileID: 3812703836417684016}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -5465,42 +4965,6 @@ Transform:
   - {fileID: 6391554701125738911}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5663219861867841644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5997338705466690185}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 6391554701125738911}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -3.5, y: -1000, z: -6}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 1402353099340152386}
-  - {fileID: 2990920757086443165}
-  - {fileID: 6763038466922867364}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 6279586437785413780}
-  HexBottomSpriteRenderer: {fileID: 7006845209427864694}
-  HexagonEvents: 
 --- !u!64 &3812703836417684016
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5572,6 +5036,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5604,7 +5071,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6130601105170646817
@@ -5656,6 +5123,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5688,7 +5158,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6141966088026456187
@@ -5740,6 +5210,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5772,7 +5245,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6143036578882656875
@@ -5824,6 +5297,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5856,7 +5332,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6152473189327016330
@@ -5899,7 +5375,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5808252899176719622}
-  - component: {fileID: 1402353099340152386}
   - component: {fileID: 4016204137210566662}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -5925,42 +5400,6 @@ Transform:
   - {fileID: 5217856033143574425}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1402353099340152386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6176822077300558018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 5217856033143574425}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -1.7, y: -1000, z: -6}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 4878551339523428238}
-  - {fileID: 2990920757086443165}
-  - {fileID: 5663219861867841644}
-  - {fileID: 0}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 4495065165911753037}
-  HexBottomSpriteRenderer: {fileID: 3416417446836004227}
-  HexagonEvents: 
 --- !u!64 &4016204137210566662
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6058,7 +5497,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3537299784971264286}
-  - component: {fileID: 8413911484029832072}
   - component: {fileID: 8117953349202297685}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -6084,42 +5522,6 @@ Transform:
   - {fileID: 1288133593126649614}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8413911484029832072
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6440927920751982252}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 1288133593126649614}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -3.5, y: -1000, z: 6}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 5419353464602456209}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 332391886553225686}
-  - {fileID: 7816445951948503454}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 3109251586315863825}
-  HexBottomSpriteRenderer: {fileID: 5836727931875347467}
-  HexagonEvents: 
 --- !u!64 &8117953349202297685
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6151,7 +5553,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6616212252076474963}
-  - component: {fileID: 6763038466922867364}
   - component: {fileID: 1780281776692184072}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -6177,42 +5578,6 @@ Transform:
   - {fileID: 5614142752212672161}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6763038466922867364
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6442110158020597406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 5614142752212672161}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -4.3, y: -1000, z: -4.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 2990920757086443165}
-  - {fileID: 1106042500458483662}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 5663219861867841644}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 2299209296934413676}
-  HexBottomSpriteRenderer: {fileID: 1970567092503059823}
-  HexagonEvents: 
 --- !u!64 &1780281776692184072
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6244,7 +5609,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8011142424674347695}
-  - component: {fileID: 9049929383779646795}
   - component: {fileID: 8609388796187766508}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -6270,42 +5634,6 @@ Transform:
   - {fileID: 5019440525957219264}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9049929383779646795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6570954079101844048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 5019440525957219264}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -1.7, y: -1000, z: 0}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 5614123596584654492}
-  - {fileID: 4990905563214913354}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 3359250822789829810}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 6777812441078342249}
-  HexBottomSpriteRenderer: {fileID: 1657904838024303984}
-  HexagonEvents: 
 --- !u!64 &8609388796187766508
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6410,6 +5738,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -6442,7 +5773,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6651187833369224859
@@ -6494,6 +5825,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -6526,7 +5860,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6707085218716705788
@@ -6578,6 +5912,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -6610,7 +5947,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6747174151505997566
@@ -6622,7 +5959,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1024754792962221399}
-  - component: {fileID: 4878551339523428238}
   - component: {fileID: 3600461876272757940}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -6648,42 +5984,6 @@ Transform:
   - {fileID: 3048138513776284806}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4878551339523428238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6747174151505997566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 3048138513776284806}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -0.9, y: -1000, z: -4.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 3276123933037926729}
-  - {fileID: 2990920757086443165}
-  - {fileID: 1402353099340152386}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 4077154264645131824}
-  HexBottomSpriteRenderer: {fileID: 543524591085711005}
-  HexagonEvents: 
 --- !u!64 &3600461876272757940
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6788,6 +6088,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -6820,7 +6123,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7104886315502920573
@@ -6905,6 +6208,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -6937,7 +6243,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7131512690289576203
@@ -6989,6 +6295,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7021,7 +6330,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7241783464114530053
@@ -7073,6 +6382,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7105,7 +6417,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7370299823131609935
@@ -7188,6 +6500,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7220,7 +6535,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7592158358711252094
@@ -7305,6 +6620,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7337,7 +6655,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7704947700087026258
@@ -7420,6 +6738,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7452,7 +6773,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7724570702198475522
@@ -7570,6 +6891,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7602,7 +6926,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7931296012935185573
@@ -7654,6 +6978,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7686,7 +7013,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &7955580154670393992
@@ -7698,7 +7025,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5844797216086800179}
-  - component: {fileID: 616181658645161095}
   - component: {fileID: 481307532168228719}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -7724,42 +7050,6 @@ Transform:
   - {fileID: 6144272701407898550}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &616181658645161095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7955580154670393992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 6144272701407898550}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 4.3, y: -1000, z: -1.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 570192893106015476}
-  - {fileID: 9024548107583388238}
-  - {fileID: 3681843863374549394}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 1709607334204138576}
-  HexBottomSpriteRenderer: {fileID: 3917400035729961432}
-  HexagonEvents: 
 --- !u!64 &481307532168228719
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7831,6 +7121,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7863,7 +7156,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8053197961641675052
@@ -7979,6 +7272,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8011,7 +7307,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8209418815294527162
@@ -8063,6 +7359,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8095,7 +7394,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8234949058243097014
@@ -8147,6 +7446,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8179,7 +7481,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8278397024673184465
@@ -8224,7 +7526,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5176971847120368036}
-  - component: {fileID: 2276435652761535200}
   - component: {fileID: 4745815441425649649}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -8250,42 +7551,6 @@ Transform:
   - {fileID: 8300000248408614762}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2276435652761535200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8302232925720605121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 8300000248408614762}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -0.9, y: -1000, z: 4.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 5419353464602456209}
-  - {fileID: 7816445951948503454}
-  - {fileID: 5861423585830293596}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 4111346171258367771}
-  HexBottomSpriteRenderer: {fileID: 4663532083930629402}
-  HexagonEvents: 
 --- !u!64 &4745815441425649649
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -8357,6 +7622,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8389,7 +7657,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8344217663613741934
@@ -8441,6 +7709,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8473,7 +7744,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8407485316487362285
@@ -8558,6 +7829,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8590,7 +7864,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8490137825710152079
@@ -8673,6 +7947,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8705,7 +7982,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8580491772798974914
@@ -8750,7 +8027,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3577075582592215549}
-  - component: {fileID: 4990905563214913354}
   - component: {fileID: 2440727100952760218}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -8776,42 +8052,6 @@ Transform:
   - {fileID: 8420491211764110816}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4990905563214913354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8601636132437412827}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 8420491211764110816}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -0.9, y: -1000, z: 1.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 988962578854367411}
-  - {fileID: 0}
-  - {fileID: 5861423585830293596}
-  - {fileID: 0}
-  - {fileID: 9049929383779646795}
-  - {fileID: 5614123596584654492}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 3335874008830798090}
-  HexBottomSpriteRenderer: {fileID: 2737000409234586683}
-  HexagonEvents: 
 --- !u!64 &2440727100952760218
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -8883,6 +8123,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8915,7 +8158,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8719346727895517111
@@ -8960,7 +8203,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1304217809792558301}
-  - component: {fileID: 5861423585830293596}
   - component: {fileID: 7592177953206374117}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -8986,42 +8228,6 @@ Transform:
   - {fileID: 8686456284613454811}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5861423585830293596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8738890126283856984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 8686456284613454811}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -1.7, y: -1000, z: 3}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 2276435652761535200}
-  - {fileID: 7816445951948503454}
-  - {fileID: 2583068759314186843}
-  - {fileID: 0}
-  - {fileID: 4990905563214913354}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 5276521237393914643}
-  HexBottomSpriteRenderer: {fileID: 2232512244700806281}
-  HexagonEvents: 
 --- !u!64 &7592177953206374117
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9086,7 +8292,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6023499056868483509}
-  - component: {fileID: 570192893106015476}
   - component: {fileID: 2508757309031460573}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -9112,42 +8317,6 @@ Transform:
   - {fileID: 8924277925154125823}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &570192893106015476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8840869717436645180}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 8924277925154125823}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: 6.1, y: -1000, z: -1.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 0}
-  - {fileID: 5532382169748816481}
-  - {fileID: 9024548107583388238}
-  - {fileID: 616181658645161095}
-  - {fileID: 0}
-  - {fileID: 0}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 5087918297287040911}
-  HexBottomSpriteRenderer: {fileID: 4407095124847240074}
-  HexagonEvents: 
 --- !u!64 &2508757309031460573
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9238,7 +8407,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7423689080858556292}
-  - component: {fileID: 2990920757086443165}
   - component: {fileID: 3153942496353859094}
   m_Layer: 3
   m_Name: HexagonPrefab(Clone)
@@ -9264,42 +8432,6 @@ Transform:
   - {fileID: 4696112072818804928}
   m_Father: {fileID: 8464553944236187702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2990920757086443165
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9022395038635533863}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71e2e4f3992d84564b3cc145bea24d69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ViewContainer: {fileID: 4696112072818804928}
-  HexagonCurrentAccessibility: 0
-  HexagonDefaultAccessibility: 0
-  HexLocation: {x: -2.6, y: -1000, z: -4.5}
-  GridLayerEnum: 2
-  Neighbours:
-  - {fileID: 4878551339523428238}
-  - {fileID: 3276123933037926729}
-  - {fileID: 1106042500458483662}
-  - {fileID: 6763038466922867364}
-  - {fileID: 5663219861867841644}
-  - {fileID: 1402353099340152386}
-  HexFloorNumber: 1
-  HexIsSlope: 0
-  HexPlayerSprite: {fileID: 21300000, guid: 7e7d965c7b262497fbbbf864a4bf4ffa, type: 3}
-  HexOpenSprite: {fileID: 21300000, guid: 45b565b077cb24144b54ff16416ce9f4, type: 3}
-  HexPathSprite: {fileID: 21300000, guid: 963efe2f65ba9498e885274b890f952a, type: 3}
-  HexHalfSprite: {fileID: 21300000, guid: c166d3d3e1bc44489857894828aa5759, type: 3}
-  HexBlockedSprite: {fileID: 21300000, guid: 9b5ce7beca8d4457abe1ef4d5f4f6188, type: 3}
-  HexUndiscoveredSprite: {fileID: 21300000, guid: 591d8f14301994cabae49e2ca9ec925d, type: 3}
-  HexDiscovered: 0
-  HexTopSpriteRenderer: {fileID: 7481777383971798945}
-  HexBottomSpriteRenderer: {fileID: 8917104716291864558}
-  HexagonEvents: 
 --- !u!64 &3153942496353859094
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9404,6 +8536,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -9436,7 +8571,7 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &9203783693576854175
@@ -9488,6 +8623,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -9520,6 +8658,6 @@ SpriteRenderer:
   m_Size: {x: 1.43, y: 1.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0

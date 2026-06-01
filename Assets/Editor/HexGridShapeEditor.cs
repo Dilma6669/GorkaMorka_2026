@@ -28,38 +28,34 @@ public class HexGridShapeEditor : Editor
                 // Visualizing the tile status with a simple button
                 string label = !tile.IsEnabled ? "-" : (tile.IsClimbable ? "C" : (!tile.IsWalkable ? "X" : tile.Height.ToString()));
 
-                if (GUILayout.Button(label, GUILayout.Width(30)))
+                // 1. Get the Rect for the button so we can handle manual events
+                Rect r = GUILayoutUtility.GetRect(30, 20);
+
+                // 2. Draw the button
+                if (GUI.Button(r, label))
                 {
-                    // 1. If Disabled, turn it on
-                    if (!tile.IsEnabled) 
-                    { 
-                        tile.IsEnabled = true; 
-                        tile.IsWalkable = true; 
-                        tile.Height = 0; 
-                    }
-                    // 2. If it's Climbable, turn it off (and make it walkable flat)
-                    else if (tile.IsClimbable) 
-                    { 
-                        tile.IsClimbable = false; 
-                        tile.IsWalkable = true; 
-                        tile.Height = 0;
-                    }
-                    // 3. If it's Unwalkable, make it Climbable (Height 0)
-                    else if (!tile.IsWalkable)
+                    // 3. Detect the mouse button
+                    Event e = Event.current;
+                    bool forward = (e.button == 0); // Left Click = Forward (your current logic)
+                    bool backward = (e.button == 1); // Right Click = Backward
+
+                    if (forward)
                     {
-                        tile.IsWalkable = true;
-                        tile.IsClimbable = true;
-                        tile.Height = 0;
+                        // --- YOUR FORWARD CYCLE LOGIC ---
+                        if (!tile.IsEnabled) { tile.IsEnabled = true; tile.IsWalkable = true; tile.IsClimbable = false; tile.Height = 0; }
+                        else if (tile.IsWalkable && !tile.IsClimbable && tile.Height < 5) { tile.Height++; }
+                        else if (tile.Height >= 5) { tile.IsClimbable = true; tile.IsWalkable = true; tile.Height = 0; }
+                        else if (tile.IsClimbable) { tile.IsClimbable = false; tile.IsWalkable = false; }
+                        else { tile.IsEnabled = false; }
                     }
-                    // 4. If height is less than 5, increment
-                    else if (tile.Height < 5) 
-                    { 
-                        tile.Height++; 
-                    }
-                    // 5. If height is 5, make it Unwalkable
-                    else 
-                    { 
-                        tile.IsWalkable = false;
+                    else if (backward)
+                    {
+                        // --- BACKWARD CYCLE LOGIC ---
+                        if (!tile.IsEnabled) { tile.IsEnabled = true; tile.IsWalkable = false; tile.IsClimbable = false; } // Go from - to X
+                        else if (!tile.IsWalkable) { tile.IsWalkable = true; tile.IsClimbable = true; } // Go from X to C
+                        else if (tile.IsClimbable) { tile.IsClimbable = false; tile.IsWalkable = true; tile.Height = 5; } // Go from C to H:5
+                        else if (tile.Height > 0) { tile.Height--; } // Decrease Height
+                        else { tile.IsEnabled = false; } // Go from H:0 to -
                     }
 
                     EditorUtility.SetDirty(shape);
