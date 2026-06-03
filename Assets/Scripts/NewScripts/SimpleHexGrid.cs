@@ -134,7 +134,7 @@ public class SimpleHexGrid : MonoBehaviour
         foreach (Vector2Int dir in axialDirections)
         {
             Vector2Int neighborCoords = new Vector2Int(coords.x + dir.x, coords.y + dir.y);
-            if (IsValidCoordinates(neighborCoords) && HexagonsInGrid[neighborCoords].GetIsWalkable())
+            if (IsValidCoordinates(neighborCoords))
             {
                 neighbors.Add(neighborCoords);
             }

@@ -170,7 +170,7 @@ public class MultiGridPathfinder : MonoBehaviour
     private List<PathNode> GetNeighbors(PathNode currentNode)
     {
         List<PathNode> neighbors = new List<PathNode>();
-
+        
         HexData currentHexData = currentNode.GridReference.GetHexData(currentNode.GridCoordinates);
         Vector3 currentWorldPos =
             currentNode.GridReference.GetHexWorldPosition(currentNode.GridCoordinates, currentHexData.Height);
@@ -182,16 +182,29 @@ public class MultiGridPathfinder : MonoBehaviour
             HexData neighbourHexData = currentNode.GridReference.GetHexData(coords);
             Vector3 neighbourWorldPos = currentNode.GridReference.GetHexWorldPosition(coords, neighbourHexData.Height);
 
-            // Check if otherHex is walkable
-            if (!neighbourHexData.GetIsWalkable() && !neighbourHexData.IsClimbable()) continue;
-
-            // If its a vehicle we want to not allow the vehicle to pathfind over itself 
-            if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle &&
-                currentNode.GridReference == entityCommander.entityToCommand.EntityGrid)
+            if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle)
             {
-                continue;
+                if (currentNode.GridReference == entityCommander.entityToCommand.EntityGrid)
+                {
+                    continue;
+                }
+                if(neighbourHexData.GetIsWalkable() == false)
+                {
+                    if (IsTileBlockedByMe(coords, currentNode.GridReference) == false)
+                    {
+                        continue;
+                    }
+                }
             }
-
+            else if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Unit)
+            {
+                // Check if otherHex is walkable
+                if (!neighbourHexData.GetIsWalkable() && !neighbourHexData.IsClimbable())
+                {
+                    continue;
+                }
+            }
+            
             // Calculate horizontal and vertical distance
             float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
                 new Vector2(neighbourWorldPos.x, neighbourWorldPos.z));
@@ -272,114 +285,7 @@ public class MultiGridPathfinder : MonoBehaviour
 
         return neighbors;
     }
-
-    /// <summary>
-    /// Gets all valid neighbors for a given PathNode, including intra-grid hexes
-    /// and potential jump points to other grids.
-    /// </summary>
-    // private List<PathNode> GetNeighbors(PathNode currentNode)
-    // {
-    //     List<PathNode> neighbors = new List<PathNode>();
-    //
-    //     HexData currentHexData = currentNode.GridReference.GetHexData(currentNode.GridCoordinates);
-    //     Vector3 currentWorldPos =
-    //         currentNode.GridReference.GetHexWorldPosition(currentNode.GridCoordinates, currentHexData.Height);
-    //
-    //     // --- 1. Intra-Grid Neighbors ---
-    //     List<Vector2Int> localNeighborCoords = currentNode.GridReference.GetHexNeighbors(currentNode.GridCoordinates);
-    //     foreach (Vector2Int coords in localNeighborCoords)
-    //     {
-    //         HexData neighbourHexData = currentNode.GridReference.GetHexData(coords);
-    //         Vector3 neighbourWorldPos = currentNode.GridReference.GetHexWorldPosition(coords, neighbourHexData.Height);
-    //
-    //         // Check if otherHex is walkable
-    //         if (neighbourHexData.GetIsWalkable() == false) continue;
-    //
-    //         // If its a vehicle we want to not allow the vehicle to pathfind over itself 
-    //         if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle &&
-    //             currentNode.GridReference == entityCommander.entityToCommand.EntityGrid)
-    //         {
-    //             continue;
-    //         }
-    //
-    //         // Calculate horizontal and vertical distance
-    //         float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
-    //             new Vector2(neighbourWorldPos.x, neighbourWorldPos.z));
-    //         float verticalDist = Mathf.Abs(currentHexData.Height - neighbourHexData.Height);
-    //
-    //         if (horizontalDist <= connectionRange && verticalDist <= maxVerticalDifference)
-    //         {
-    //             neighbors.Add(new PathNode(coords, currentNode.GridReference));
-    //             
-    //             if (currentWorldPos.y > neighbourWorldPos.y) // If jumping DOWN
-    //             {
-    //                 if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
-    //                 {
-    //                     neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridReference));
-    //                 }
-    //             }
-    //             else // If jumping UP or staying at the same height
-    //             {
-    //                 neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridReference));
-    //             }
-    //         }
-    //     }
-    //
-    //     // --- 2. Inter-Grid Neighbors (Jumps) ---
-    //     foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
-    //     {
-    //         // If its a vehicle we want to not allow the vehicle to pathfind over itself 
-    //         if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle)
-    //         {
-    //             if (entityCommander.entityToCommand.currentGrid == otherGrid)
-    //             {
-    //              //   Debug.Log("fuck here");
-    //                 continue;
-    //             }
-    //         }
-    //
-    //         if (otherGrid == currentNode.GridReference)
-    //         {
-    //             continue;
-    //         }
-    //
-    //         foreach (HexData otherHexData in otherGrid.HexagonsInGrid.Values)
-    //         {
-    //             // Check if otherHex is walkable
-    //             if (!otherHexData.GetIsWalkable()) continue;
-    //
-    //             Vector3 otherHexWorldPos =
-    //                 otherGrid.GetHexWorldPosition(otherHexData.GridCoordinates, otherHexData.Height);
-    //
-    //             // Calculate horizontal and vertical distance
-    //             float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
-    //                 new Vector2(otherHexWorldPos.x, otherHexWorldPos.z));
-    //             float verticalDist = Mathf.Abs(currentWorldPos.y - otherHexWorldPos.y);
-    //
-    //             // Check if within jump range
-    //             if (horizontalDist <= connectionRange && verticalDist <= maxVerticalDifference)
-    //             {
-    //                 // Found a valid jump point!
-    //                 if (currentWorldPos.y > otherHexWorldPos.y) // If jumping DOWN
-    //                 {
-    //                     if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
-    //                     {
-    //                         neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
-    //                     }
-    //                 }
-    //                 else // If jumping UP or staying at the same height
-    //                 {
-    //                     neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
-    //                 }
-    //             }
-    //         }
-    //     }
-    //
-    //     return neighbors;
-    // }
     
-    
-
 
     /// <summary>
     /// Reconstructs the path from the target node back to the start node.
@@ -395,5 +301,21 @@ public class MultiGridPathfinder : MonoBehaviour
         }
         path.Reverse(); // Reverse to get path from start to end
         return path;
+    }
+    
+    private bool IsTileBlockedByMe(Vector2Int coords, SimpleHexGrid grid)
+    {
+        var vehicle = entityCommander.entityToCommand.GetComponentInChildren<VehicleObstacle>();
+        if (vehicle == null) return false;
+
+        // Check if any tile in the vehicle's list matches the coordinates we are checking
+        foreach (HexVisualTile blockedTile in vehicle.currentlyBlockedTiles)
+        {
+            if (blockedTile.GridCoordinates == coords && blockedTile.GridReference == grid)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
