@@ -27,6 +27,8 @@ public class Entity : MonoBehaviour
     
     public EntitySpawner.EntityType EntityType;
 
+    public string EntityGUID;
+
     void Awake()
     {
         // Ensure unitPathMover is assigned, either manually or found automatically

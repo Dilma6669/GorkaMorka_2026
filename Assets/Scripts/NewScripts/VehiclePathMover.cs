@@ -273,7 +273,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
             HexData previousHexData = previousNode.GridReference.GetHexData(previousNode.GridCoordinates);
             HexData currentHexData = currentNode.GridReference.GetHexData(currentNode.GridCoordinates);
             
-            if (!previousHexData.GetIsWalkable() || !currentHexData.GetIsWalkable())
+            if (!previousHexData.GetIsWalkable() || !currentHexData.GetIsWalkable() || !previousHexData.GetIsOccupied() || !currentHexData.GetIsOccupied())
             {
                 smoothedPath.Add(currentNode);
                 continue;

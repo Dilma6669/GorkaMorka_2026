@@ -175,7 +175,7 @@ public class MultiGridPathfinder : MonoBehaviour
         Vector3 currentWorldPos =
             currentNode.GridReference.GetHexWorldPosition(currentNode.GridCoordinates, currentHexData.Height);
 
-        // --- 1. Intra-Grid Neighbors ---
+        // --- 1. Intra-Grid Neighbors (SAME GRID AS ENTITY) ---
         List<Vector2Int> localNeighborCoords = currentNode.GridReference.GetHexNeighbors(currentNode.GridCoordinates);
         foreach (Vector2Int coords in localNeighborCoords)
         {
@@ -188,18 +188,13 @@ public class MultiGridPathfinder : MonoBehaviour
                 {
                     continue;
                 }
-                if(neighbourHexData.GetIsWalkable() == false)
-                {
-                    if (IsTileBlockedByMe(coords, currentNode.GridReference) == false)
-                    {
-                        continue;
-                    }
-                }
+                if (!neighbourHexData.GetIsWalkable()) continue;
+                if (neighbourHexData.GetIsOccupied() && neighbourHexData.GetOccupier() != entityCommander.entityToCommand.EntityGUID) continue;
             }
             else if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Unit)
             {
                 // Check if otherHex is walkable
-                if (!neighbourHexData.GetIsWalkable() && !neighbourHexData.IsClimbable())
+                if (!neighbourHexData.GetIsWalkable() || neighbourHexData.GetIsOccupied())
                 {
                     continue;
                 }
@@ -228,7 +223,7 @@ public class MultiGridPathfinder : MonoBehaviour
             }
         }
 
-        // --- 2. Inter-Grid Neighbors (Jumps) ---
+        // --- 2. Inter-Grid Neighbors (JUMPING TO DIFFERENT GRID) ---
         foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
         {
             // If its a vehicle we want to not allow the vehicle to pathfind over itself 
@@ -248,12 +243,9 @@ public class MultiGridPathfinder : MonoBehaviour
 
             foreach (HexData otherHexData in otherGrid.HexagonsInGrid.Values)
             {
-                // 1. Is the target walkable?
                 if (!otherHexData.GetIsWalkable()) continue;
-
-                // 2. Is the current tile a "portal" (Ladder/Stair)?
-                // This is the GATE: If I am not on a climbable tile, I cannot initiate a jump.
-                if (!otherHexData.IsClimbable()) continue;
+                if (!otherHexData.GetIsClimbable()) continue;
+                if (otherHexData.GetIsOccupied()) continue;
 
 
                 Vector3 otherHexWorldPos =
@@ -305,7 +297,7 @@ public class MultiGridPathfinder : MonoBehaviour
     
     private bool IsTileBlockedByMe(Vector2Int coords, SimpleHexGrid grid)
     {
-        var vehicle = entityCommander.entityToCommand.GetComponentInChildren<VehicleObstacle>();
+        var vehicle = entityCommander.entityToCommand.GetComponentInChildren<HexagonCollider>();
         if (vehicle == null) return false;
 
         // Check if any tile in the vehicle's list matches the coordinates we are checking

@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine; // Required for Vector2Int
 
 // Phase 1.1 (Revised): HexData Struct
@@ -9,14 +10,18 @@ public struct HexData
     public Vector2Int GridCoordinates; // The (x, z) coordinates of the hex within its grid.
    // public Vector3 WorldPosition;
     public float Height; // Add this new field to store the height
-    public bool isWalkable;            // A flag indicating if this hex can be traversed.
-    public bool isClimbable;
+    private bool isWalkable;            // A flag indicating if this hex can be traversed.
+    private bool isOccupied;
+    private string hexOccupier;
+    private bool isClimbable;
 
     public HexData(Vector2Int gridCoords, float height, bool walkable, bool climbable)
     {
         GridCoordinates = gridCoords;
         Height = height;
         isWalkable = walkable;
+        isOccupied = false;
+        hexOccupier = null;
         isClimbable = climbable;
     }
 
@@ -26,20 +31,46 @@ public struct HexData
         WorldPosition = worldPosition;
     }*/
     
-    public bool IsClimbable()
+    public bool GetIsClimbable()
     {
         return isClimbable;
     }
-
-    public void SetIsWalkable(bool walkable)
+    
+    public void SetIsClimbable(bool climbable)
     {
-        isWalkable = walkable;
+        isClimbable = climbable;
     }
     
     public bool GetIsWalkable()
     {
         return isWalkable;
     }
+    
+    public void SetIsWalkable(bool walkable)
+    {
+        isWalkable = walkable;
+    }
+    
+    public bool GetIsOccupied()
+    {
+        return isOccupied;
+    }
+    
+    public void SetIsOccupied(bool occupied)
+    {
+        isOccupied = occupied;
+    }
+    
+    public string GetOccupier()
+    {
+        return hexOccupier;
+    }
+    
+    public void SetOccupier(string occupier)
+    {
+        hexOccupier = occupier;
+    }
+    
 
     // Overriding Equals and GetHashCode is crucial for using HexData correctly
     // in collections like HashSets or Dictionaries later.

@@ -89,6 +89,8 @@ public class EntitySpawner : MonoBehaviour
                 "EntitySpawner: EntityCommander reference not set in Inspector. Spawned unit will not be assigned to commander automatically.");
         }
         // --- End Multi-Unit Spawning adjustment ---
+        
+        newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
 
         return newEntity;
     }
@@ -142,6 +144,8 @@ public class EntitySpawner : MonoBehaviour
             Debug.LogWarning("EntitySpawner: EntityCommander reference not set in Inspector. Spawned vehicle will not be assigned to commander automatically.");
         }
         // --- End Multi-Unit Spawning adjustment ---
+        
+        newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
 
         return newEntity;
     }
@@ -201,6 +205,8 @@ public class EntitySpawner : MonoBehaviour
         }
         // --- End Multi-Unit Spawning adjustment ---
 
+        newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
+        
         return newEntity;
     }
 

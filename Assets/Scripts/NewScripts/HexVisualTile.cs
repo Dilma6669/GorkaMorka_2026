@@ -3,6 +3,8 @@ using UnityEngine;
 public class HexVisualTile : MonoBehaviour
 {
     [HideInInspector] public SimpleHexGrid GridReference;
+
+    public HexData hexData => GridReference.GetHexData(GridCoordinates);
     
     public Renderer pathOverlayRenderer;
     private Renderer hexRenderer;
@@ -13,16 +15,18 @@ public class HexVisualTile : MonoBehaviour
     public Vector2Int GridCoordinates;
     public float Height; 
     public bool IsWalkable;
+    public bool IsOccupied;
     public bool IsClimbable;
     public bool ColourLocked;
     
-    public void Initialize(SimpleHexGrid grid, Vector2Int coords, float height, bool isWalkable, bool isClimbable)
+    public void Initialize(SimpleHexGrid grid, Vector2Int coords, float height, bool isWalkable, bool isClimbable, bool isOccupied)
     {
         GridReference = grid;
         GridCoordinates = coords;
         Height = height;
         IsWalkable = isWalkable;
         IsClimbable = isClimbable;
+        IsOccupied = isOccupied;
 
         hexRenderer = GetComponent<Renderer>();
         propBlock = new MaterialPropertyBlock();
@@ -47,6 +51,9 @@ public class HexVisualTile : MonoBehaviour
         // Setting the property block to null removes the override, 
         // reverting the tile to the material's default color.
         hexRenderer.SetPropertyBlock(null);
+        
+        if(IsWalkable == false) SetBaseColor(Color.red);
+        if(IsClimbable) SetBaseColor(Color.blue);
     }
     
 
@@ -59,5 +66,24 @@ public class HexVisualTile : MonoBehaviour
         {
             pathOverlayRenderer.material.color = color;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        // Ensure you have a reference to your HexData
+        string status = hexData.GetIsOccupied() ? "Occupied" : "Free";
+        // Assuming your properties are named isClimable and isWalkable
+        string climbable = hexData.GetIsClimbable() ? "Climbable" : "Not Climbable";
+        string walkable = hexData.GetIsWalkable() ? "Walkable" : "Blocked";
+
+        Color textColor = hexData.GetIsOccupied() || !hexData.GetIsWalkable() ? Color.red : Color.green;
+
+        // Draw the text in the Scene View
+        UnityEditor.Handles.color = textColor;
+        UnityEditor.Handles.Label(transform.position + Vector3.up * 0.5f,
+            $"Coords: {hexData.GridCoordinates}\n" +
+            $"Status: {status}\n" +
+            $"Move: {walkable}\n" +
+            $"Climb: {climbable}");
     }
 }

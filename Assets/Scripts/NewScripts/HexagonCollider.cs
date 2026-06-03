@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
 
-public class VehicleObstacle : MonoBehaviour
+public class HexagonCollider : MonoBehaviour
 {
+    public Entity Entity;
     public List<HexVisualTile> currentlyBlockedTiles = new List<HexVisualTile>();
 
     private void OnTriggerEnter(Collider other)
@@ -16,17 +17,14 @@ public class VehicleObstacle : MonoBehaviour
             {
                 currentlyBlockedTiles.Add(tile);
                 
-                // Use your existing grid logic to disable walking
-                // We'll need a way to modify the HexData, 
-                // but for visualization, we just highlight it
-                tile.SetHighlightColour(Color.red, true);
-                
                 // IMPORTANT: You need to tell the Pathfinding that this hex is blocked
                 // Update the HexData directly
                 if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
-                    data.SetIsWalkable(false);
+                    data.SetIsOccupied(true);
+                    data.SetOccupier(Entity.EntityGUID);
                     tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
+                    tile.SetBaseColor(Color.red);
                 }
             }
         }
@@ -39,13 +37,14 @@ public class VehicleObstacle : MonoBehaviour
             if (currentlyBlockedTiles.Contains(tile))
             {
                 currentlyBlockedTiles.Remove(tile);
-                tile.SetHighlightColour(Color.clear, false);
                 
                 // Re-enable walking
                 if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
-                    data.SetIsWalkable(true);
+                    data.SetIsOccupied(false);
+                    data.SetOccupier(null);
                     tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
+                    tile.ResetBaseColor();
                 }
             }
         }

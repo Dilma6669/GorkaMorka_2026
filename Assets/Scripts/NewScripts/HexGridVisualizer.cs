@@ -22,6 +22,7 @@ public class HexGridVisualizer : MonoBehaviour
     [Header("Tile Colors")]
     public Color unwalkableColor = Color.red;
     public Color climbableColor = Color.blue;
+    public Color occupiedColour = Color.red;
     
     // A dictionary to quickly find a HexVisualTile by its axial coordinates
     private Dictionary<Vector2Int, HexVisualTile> visualTiles;
@@ -98,7 +99,7 @@ public class HexGridVisualizer : MonoBehaviour
             
             if (visualTile != null)
             {
-                visualTile.Initialize(targetGrid, coords, hexDataPair.Value.Height, hexDataPair.Value.isWalkable, hexDataPair.Value.isClimbable);
+                visualTile.Initialize(targetGrid, coords, hexDataPair.Value.Height, hexDataPair.Value.GetIsWalkable(), hexDataPair.Value.GetIsClimbable(), hexDataPair.Value.GetIsOccupied());
                 visualTiles.Add(coords, visualTile); // Store the reference
             }
             else
@@ -112,11 +113,17 @@ public class HexGridVisualizer : MonoBehaviour
                 visualTile.SetBaseColor(unwalkableColor); 
                 visualTile.ColourLocked = true;
             }
-            else if (hexDataPair.Value.isClimbable)
+            else if (hexDataPair.Value.GetIsClimbable())
             {
                 visualTile.ColourLocked = false;
                 visualTile.SetBaseColor(climbableColor);
-                visualTile.ColourLocked = true;
+               // visualTile.ColourLocked = true;
+            }
+            else if (hexDataPair.Value.GetIsOccupied())
+            {
+               // visualTile.ColourLocked = false;
+                visualTile.SetBaseColor(occupiedColour);
+                //visualTile.ColourLocked = true;
             }
             else
             {
