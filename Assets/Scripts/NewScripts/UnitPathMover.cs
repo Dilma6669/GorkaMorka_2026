@@ -67,68 +67,55 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     {
         if (currentNodeIndex >= currentPath.Count)
         {
-            // Reached the end of the path
             StopMoving();
-            Debug.Log($"PathMover on '{name}': Path complete!");
             return;
         }
 
-        PathNode targetNode = currentPath[currentNodeIndex];
-        
-        HexData hexData = targetNode.GridReference.GetHexData(targetNode.GridCoordinates);
-        // Get the target hex's center world position
-        Vector3 targetHexWorldPos = targetNode.GridReference.GetHexWorldPosition(targetNode.GridCoordinates, hexData.Height);
+        // 1. SKIP LOGIC: Target the NEXT node instead of the CURRENT one
+        // If we have at least one node ahead of us, aim for that one.
+        int targetIndex = Mathf.Min(currentNodeIndex + 2, currentPath.Count - 1);
+    
+        PathNode targetNode = currentPath[targetIndex];
+        Vector3 targetPos = GetWorldPos(targetNode);
+        Vector3 targetPosWithCurrentY = new Vector3(targetPos.x, transform.position.y, targetPos.z);
 
-        // Maintain the mover's current Y position while moving towards the target hex's XZ
-        Vector3 targetPosWithCurrentY = new Vector3(targetHexWorldPos.x, transform.position.y, targetHexWorldPos.z);
-
-        // Calculate the direction to the next hexagon
-        Vector3 directionToTarget = targetPosWithCurrentY - transform.position;
-
-        // Only rotate if the unit is moving
-        if (directionToTarget != Vector3.zero)
-        {
-            // Calculate the target rotation to face the direction of movement
-            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-            // Smoothly rotate towards the target rotation
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
-
-        // Move towards the target position
+        // 2. Movement
         transform.position = Vector3.MoveTowards(transform.position, targetPosWithCurrentY, moveSpeed * Time.deltaTime);
 
-        // If we want the unit to smoothly move up/down between hexes, we need to blend the Y position too.
-        // For simple snapping, we only move XZ, and let SnapToHex handle Y.
-        // For smoother vertical transitions, uncomment/adapt the following line:
-        // transform.position = Vector3.Lerp(transform.position, targetHexWorldPos + Vector3.up * GetComponent<Unit>().unitHeightOffset, moveSpeed * Time.deltaTime / Vector3.Distance(transform.position, targetPos));
-
-        // Check if we are close enough to the target position in XZ plane
-        if (Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetHexWorldPos.x, 0, targetHexWorldPos.z)) < 0.05f) // Small threshold for "reached"
+        // 3. Rotation: Still face the target we are moving toward
+        Vector3 dir = (targetPosWithCurrentY - transform.position).normalized;
+        if (dir != Vector3.zero)
         {
-            // Snap to the exact hex position (including proper Y with offset)
-            // This assumes the PathMover is on a GameObject that also has a Unit component.
-            Entity entity = GetComponent<Entity>();
-            if (entity != null)
-            {
-                entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
-                
-                // We need to re-establish units onboard a vehicles new hexagons positions
-                /*if (targetNode.GridReference.EntityContainer != null)
-                {
-                    foreach (var entityOnVehicle in targetNode.GridReference.EntityContainer.GetComponentsInChildren<Entity>())
-                    {
-                        entityOnVehicle.SnapToHex(entityOnVehicle.currentGrid, entityOnVehicle.currentGridCoordinates);
-                    }
-                }*/
-            }
-            else
-            {
-                // Fallback if no Unit component, just snap to hex center Y
-                transform.position = targetHexWorldPos;
-            }
-
-            currentNodeIndex++; // Move to the next node in the path
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), rotationSpeed * Time.deltaTime);
         }
+
+        // 4. ARRIVAL CHECK:
+        // We check distance to the node we are aiming at (the one we skipped to)
+        float dist = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), 
+            new Vector3(targetPos.x, 0, targetPos.z));
+
+        if (dist < 0.3f) 
+        {
+            // Final snap logic
+            if (targetIndex == currentPath.Count - 1)
+            {
+                Entity entity = GetComponent<Entity>();
+                if (entity != null) 
+                {
+                    entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
+                }
+            }
+        
+            // Increment index. Because we are skipping, we jump by 2, 
+            // or just move the index to the one we just "arrived" at.
+            currentNodeIndex = targetIndex; 
+        }
+    }
+    
+    // Helper to clean up your code
+    private Vector3 GetWorldPos(PathNode node)
+    {
+        HexData hexData = node.GridReference.GetHexData(node.GridCoordinates);
+        return node.GridReference.GetHexWorldPosition(node.GridCoordinates, hexData.Height);
     }
 }

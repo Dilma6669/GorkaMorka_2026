@@ -141,53 +141,55 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         // --- NEW ANGLE-BASED WAYPOINT DISCARD LAYER ---
         // If we have future nodes left before the destination, check if our current target 
         // requires a weirdly sharp, awkward turn to get back to.
-        while (currentNodeIndex > 1 && currentNodeIndex < currentPath.Count - 1)
-        {
-            PathNode checkNode = currentPath[currentNodeIndex];
-            HexData checkData = checkNode.GridReference.GetHexData(checkNode.GridCoordinates);
-            Vector3 checkWorldPos = checkNode.GridReference.GetHexWorldPosition(checkNode.GridCoordinates, checkData.Height);
+        // while (currentNodeIndex > 1 && currentNodeIndex < currentPath.Count - 1)
+        // {
+        //     PathNode checkNode = currentPath[currentNodeIndex];
+        //     HexData checkData = checkNode.GridReference.GetHexData(checkNode.GridCoordinates);
+        //     Vector3 checkWorldPos = checkNode.GridReference.GetHexWorldPosition(checkNode.GridCoordinates, checkData.Height);
+        //
+        //     Vector3 dirToNode = (checkWorldPos - transform.position);
+        //     dirToNode.y = 0;
+        //
+        //     if (dirToNode.sqrMagnitude > Mathf.Epsilon)
+        //     {
+        //         // Calculate how well our current nose direction aligns with this node
+        //         float alignmentToNode = Vector3.Dot(transform.forward, dirToNode.normalized);
+        //
+        //         // If the node is behind our 90-degree shoulder line (alignment < 0)
+        //         // or requires a harsh side-turn while we are moving fast, skip it!
+        //         if (alignmentToNode < 0.1f) 
+        //         {
+        //             currentNodeIndex++; // Discard this node and check the next one in the queue
+        //             continue;
+        //         }
+        //     }
+        //     break; // The current node is safely in front of us, proceed to steer toward it
+        // }
+        // // ----------------------------------------------
     
-            Vector3 dirToNode = (checkWorldPos - transform.position);
-            dirToNode.y = 0;
+        // SKIPPING LOGIC: Force the target to be the node AFTER the current one (+1)
+// Inside MoveAlongPath, replace lines 145-161 with this:
     
-            if (dirToNode.sqrMagnitude > Mathf.Epsilon)
-            {
-                // Calculate how well our current nose direction aligns with this node
-                float alignmentToNode = Vector3.Dot(transform.forward, dirToNode.normalized);
+        // 1. Determine our target: 
+        // We target the node 2 steps ahead to create the "look-ahead" arc.
+        int skipIndex = Mathf.Min(currentNodeIndex + 2, currentPath.Count - 1);
+        PathNode targetNode = currentPath[skipIndex];
     
-                // If the node is behind our 90-degree shoulder line (alignment < 0)
-                // or requires a harsh side-turn while we are moving fast, skip it!
-                if (alignmentToNode < 0.1f) 
-                {
-                    currentNodeIndex++; // Discard this node and check the next one in the queue
-                    continue;
-                }
-            }
-            break; // The current node is safely in front of us, proceed to steer toward it
-        }
-        // ----------------------------------------------
-    
-        PathNode targetNode = currentPath[currentNodeIndex];
         HexData hexData = targetNode.GridReference.GetHexData(targetNode.GridCoordinates);
         Vector3 targetHexWorldPos = targetNode.GridReference.GetHexWorldPosition(targetNode.GridCoordinates, hexData.Height);
-    
-        // Get the destination for steering (using lookAheadNodes)
-        Vector3 rawSteeringDestination;
-        if (currentNodeIndex + lookAheadNodes < currentPath.Count)
-        {
-            PathNode futureNode = currentPath[currentNodeIndex + lookAheadNodes];
-            HexData futureHexData = futureNode.GridReference.GetHexData(futureNode.GridCoordinates);
-            rawSteeringDestination = futureNode.GridReference.GetHexWorldPosition(futureNode.GridCoordinates, futureHexData.Height);
-        }
-        else
-        {
-            rawSteeringDestination = targetHexWorldPos;
-        }
+
+        // 2. Determine steering look-ahead:
+        // Look a bit further than the target node for smooth steering.
+        int steeringLookAhead = Mathf.Min(skipIndex + lookAheadNodes, currentPath.Count - 1);
+        PathNode futureNode = currentPath[steeringLookAhead];
+        HexData futureHexData = futureNode.GridReference.GetHexData(futureNode.GridCoordinates);
+        Vector3 rawSteeringDestination = futureNode.GridReference.GetHexWorldPosition(futureNode.GridCoordinates, futureHexData.Height);
     
         // 1. Calculate direction to the destination
+// 1. Calculate direction to the destination
         Vector3 directionToTarget = rawSteeringDestination - transform.position;
         directionToTarget.y = 0;
-    
+
         if (directionToTarget.sqrMagnitude > Mathf.Epsilon)
         {
             Vector3 normalizedDir = directionToTarget.normalized;
@@ -195,12 +197,17 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
             float angleDot = Vector3.Dot(transform.forward, normalizedDir);
             bool isReversing = angleDot < -0.5f;
             Vector3 rawSteeringDirection = isReversing ? -normalizedDir : normalizedDir;
-    
-            // Calculate the rotation step, but CLAMP the maximum angle change allowed in a single frame
+
+            // DYNAMIC ROTATION SPEED:
+            // Calculate distance to current target node to scale down rotation speed
+            float distToTarget = Vector3.Distance(transform.position, targetHexWorldPos);
+            // If within 5 units, we start slowing down the rotation to prevent "snap-over"
+            float rotationMultiplier = Mathf.Clamp01(distToTarget / 5.0f);
+            float dynamicTurnSpeed = turnSpeed * rotationMultiplier;
+
+            // Apply rotation with the dynamic speed
             Quaternion targetRotation = Quaternion.LookRotation(rawSteeringDirection);
-        
-            // This ensures the nose can only turn a maximum of (turnSpeed * Time.deltaTime) degrees per frame
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * turningArc * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, dynamicTurnSpeed * turningArc * Time.deltaTime);
             
             // 2. Handle Movement: Blend forward drive with target drift so it handles wide turns naturally
             float currentMoveDirection = isReversing ? -1f : 1f;
@@ -214,19 +221,18 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         // 3. Check if we have reached OR passed the current target node.
         Vector3 toTarget = targetHexWorldPos - transform.position;
         toTarget.y = 0;
-        
-        float dotToTarget = Vector3.Dot(transform.forward, toTarget.normalized);
     
-        // If we are close enough, or if we cross the checkpoint plane
-        if (toTarget.magnitude < 1.0f || (dotToTarget < 0 && Vector3.Dot(transform.forward, toTarget.normalized) > -0.5f))
+        // Use a slightly larger radius (e.g., 2.0f) so the vehicle "consumes" 
+        // the node as it passes by, without needing to hit the center.
+        if (toTarget.magnitude < 2.0f)
         {
             if (entity != null)
             {
                 entity.currentGrid = targetNode.GridReference;
                 entity.currentGridCoordinates = targetNode.GridCoordinates;
             }
-    
-            currentNodeIndex++;
+
+            currentNodeIndex += 2;
         }
         
         // PROGRESS WATCHDOG 

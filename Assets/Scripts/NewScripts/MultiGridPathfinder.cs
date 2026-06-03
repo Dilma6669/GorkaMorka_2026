@@ -85,7 +85,7 @@ public class MultiGridPathfinder : MonoBehaviour
                 }
 
                 // Calculate tentative GCost from start to neighbor through currentNode
-                float tentativeGCost = currentNode.GCost + CalculateDistanceCost(currentNode, neighbor);
+                float tentativeGCost = currentNode.GCost + CalculateDistanceCost(currentNode, neighbor, targetNode);
 
                 // If this new path to neighbor is shorter, or neighbor not in openSet
                 // The '!openSet.Contains(neighbor)' check is important for correctly re-evaluating nodes
@@ -143,24 +143,29 @@ public class MultiGridPathfinder : MonoBehaviour
             }
        // }
 
-        return heuristicDistance;
+        return heuristicDistance * 1.001f;
     }
 
     /// <summary>
     /// Calculates the actual movement cost between two adjacent PathNodes.
     /// Distinguishes between intra-grid movement and inter-grid jumps.
     /// </summary>
-    private float CalculateDistanceCost(PathNode fromNode, PathNode toNode)
+    private float CalculateDistanceCost(PathNode fromNode, PathNode toNode, PathNode goalNode) // Add goalNode
     {
-        // Get the height of the hexes for the cost calculation.
         HexData fromHexData = fromNode.GridReference.GetHexData(fromNode.GridCoordinates);
         HexData toHexData = toNode.GridReference.GetHexData(toNode.GridCoordinates);
-        
-        // CRITICAL FIX: The cost is now based on the height difference, not the absolute height.
+    
         float verticalDifference = Mathf.Abs(fromHexData.Height - toHexData.Height);
         float heightCost = verticalDifference * heightDifferencePenalty;
-        
-        return defaultMovementCost + heightCost;
+    
+        // Use the goalNode reference instead of class-level variables
+        Vector3 toPos = toNode.GridReference.GetHexWorldPosition(toNode.GridCoordinates, toHexData.Height);
+        Vector3 targetWorldPos = goalNode.GridReference.GetHexWorldPosition(goalNode.GridCoordinates, goalNode.GridReference.GetHexData(goalNode.GridCoordinates).Height);
+    
+        float distanceToTarget = Vector3.Distance(toPos, targetWorldPos);
+        float directionalBias = distanceToTarget * 0.05f; 
+    
+        return defaultMovementCost + heightCost + directionalBias;
     }
     
     /// <summary>
