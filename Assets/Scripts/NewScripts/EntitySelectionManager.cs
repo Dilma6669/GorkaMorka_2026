@@ -22,14 +22,11 @@ public class EntitySelectionManager : MonoBehaviour
     
     private Vector2Int selectedHexCoords;
     private SimpleHexGrid selectedHexGrid;
- 
     
-    private EntityCommander entityCommander;
     private MultiGridPathfinder pathfinder;
     
     private void Awake()
     {
-        entityCommander = GetComponent<EntityCommander>();
         pathfinder = GetComponent<MultiGridPathfinder>();
     }
     
@@ -100,7 +97,7 @@ public class EntitySelectionManager : MonoBehaviour
         
         if (closestUnitSelected != null)
         {
-            entityCommander.entityToCommand = closestUnitSelected;
+            EntityCommander.SetEntityToCommand(closestUnitSelected);
             Debug.Log($"EntitySelectionManager: Selected {closestUnitSelected.name}");
             return;
         }
@@ -114,7 +111,7 @@ public class EntitySelectionManager : MonoBehaviour
 
                 if (closetVehicleSelected.EntityGrid != closestHexGrid)
                 {
-                    entityCommander.entityToCommand = closetVehicleSelected;
+                    EntityCommander.SetEntityToCommand(closetVehicleSelected);
                     Debug.Log($"EntitySelectionManager: Selected {closetVehicleSelected.name}");
                     return;
                 }
@@ -131,20 +128,19 @@ public class EntitySelectionManager : MonoBehaviour
             SimpleHexGrid closestHexGrid = closetHexSelected.GridReference;
             selectedHexGrid = closestHexGrid;
             
-            if (entityCommander != null && entityCommander.entityToCommand != null)
+            if (EntityCommander.GetEntityInCommand() != null)
             {
                 Vector2Int targetCoords = closetHexSelected.GridCoordinates;
 
-                if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle &&
-                    closestHexGrid == entityCommander.entityToCommand.EntityGrid)
+                if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle &&
+                    closestHexGrid == EntityCommander.GetEntityInCommand().EntityGrid)
                     return;
                 
                 // 2. Get the correct mover and smooth the path if it's a vehicle
-                if (entityCommander.entityToCommand != null && closetHexSelected != null)
+                if (EntityCommander.GetEntityInCommand() != null && closetHexSelected != null)
                 {
-                    entityCommander.targetGrid = closestHexGrid;
-                    entityCommander.targetCoordinates = targetCoords;
-                    entityCommander.CommandUnitToMove();
+                    EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, targetCoords);
+                    EntityCommander.CommandUnitToMove();
                     closetHexSelected.SetHighlightColour(TargetHexagonHighlightedColour, true);
                 }
             }
@@ -235,12 +231,12 @@ public class EntitySelectionManager : MonoBehaviour
             }
 
             // --- Visualization Logic ---
-            if (entityCommander != null && entityCommander.entityToCommand != null)
+            if (EntityCommander.GetEntityInCommand())
             {
                 Vector2Int targetCoords = closetHexHovered.GridCoordinates;
             
                 // Re-use your pathfinding/visualization code here using hexHitResult.point
-                PathNode startNode = new PathNode(entityCommander.entityToCommand.currentGridCoordinates, entityCommander.entityToCommand.currentGrid);
+                PathNode startNode = new PathNode(EntityCommander.GetEntityInCommand().currentGridCoordinates, EntityCommander.GetEntityInCommand().currentGrid);
                 PathNode endNode = new PathNode(targetCoords, hexGrid);
                 List<PathNode> rawPath = pathfinder.FindPath(startNode, endNode);
 
@@ -250,9 +246,9 @@ public class EntitySelectionManager : MonoBehaviour
                     List<PathNode> finalPath;
 
                     // 2. Get the correct mover and smooth the path if it's a vehicle
-                    if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle)
+                    if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
                     {
-                        VehiclePathMover mover = entityCommander.entityToCommand.GetComponent<VehiclePathMover>();
+                        VehiclePathMover mover = EntityCommander.GetEntityInCommand().GetComponent<VehiclePathMover>();
                         if (mover != null)
                         {
                             finalPath = mover.SmoothPathForVehicle(rawPath);
@@ -262,7 +258,7 @@ public class EntitySelectionManager : MonoBehaviour
                             finalPath = rawPath;
                         }
                     }
-                    else if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Unit)
+                    else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                     {
                         // For units, the raw path is the final path
                         finalPath = rawPath;

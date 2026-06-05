@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
@@ -7,6 +8,25 @@ public class HexagonCollider : MonoBehaviour
     public Entity Entity;
     public List<HexVisualTile> currentlyBlockedTiles = new List<HexVisualTile>();
 
+    public bool SetRandomOccupier;
+    
+    public void ClearBlockedHexes()
+    {
+        // Optional: Reset any visual highlighting on the hexes before clearing
+        foreach (var tile in currentlyBlockedTiles)
+        {
+            if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
+            {
+                data.SetIsOccupied(false);
+                data.SetOccupier(null);
+                tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
+                tile.ResetBaseColor();
+            }
+        }
+        
+        currentlyBlockedTiles.Clear();
+    }
+    
     private void OnTriggerEnter(Collider other)
     {
         // Check if the object we hit is a hex tile
@@ -22,7 +42,7 @@ public class HexagonCollider : MonoBehaviour
                 if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
                     data.SetIsOccupied(true);
-                    data.SetOccupier(Entity.EntityGUID);
+                    data.SetOccupier(SetRandomOccupier ? Guid.NewGuid().ToString() : Entity.EntityGUID);
                     tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
                     tile.SetBaseColor(Color.red);
                 }

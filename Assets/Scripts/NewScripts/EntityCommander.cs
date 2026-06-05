@@ -7,97 +7,64 @@ using UnityEngine.Serialization; // Required for List<PathNode>
 // In a full game, this logic would be part of a larger input/selection manager.
 public class EntityCommander : MonoBehaviour
 {
-    [Tooltip("The specific Unit this commander will control.")]
-    public Entity entityToCommand;
 
+    private static Entity entityToCommand;
+    private static SimpleHexGrid targetGrid;
+    private static Vector2Int targetCoordinates;
+
+    [Tooltip("The specific Unit this commander will control.")]
+    public Entity EntityInCommand;
+    
     [Header("Target for Pathfinding (for testing)")]
     [Tooltip("The grid where the target hex is located.")]
-    public SimpleHexGrid targetGrid;
-    [Tooltip("The axial coordinates of the target hex on the target grid.")]
-    public Vector2Int targetCoordinates;
- 
-    private MultiGridPathfinder pathfinder;
+    public SimpleHexGrid TargetGrid;
     
+    [Tooltip("The axial coordinates of the target hex on the target grid.")]
+    private MultiGridPathfinder pathfinder;
+    public Vector2Int TargetCoordinates;
+    
+    // A static reference to the current instance
+    public static EntityCommander Instance { get; private set; }
+    
+
     private void Awake()
     {
         pathfinder = GetComponent<MultiGridPathfinder>();
+        Instance = this;
+    }
+
+    public static void SetEntityToCommand(Entity entity)
+    {
+        Debug.Log($"EntityCommander: Assigned '{entity.name}' to EntityCommander.");
+        entityToCommand = entity;
+        
+        if (Instance != null)
+        {
+            Instance.EntityInCommand = entity;
+        }
     }
     
-    /// <summary>
-    /// Commands the assigned unit to find a path to the specified target
-    /// and then traverse it.
-    [ContextMenu("Command Unit to Move")]
-    // public void CommandUnitToMove()
-    // {
-    //     if (entityToCommand == null)
-    //     {
-    //         Debug.LogError("UnitCommander: unitToCommand is null. Cannot command unit to move.");
-    //         return;
-    //     }
-    //     
-    //     if (pathfinder == null)
-    //     {
-    //         Debug.LogError("UnitCommander: Pathfinder not assigned!");
-    //         return;
-    //     }
-    //     if (targetGrid == null)
-    //     {
-    //         Debug.LogError("UnitCommander: Target Grid for pathfinding is not assigned!");
-    //         return;
-    //     }
-    //     if (!targetGrid.IsValidCoordinates(targetCoordinates))
-    //     {
-    //         Debug.LogError($"UnitCommander: Target coordinates {targetCoordinates} are invalid on grid '{targetGrid.name}'.");
-    //         return;
-    //     }
-    //
-    //     // 1. Get the correct mover component based on the entity's type
-    //     IEntityPathMover moverComponent = entityToCommand.GetComponent<IEntityPathMover>();
-    //     
-    //     if (moverComponent == null)
-    //     {
-    //         Debug.LogError($"EntityCommander: No PathMover or VehiclePathMover found on entity '{entityToCommand.name}'.");
-    //         return;
-    //     }
-    //
-    //     // 2. Get the path from the pathfinder
-    //     PathNode startNode = new PathNode(entityToCommand.currentGridCoordinates, entityToCommand.currentGrid);
-    //     PathNode endNode = new PathNode(targetCoordinates, targetGrid);
-    //     List<PathNode> path = pathfinder.FindPath(startNode, endNode);
-    //
-    //     // 3. If a path is found, validate and command movement
-    //     if (path != null && path.Count > 0)
-    //     {
-    //         // --- NEW VEHICLE VALIDATION LAYER ---
-    //         // Only apply the turn restriction if the component is a VehiclePathMover
-    //         if (moverComponent is VehiclePathMover)
-    //         {
-    //             if (!IsPathPossibleForVehicle(path))
-    //             {
-    //                 Debug.LogWarning($"[COMMANDER] Path rejected for vehicle '{entityToCommand.name}': Turn angles are too sharp!");
-    //                 // TODO: Hook your visual grid color-swapping system to RED here later
-    //                 return; 
-    //             }
-    //         }
-    //         // ------------------------------------
-    //
-    //         Debug.Log($"EntityCommander: Found path for '{entityToCommand.name}'. Commanding entity to move.");
-    //         
-    //         if (moverComponent is { } pathMover)
-    //         {
-    //             pathMover.StartMoving(path);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         Debug.LogWarning($"EntityCommander: No path found for '{entityToCommand.name}' to {targetCoordinates} on '{targetGrid.name}'.");
-    //     }
-    // }
-    //
+    public static Entity GetEntityInCommand()
+    {
+        return entityToCommand;
+    }
+
+    public static void SetTargetGridAndCoordinates(SimpleHexGrid grid, Vector2Int coords)
+    {
+        targetGrid = grid;
+        targetCoordinates = coords;
+        
+        if (Instance != null)
+        {
+            Instance.TargetGrid = grid;
+            Instance.TargetCoordinates = coords;
+        }
+    }
+    
     
     // Inside your EntityCommander.cs script
     [ContextMenu("Command Unit to Move")]
-    public void CommandUnitToMove()
+    public static void CommandUnitToMove()
     {
         if (entityToCommand == null)
         {
@@ -105,11 +72,6 @@ public class EntityCommander : MonoBehaviour
             return;
         }
         
-        if (pathfinder == null)
-        {
-            Debug.LogError("UnitCommander: Pathfinder not assigned!");
-            return;
-        }
         if (targetGrid == null)
         {
             Debug.LogError("UnitCommander: Target Grid for pathfinding is not assigned!");
@@ -134,7 +96,7 @@ public class EntityCommander : MonoBehaviour
         // 2. Get the path from the pathfinder
         PathNode startNode = new PathNode(entityToCommand.currentGridCoordinates, entityToCommand.currentGrid);
         PathNode endNode = new PathNode(targetCoordinates, targetGrid);
-        List<PathNode> path = pathfinder.FindPath(startNode, endNode);
+        List<PathNode> path = MultiGridPathfinder.Instance.FindPath(startNode, endNode);
     
         // 3. If a path is found, command the mover component to start
         if (path != null && path.Count > 0)

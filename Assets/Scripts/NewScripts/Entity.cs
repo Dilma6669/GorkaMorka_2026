@@ -134,4 +134,9 @@ public class Entity : MonoBehaviour
     {
         return entityPathMover != null && entityPathMover.IsMoving();
     }
+    
+    public virtual void SetSelected(bool isSelected)
+    {
+       // Change entity colour here or something
+    }
 }

@@ -80,8 +80,7 @@ public class EntitySpawner : MonoBehaviour
         // In a later step, we will implement unit selection (clicking) to pick which unit to command.
         if (entityCommander != null)
         {
-            entityCommander.entityToCommand = newEntity; // Assign the newly spawned unit to the commander
-            Debug.Log($"EntitySpawner: Assigned '{newEntity.name}' to EntityCommander.");
+            EntityCommander.SetEntityToCommand(newEntity); // Assign the newly spawned unit to the commander
         }
         else
         {
@@ -136,8 +135,7 @@ public class EntitySpawner : MonoBehaviour
         // In a later step, we will implement unit selection (clicking) to pick which unit to command.
         if (entityCommander != null)
         {
-            entityCommander.entityToCommand = newEntity; // Assign the newly spawned unit to the commander
-            Debug.Log($"EntitySpawner: Assigned '{newEntity.name}' to EntityCommander.");
+            EntityCommander.SetEntityToCommand(newEntity); // Assign the newly spawned unit to the commander
         }
         else
         {
@@ -195,8 +193,7 @@ public class EntitySpawner : MonoBehaviour
         // In a later step, we will implement unit selection (clicking) to pick which unit to command.
         if (entityCommander != null)
         {
-            entityCommander.entityToCommand = newEntity; // Assign the newly spawned unit to the commander
-            Debug.Log($"EntitySpawner: Assigned '{newEntity.name}' to EntityCommander.");
+            EntityCommander.SetEntityToCommand(newEntity); // Assign the newly spawned unit to the commander
         }
         else
         {

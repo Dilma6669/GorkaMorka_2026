@@ -22,30 +22,29 @@ public class MultiGridPathfinder : MonoBehaviour
     [Tooltip("The movement cost for moving between adjacent hexes within the same grid.")]
     public float defaultMovementCost = 1f;
     [Tooltip("The additional cost incurred when jumping from one grid to another. - How likely to jump rather than stay on current grid. Good for jumping onto cars from side.")]
-    public float jumpCost = 5f; // Cost for inter-grid jump
+    public float jumpCost = 1f; // Cost for inter-grid jump
 
     [Header("Inter-Grid Jump Settings")]
     [Tooltip("The maximum horizontal distance between two hexes on different grids for a jump to be possible.")]
-    public float connectionRange = 1.5f; // e.g., 1.5 times hexSize
+    public float connectionRange = 3; // e.g., 1.5 times hexSize
     [Tooltip("The maximum vertical (Y-axis) difference between two hexes on different grids for a jump to be possible.")]
-    public float maxVerticalDifference = 2f;
+    public float maxVerticalDifference = 1f;
 
     // Add this variable to your script, in the "Inter-Grid Jump Settings" section.
     [Tooltip("A penalty applied for each unit of vertical distance for a jump.")]
-    public float heightDifferencePenalty = 1.0f; 
+    public float heightDifferencePenalty = 10.0f; 
     
 
     // --- Internal A* Data Structures ---
     private List<PathNode> openSet;   // Nodes to be evaluated
     private HashSet<PathNode> closedSet;  // Nodes already evaluated
-
-    private EntityCommander entityCommander;
     
+    public static MultiGridPathfinder Instance { get; private set; }
+
     private void Awake()
     {
-        entityCommander = GetComponent<EntityCommander>();
+        Instance = this;
     }
-
     
     /// <summary>
     /// Implements the A* pathfinding algorithm.
@@ -60,7 +59,7 @@ public class MultiGridPathfinder : MonoBehaviour
 
         startNode.GCost = 0;
         startNode.HCost = CalculateHeuristic(startNode, targetNode);
-
+        
         while (openSet.Count > 0)
         {
             // Get node with the lowest FCost from openSet
@@ -187,16 +186,16 @@ public class MultiGridPathfinder : MonoBehaviour
             HexData neighbourHexData = currentNode.GridReference.GetHexData(coords);
             Vector3 neighbourWorldPos = currentNode.GridReference.GetHexWorldPosition(coords, neighbourHexData.Height);
 
-            if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle)
+            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
             {
-                if (currentNode.GridReference == entityCommander.entityToCommand.EntityGrid)
+                if (currentNode.GridReference == EntityCommander.GetEntityInCommand().EntityGrid)
                 {
                     continue;
                 }
                 if (!neighbourHexData.GetIsWalkable()) continue;
-                if (neighbourHexData.GetIsOccupied() && neighbourHexData.GetOccupier() != entityCommander.entityToCommand.EntityGUID) continue;
+                if (neighbourHexData.GetIsOccupied() && neighbourHexData.GetOccupier() != EntityCommander.GetEntityInCommand().EntityGUID) continue;
             }
-            else if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Unit)
+            else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
             {
                 // Check if otherHex is walkable
                 if (!neighbourHexData.GetIsWalkable() || neighbourHexData.GetIsOccupied())
@@ -209,11 +208,11 @@ public class MultiGridPathfinder : MonoBehaviour
             float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
                 new Vector2(neighbourWorldPos.x, neighbourWorldPos.z));
             float verticalDist = Mathf.Abs(currentHexData.Height - neighbourHexData.Height);
-
+            
             if (horizontalDist <= connectionRange && verticalDist <= maxVerticalDifference)
             {
                 neighbors.Add(new PathNode(coords, currentNode.GridReference));
-                
+
                 if (currentWorldPos.y > neighbourWorldPos.y) // If jumping DOWN
                 {
                     if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
@@ -232,9 +231,9 @@ public class MultiGridPathfinder : MonoBehaviour
         foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
         {
             // If its a vehicle we want to not allow the vehicle to pathfind over itself 
-            if (entityCommander.entityToCommand.EntityType == EntitySpawner.EntityType.Vehicle)
+            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
             {
-                if (entityCommander.entityToCommand.currentGrid == otherGrid)
+                if (EntityCommander.GetEntityInCommand().currentGrid == otherGrid)
                 {
                  //   Debug.Log("fuck here");
                     continue;
@@ -298,21 +297,5 @@ public class MultiGridPathfinder : MonoBehaviour
         }
         path.Reverse(); // Reverse to get path from start to end
         return path;
-    }
-    
-    private bool IsTileBlockedByMe(Vector2Int coords, SimpleHexGrid grid)
-    {
-        var vehicle = entityCommander.entityToCommand.GetComponentInChildren<HexagonCollider>();
-        if (vehicle == null) return false;
-
-        // Check if any tile in the vehicle's list matches the coordinates we are checking
-        foreach (HexVisualTile blockedTile in vehicle.currentlyBlockedTiles)
-        {
-            if (blockedTile.GridCoordinates == coords && blockedTile.GridReference == grid)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

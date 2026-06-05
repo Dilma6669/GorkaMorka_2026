@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -6,6 +7,8 @@ using System.Collections.Generic;
 // It no longer directly references the MultiGridPathfinder or initiates pathfinding itself.
 public class UnitPathMover : MonoBehaviour, IEntityPathMover
 {
+    private Entity entity;
+    
     [Tooltip("The speed at which the object moves along the path.")]
     public float moveSpeed = 5f;
 
@@ -16,6 +19,11 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     private List<PathNode> currentPath;
     private int currentNodeIndex;
     private bool isMoving = false;
+
+    private void Awake()
+    {
+        entity = GetComponent<Entity>();
+    }
 
     void Update()
     {
@@ -67,17 +75,42 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     {
         if (currentNodeIndex >= currentPath.Count)
         {
+            // Reached the end of the path
             StopMoving();
+            Debug.Log($"PathMover on '{name}': Path complete!");
             return;
         }
 
-        // 1. SKIP LOGIC: Target the NEXT node instead of the CURRENT one
-        // If we have at least one node ahead of us, aim for that one.
-        int targetIndex = Mathf.Min(currentNodeIndex + 2, currentPath.Count - 1);
-    
+        // --- NEW: VERTICAL SKIP CONSTRAINT ---
+        // Calculate heights of current and potential target
+        int nextIndex = currentNodeIndex + 1;
+        int skipIndex = Mathf.Min(currentNodeIndex + 2, currentPath.Count - 1);
+
+        PathNode currentNode = currentPath[currentNodeIndex];
+        if (currentPath.Count <= nextIndex)
+            return;
+        if (currentPath.Count <= skipIndex)
+            return;
+        PathNode nextNode = currentPath[nextIndex];
+        PathNode skipNode = currentPath[skipIndex];
+
+        float currentHeight = currentNode.GridReference.GetHexData(currentNode.GridCoordinates).Height;
+        float nextHeight = nextNode.GridReference.GetHexData(nextNode.GridCoordinates).Height;
+        float skipHeight = skipNode.GridReference.GetHexData(skipNode.GridCoordinates).Height;
+
+        
+        // Only skip to skipIndex if the height doesn't change on the way there
+        int targetIndex = (Mathf.Approximately(currentHeight, nextHeight) && Mathf.Approximately(nextHeight, skipHeight)) 
+            ? skipIndex 
+            : nextIndex;
+        
+        // --------------------------------------
+        
         PathNode targetNode = currentPath[targetIndex];
-        Vector3 targetPos = GetWorldPos(targetNode);
-        Vector3 targetPosWithCurrentY = new Vector3(targetPos.x, transform.position.y, targetPos.z);
+        HexData hexData = targetNode.GridReference.GetHexData(targetNode.GridCoordinates);
+        Vector3 targetHexWorldPos =
+            targetNode.GridReference.GetHexWorldPosition(targetNode.GridCoordinates, hexData.Height);
+        Vector3 targetPosWithCurrentY = new Vector3(targetHexWorldPos.x, transform.position.y, targetHexWorldPos.z);
 
         // 2. Movement
         transform.position = Vector3.MoveTowards(transform.position, targetPosWithCurrentY, moveSpeed * Time.deltaTime);
@@ -86,36 +119,20 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         Vector3 dir = (targetPosWithCurrentY - transform.position).normalized;
         if (dir != Vector3.zero)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir),
+                rotationSpeed * Time.deltaTime);
         }
 
-        // 4. ARRIVAL CHECK:
-        // We check distance to the node we are aiming at (the one we skipped to)
-        float dist = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), 
-            new Vector3(targetPos.x, 0, targetPos.z));
+        float dist = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z),
+            new Vector3(targetHexWorldPos.x, 0, targetHexWorldPos.z));
 
-        if (dist < 0.3f) 
+        // Check if we are close enough to the target position in XZ plane
+        if (dist < 0.3f) // Small threshold for "reached"
         {
-            // Final snap logic
-            if (targetIndex == currentPath.Count - 1)
-            {
-                Entity entity = GetComponent<Entity>();
-                if (entity != null) 
-                {
-                    entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
-                }
-            }
-        
-            // Increment index. Because we are skipping, we jump by 2, 
-            // or just move the index to the one we just "arrived" at.
-            currentNodeIndex = targetIndex; 
+            entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
+
+            currentNodeIndex = targetIndex; // Good here!
         }
     }
-    
-    // Helper to clean up your code
-    private Vector3 GetWorldPos(PathNode node)
-    {
-        HexData hexData = node.GridReference.GetHexData(node.GridCoordinates);
-        return node.GridReference.GetHexWorldPosition(node.GridCoordinates, hexData.Height);
-    }
+
 }
