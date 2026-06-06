@@ -10,8 +10,8 @@ public class HexGridShape : ScriptableObject
         public int Height = 0;       // 0-5
         public bool IsWalkable = true;
         public bool IsClimbable = false;
-        public bool IsEnabled = true; // Add this!
-        // You can add more types later (e.g., 'IsWater', 'IsCover')
+        public bool IsEnabled = true;
+        public bool IsCommandSeat = false; 
     }
 
     [System.Serializable]

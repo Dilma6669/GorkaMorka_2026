@@ -62,7 +62,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
             return;
         }
 
-        currentPath = SmoothPathForVehicle(path);
+        currentPath = GetSmoothPathForVehicle(path);
     
         // CHANGE THIS FROM 0 TO 1:
         // Skip the first node because it's the hex the vehicle is currently occupying
@@ -70,32 +70,6 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
     
         isMoving = true;
     }
-    
-    // public void StartMoving(List<PathNode> path)
-    // {
-    //     if (path == null || path.Count == 0)
-    //     {
-    //         Debug.LogWarning("PathMover: Cannot start moving, path is null or empty.");
-    //         isMoving = false;
-    //         return;
-    //     }
-    //     
-    //     // First, check if the path is valid and smooth it for the vehicle.
-    //     currentPath = SmoothPathForVehicle(path);
-    //     
-    //     // Reset path tracking variables.
-    //     currentNodeIndex = 0;
-    //     isMoving = true;
-    //     
-    //     HexData hexData = currentPath[0].GridReference.GetHexData(currentPath[0].GridCoordinates);
-    //     
-    //     // Immediately snap to the start of the path
-    //     // Ensure the mover's Y position is respected, just updating XZ for the snap point
-    //     Vector3 startHexWorldPos = currentPath[0].GridReference.GetHexWorldPosition(currentPath[0].GridCoordinates, hexData.Height);
-    //     transform.position = new Vector3(startHexWorldPos.x, transform.position.y, startHexWorldPos.z);
-    //
-    //     Debug.Log($"PathMover on '{name}': Started moving along path with {path.Count} nodes.");
-    // }
     
     public void StopMoving()
     {
@@ -137,39 +111,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
                 currentNodeIndex = finalIndex;
             }
         }
-    
-        // --- NEW ANGLE-BASED WAYPOINT DISCARD LAYER ---
-        // If we have future nodes left before the destination, check if our current target 
-        // requires a weirdly sharp, awkward turn to get back to.
-        // while (currentNodeIndex > 1 && currentNodeIndex < currentPath.Count - 1)
-        // {
-        //     PathNode checkNode = currentPath[currentNodeIndex];
-        //     HexData checkData = checkNode.GridReference.GetHexData(checkNode.GridCoordinates);
-        //     Vector3 checkWorldPos = checkNode.GridReference.GetHexWorldPosition(checkNode.GridCoordinates, checkData.Height);
-        //
-        //     Vector3 dirToNode = (checkWorldPos - transform.position);
-        //     dirToNode.y = 0;
-        //
-        //     if (dirToNode.sqrMagnitude > Mathf.Epsilon)
-        //     {
-        //         // Calculate how well our current nose direction aligns with this node
-        //         float alignmentToNode = Vector3.Dot(transform.forward, dirToNode.normalized);
-        //
-        //         // If the node is behind our 90-degree shoulder line (alignment < 0)
-        //         // or requires a harsh side-turn while we are moving fast, skip it!
-        //         if (alignmentToNode < 0.1f) 
-        //         {
-        //             currentNodeIndex++; // Discard this node and check the next one in the queue
-        //             continue;
-        //         }
-        //     }
-        //     break; // The current node is safely in front of us, proceed to steer toward it
-        // }
-        // // ----------------------------------------------
-    
-        // SKIPPING LOGIC: Force the target to be the node AFTER the current one (+1)
-// Inside MoveAlongPath, replace lines 145-161 with this:
-    
+        
         // 1. Determine our target: 
         // We target the node 2 steps ahead to create the "look-ahead" arc.
         int skipIndex = Mathf.Min(currentNodeIndex + 2, currentPath.Count - 1);
@@ -186,7 +128,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         Vector3 rawSteeringDestination = futureNode.GridReference.GetHexWorldPosition(futureNode.GridCoordinates, futureHexData.Height);
     
         // 1. Calculate direction to the destination
-// 1. Calculate direction to the destination
+        // 1. Calculate direction to the destination
         Vector3 directionToTarget = rawSteeringDestination - transform.position;
         directionToTarget.y = 0;
 
@@ -224,7 +166,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
     
         // Use a slightly larger radius (e.g., 2.0f) so the vehicle "consumes" 
         // the node as it passes by, without needing to hit the center.
-        if (toTarget.magnitude < 2.0f)
+        if (toTarget.magnitude < 5.0f)
         {
             if (entity != null)
             {
@@ -258,10 +200,11 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         }
     }
 
+
     /// <summary>
     /// Inserts additional path nodes to create a smoother path for vehicles.
     /// </summary>
-    public List<PathNode> SmoothPathForVehicle(List<PathNode> originalPath)
+    public List<PathNode> GetSmoothPathForVehicle(List<PathNode> originalPath)
     {
         if (originalPath == null || originalPath.Count <= 1)
         {

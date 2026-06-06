@@ -5,9 +5,10 @@ public class VehicleEntity : Entity
     [SerializeField] private HexagonCollider leftArc;
     [SerializeField] private HexagonCollider rightArc;
 
+    [SerializeField] private Entity Driver;
     [SerializeField] private bool showArcs;
 
-    public virtual void SetSelected(bool isSelected)
+    public override void SetSelected(bool isSelected)
     {
         // If we are selected, show arcs. If deselected, hide them.
         ShowArcs = isSelected;
@@ -23,6 +24,16 @@ public class VehicleEntity : Entity
         }
     }
 
+    public void SetDriver(Entity driver)
+    {
+        Driver = driver;
+    }
+
+    public void ClearDriver()
+    {
+        Driver = null;
+    }
+
     private void OnValidate()
     {
 #if UNITY_EDITOR
@@ -34,13 +45,16 @@ public class VehicleEntity : Entity
 
     public void ApplyArcState()
     {
+        if (Driver == null)
+        {
+            return;
+        }
+        
         bool active = showArcs;
 
         if (leftArc != null)
         {
             leftArc.gameObject.SetActive(active);
-
-            // If turning off, clear BEFORE deactivating the object
             if (!active) leftArc.ClearBlockedHexes();
         }
 

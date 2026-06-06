@@ -18,123 +18,153 @@ MonoBehaviour:
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 1
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
   - Tiles:
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
   - Tiles:
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
-    - Height: 1
+      IsCommandSeat: 0
+    - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 1
   - Tiles:
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
   - Tiles:
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 1
       IsEnabled: 1
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0
     - Height: 0
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 0
+      IsCommandSeat: 0

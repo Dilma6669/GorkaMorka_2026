@@ -23,6 +23,7 @@ public class HexGridVisualizer : MonoBehaviour
     public Color unwalkableColor = Color.red;
     public Color climbableColor = Color.blue;
     public Color occupiedColour = Color.red;
+    public Color commandSeatColour = Color.green;
     
     // A dictionary to quickly find a HexVisualTile by its axial coordinates
     private Dictionary<Vector2Int, HexVisualTile> visualTiles;
@@ -99,7 +100,7 @@ public class HexGridVisualizer : MonoBehaviour
             
             if (visualTile != null)
             {
-                visualTile.Initialize(targetGrid, coords, hexDataPair.Value.Height, hexDataPair.Value.GetIsWalkable(), hexDataPair.Value.GetIsClimbable(), hexDataPair.Value.GetIsOccupied());
+                visualTile.Initialize(targetGrid, coords, hexDataPair.Value.Height, hexDataPair.Value.GetIsWalkable(), hexDataPair.Value.GetIsClimbable(), hexDataPair.Value.GetIsOccupied(), hexDataPair.Value.GetIsCommandSeat());
                 visualTiles.Add(coords, visualTile); // Store the reference
             }
             else
@@ -123,6 +124,12 @@ public class HexGridVisualizer : MonoBehaviour
             {
                // visualTile.ColourLocked = false;
                 visualTile.SetBaseColor(occupiedColour);
+                //visualTile.ColourLocked = true;
+            }
+            else if (hexDataPair.Value.GetIsCommandSeat())
+            {
+                // visualTile.ColourLocked = false;
+                visualTile.SetBaseColor(commandSeatColour);
                 //visualTile.ColourLocked = true;
             }
             else

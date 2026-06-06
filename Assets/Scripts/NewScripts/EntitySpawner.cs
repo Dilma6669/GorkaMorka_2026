@@ -80,7 +80,7 @@ public class EntitySpawner : MonoBehaviour
         // In a later step, we will implement unit selection (clicking) to pick which unit to command.
         if (entityCommander != null)
         {
-            EntityCommander.SetEntityToCommand(newEntity); // Assign the newly spawned unit to the commander
+            EntitySelectionManager.SelectUnit(newEntity);
         }
         else
         {
@@ -135,7 +135,7 @@ public class EntitySpawner : MonoBehaviour
         // In a later step, we will implement unit selection (clicking) to pick which unit to command.
         if (entityCommander != null)
         {
-            EntityCommander.SetEntityToCommand(newEntity); // Assign the newly spawned unit to the commander
+            EntitySelectionManager.SelectVehicle(newEntity);
         }
         else
         {

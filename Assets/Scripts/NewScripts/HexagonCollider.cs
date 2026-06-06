@@ -8,24 +8,8 @@ public class HexagonCollider : MonoBehaviour
     public Entity Entity;
     public List<HexVisualTile> currentlyBlockedTiles = new List<HexVisualTile>();
 
-    public bool SetRandomOccupier;
+    public string SetUniqueGUID;
     
-    public void ClearBlockedHexes()
-    {
-        // Optional: Reset any visual highlighting on the hexes before clearing
-        foreach (var tile in currentlyBlockedTiles)
-        {
-            if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
-            {
-                data.SetIsOccupied(false);
-                data.SetOccupier(null);
-                tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
-                tile.ResetBaseColor();
-            }
-        }
-        
-        currentlyBlockedTiles.Clear();
-    }
     
     private void OnTriggerEnter(Collider other)
     {
@@ -40,13 +24,16 @@ public class HexagonCollider : MonoBehaviour
                 if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
                     if (data.GetIsOccupied())
+                    {
+                        Debug.Log($"fuck hex is occupied by = {data.GetOccupier()}");
                         return;
-                    
+                    }
+
                     data.SetIsOccupied(true);
+                    data.SetOccupier(string.IsNullOrEmpty(SetUniqueGUID) ? Entity.EntityGUID : SetUniqueGUID);
                     tile.SetIsOccupied(true);
-                    data.SetOccupier(SetRandomOccupier ? Guid.NewGuid().ToString() : Entity.EntityGUID);
-                    tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
                     tile.SetBaseColor(Color.red);
+                    tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
                     currentlyBlockedTiles.Add(tile);
                 }
             }
@@ -59,28 +46,79 @@ public class HexagonCollider : MonoBehaviour
         {
             if (currentlyBlockedTiles.Contains(tile))
             {
-                // Re-enable walking
                 if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
                     if (data.GetIsOccupied())
                     {
                         // Sometimes units trigger vehicle shadow hexagons and they fight to be the occupier, this stops that.
                         string occupierGUID = data.GetOccupier();
-                        if (Entity.EntityGUID != occupierGUID)
+                        
+                        if ((string.IsNullOrEmpty(SetUniqueGUID) ? Entity.EntityGUID : SetUniqueGUID) != occupierGUID)
                         {
                             return;
                         }
+
+                        // This miiiight cause issues....
+                        if(string.IsNullOrEmpty(SetUniqueGUID) == false)
+                        {
+                            if (occupierGUID == Entity.EntityGUID)
+                            {
+                                return;
+                            }
+                        }
                     }
 
-                    data.SetIsOccupied(false);
-                    tile.SetIsOccupied(false);
-                    data.SetOccupier(null);
-                    tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
-                    tile.ResetBaseColor();
+                    OnClearTile(tile, data);
                     currentlyBlockedTiles.Remove(tile);
-
                 }
             }
         }
+    }
+    
+    public void ClearBlockedHexes()
+    {
+        // Optional: Reset any visual highlighting on the hexes before clearing
+        foreach (var tile in currentlyBlockedTiles)
+        {
+            if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
+            {
+                if (data.GetIsOccupied())
+                {
+                    // Sometimes units trigger vehicle shadow hexagons and they fight to be the occupier, this stops that.
+                    string occupierGUID = data.GetOccupier();
+                        
+                    if ((string.IsNullOrEmpty(SetUniqueGUID) ? Entity.EntityGUID : SetUniqueGUID) != occupierGUID)
+                    {
+                        continue;
+                    }
+
+                    // This miiiight cause issues....
+                    if(string.IsNullOrEmpty(SetUniqueGUID) == false)
+                    {
+                        Debug.Log($"fuck occupierGUID = {occupierGUID}");
+                        Debug.Log($"fuck Entity.EntityGUID = {Entity.EntityGUID}");
+                        
+                        if (occupierGUID == Entity.EntityGUID)
+                        {
+                            Debug.Log($"fuck here");
+                            continue;
+                        }
+                    }
+                }
+
+                OnClearTile(tile, data);
+            }
+        }
+        
+        currentlyBlockedTiles.Clear();
+    }
+
+    private void OnClearTile(HexVisualTile tile, HexData data)
+    {
+        data.SetIsOccupied(false);
+        data.SetOccupier(null);
+        tile.SetIsOccupied(false);
+        tile.ResetBaseColor();
+        tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
     }
 }

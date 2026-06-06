@@ -18,8 +18,9 @@ public class HexVisualTile : MonoBehaviour
     public bool IsOccupied;
     public bool IsClimbable;
     public bool ColourLocked;
+    public bool IsCommandSeat;
     
-    public void Initialize(SimpleHexGrid grid, Vector2Int coords, float height, bool isWalkable, bool isClimbable, bool isOccupied)
+    public void Initialize(SimpleHexGrid grid, Vector2Int coords, float height, bool isWalkable, bool isClimbable, bool isOccupied, bool isCommandSeat)
     {
         GridReference = grid;
         GridCoordinates = coords;
@@ -27,6 +28,7 @@ public class HexVisualTile : MonoBehaviour
         IsWalkable = isWalkable;
         IsClimbable = isClimbable;
         IsOccupied = isOccupied;
+        IsCommandSeat = isCommandSeat;
 
         hexRenderer = GetComponent<Renderer>();
         propBlock = new MaterialPropertyBlock();
@@ -34,22 +36,11 @@ public class HexVisualTile : MonoBehaviour
         hexRenderer.SetPropertyBlock(null);
     }
     
-    
-    public void SetIsClimbable(bool climbable)
-    {
-        IsClimbable = climbable;
-    }
-    
-    
-    public void SetIsWalkable(bool walkable)
-    {
-        IsWalkable = walkable;
-    }
-    
     public void SetIsOccupied(bool occupied)
     {
         IsOccupied = occupied;
     }
+    
 
     public void SetBaseColor(Color newColor)
     {
@@ -70,6 +61,7 @@ public class HexVisualTile : MonoBehaviour
         hexRenderer.SetPropertyBlock(null);
         
         if(IsWalkable == false) SetBaseColor(Color.red);
+        if(IsOccupied) SetBaseColor(Color.red);
         if(IsClimbable) SetBaseColor(Color.blue);
     }
     
@@ -88,8 +80,9 @@ public class HexVisualTile : MonoBehaviour
     private void OnDrawGizmos()
     {
         // Ensure you have a reference to your HexData
-        string status = hexData.GetIsOccupied() ? "Occupied" : "Free";
-        // Assuming your properties are named isClimable and isWalkable
+        string occupied = hexData.GetIsOccupied() ? "Occupied" : "Free";
+        string occupier = string.IsNullOrEmpty(hexData.GetOccupier()) ? "-" : hexData.GetOccupier();
+        // Assuming your properties are named isClimbable and isWalkable
         string climbable = hexData.GetIsClimbable() ? "Climbable" : "Not Climbable";
         string walkable = hexData.GetIsWalkable() ? "Walkable" : "Blocked";
 
@@ -99,7 +92,8 @@ public class HexVisualTile : MonoBehaviour
         UnityEditor.Handles.color = textColor;
         UnityEditor.Handles.Label(transform.position + Vector3.up * 0.5f,
             $"Coords: {hexData.GridCoordinates}\n" +
-            $"Status: {status}\n" +
+            $"Occupied: {occupied}\n" +
+            $"Occupier: {occupier}\n" +
             $"Move: {walkable}\n" +
             $"Climb: {climbable}");
     }

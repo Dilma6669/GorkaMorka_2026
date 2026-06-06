@@ -10,7 +10,7 @@ public class EntityManager
     public static string RegisterEntity(Entity entity)
     {
         // 2. Generate a real unique ID
-        string newGUID = Guid.NewGuid().ToString();
+        string newGUID = entity.name + "_" +Guid.NewGuid();
         entities[newGUID] = entity;
         return newGUID; // Return it so the Entity knows its own ID
     }

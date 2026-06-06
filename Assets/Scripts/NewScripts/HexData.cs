@@ -6,16 +6,16 @@ using UnityEngine; // Required for Vector2Int
 // WorldPosition is now retrieved dynamically from the SimpleHexGrid.
 public struct HexData
 {
-    // Input: These values are set when a HexData instance is created.
     public Vector2Int GridCoordinates; // The (x, z) coordinates of the hex within its grid.
-   // public Vector3 WorldPosition;
-    public float Height; // Add this new field to store the height
-    private bool isWalkable;            // A flag indicating if this hex can be traversed.
+
+    public float Height;
+    private bool isWalkable;        
     private bool isOccupied;
     private string hexOccupier;
     private bool isClimbable;
+    public bool IsCommandSeat;
 
-    public HexData(Vector2Int gridCoords, float height, bool walkable, bool climbable)
+    public HexData(Vector2Int gridCoords, float height, bool walkable, bool climbable, bool isCommandSeat)
     {
         GridCoordinates = gridCoords;
         Height = height;
@@ -23,6 +23,7 @@ public struct HexData
         isOccupied = false;
         hexOccupier = null;
         isClimbable = climbable;
+        IsCommandSeat = isCommandSeat;
     }
 
     
@@ -69,6 +70,16 @@ public struct HexData
     public void SetOccupier(string occupier)
     {
         hexOccupier = occupier;
+    }
+    
+    public bool GetIsCommandSeat()
+    {
+        return IsCommandSeat;
+    }
+    
+    public void SetIsCommandSeat(bool commandSeat)
+    {
+        IsCommandSeat = commandSeat;
     }
     
 

@@ -43,6 +43,92 @@ public class EntitySelectionManager : MonoBehaviour
         }
     }
 
+    public static void SelectVehicle(Entity entity)
+    {
+        if (EntityCommander.GetEntityInCommand() != null && EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+        {
+            VehicleEntity previousVehicle = (VehicleEntity)EntityCommander.GetEntityInCommand();
+            previousVehicle.SetSelected(false);
+        }
+        
+        Debug.Log($"EntitySelectionManager: Selected {entity.name}");
+        EntityCommander.SetEntityToCommand(entity);
+        VehicleEntity vehicle = (VehicleEntity)entity;
+        vehicle.SetSelected(true);
+    }
+    
+    public static void SelectUnit(Entity entity)
+    {
+        if (EntityCommander.GetEntityInCommand() != null && EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+        {
+            VehicleEntity previousVehicle = (VehicleEntity)EntityCommander.GetEntityInCommand();
+            previousVehicle.SetSelected(false);
+        }
+        
+        Debug.Log($"EntitySelectionManager: Selected {entity.name}");
+        EntityCommander.SetEntityToCommand(entity);
+    }
+
+    private static void SelectHex(HexVisualTile hex)
+    {
+        Debug.Log($"EntitySelectionManager: Selected {hex.GridCoordinates}");
+    }
+    
+    private void SelectHexWithUnitActive(HexVisualTile hex)
+    {
+        Debug.Log($"EntitySelectionManager: Selected {hex.GridCoordinates} with Unit Active");
+        if (selectedHexCoords == hex.GridCoordinates) return;
+        selectedHexCoords = hex.GridCoordinates;
+
+        SimpleHexGrid closestHexGrid = hex.GridReference;
+        selectedHexGrid = closestHexGrid;
+        EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, selectedHexCoords);
+        EntityCommander.CommandUnitToMove();
+        hex.SetHighlightColour(TargetHexagonHighlightedColour, true);
+    }
+    
+    private void SelectHexWithVehicleActive(HexVisualTile hex)
+    {
+        Debug.Log($"EntitySelectionManager: Selected {hex.GridCoordinates} with Vehicle Active");
+        if (selectedHexCoords == hex.GridCoordinates) return;
+        selectedHexCoords = hex.GridCoordinates;
+
+        SimpleHexGrid closestHexGrid = hex.GridReference;
+        selectedHexGrid = closestHexGrid;
+        
+        if (closestHexGrid == EntityCommander.GetEntityInCommand().EntityGrid)
+            return;
+
+        EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, selectedHexCoords);
+        EntityCommander.CommandUnitToMove();
+        hex.SetHighlightColour(TargetHexagonHighlightedColour, true);
+    }
+    
+    private void HoverVehicle(Entity entity)
+    {
+        Debug.Log($"EntitySelectionManager: Hovered {entity.name}");
+    }
+    
+    private void HoverUnit(Entity entity)
+    {
+        Debug.Log($"EntitySelectionManager: Hovered {entity.name}");
+    }
+
+    private void HoverHex(HexVisualTile hex)
+    {
+        Debug.Log($"EntitySelectionManager: Hovered {hex.GridCoordinates}");
+    }
+    
+    private void HoverHexWithUnitActive(HexVisualTile hex)
+    {
+        Debug.Log($"EntitySelectionManager: Hovered {hex.GridCoordinates} with Unit Active");
+    }
+
+    private void HoverHexWithVehicleActive(HexVisualTile hex)
+    {
+        Debug.Log($"EntitySelectionManager: Hovered {hex.GridCoordinates} with Vehicle Active");
+    }
+
     /// <summary>
     /// Processes a left-click, prioritizing unit selection over movement commands.
     void HandleLeftClick()
@@ -97,8 +183,7 @@ public class EntitySelectionManager : MonoBehaviour
         
         if (closestUnitSelected != null)
         {
-            EntityCommander.SetEntityToCommand(closestUnitSelected);
-            Debug.Log($"EntitySelectionManager: Selected {closestUnitSelected.name}");
+            SelectUnit(closestUnitSelected);
             return;
         }
         
@@ -111,8 +196,7 @@ public class EntitySelectionManager : MonoBehaviour
 
                 if (closetVehicleSelected.EntityGrid != closestHexGrid)
                 {
-                    EntityCommander.SetEntityToCommand(closetVehicleSelected);
-                    Debug.Log($"EntitySelectionManager: Selected {closetVehicleSelected.name}");
+                    SelectVehicle(closetVehicleSelected);
                     return;
                 }
             }
@@ -122,31 +206,26 @@ public class EntitySelectionManager : MonoBehaviour
         {
             //Debug.Log($"EntitySelectionManager: Hexagon Hovered {closetHexHovered.name}");
 
-            if (selectedHexCoords == closetHexSelected.GridCoordinates) return;
-            selectedHexCoords = closetHexSelected.GridCoordinates;
-
-            SimpleHexGrid closestHexGrid = closetHexSelected.GridReference;
-            selectedHexGrid = closestHexGrid;
-            
             if (EntityCommander.GetEntityInCommand() != null)
             {
                 Vector2Int targetCoords = closetHexSelected.GridCoordinates;
-
-                if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle &&
-                    closestHexGrid == EntityCommander.GetEntityInCommand().EntityGrid)
-                    return;
                 
-                // 2. Get the correct mover and smooth the path if it's a vehicle
-                if (EntityCommander.GetEntityInCommand() != null && closetHexSelected != null)
+
+                if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                 {
-                    EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, targetCoords);
-                    EntityCommander.CommandUnitToMove();
-                    closetHexSelected.SetHighlightColour(TargetHexagonHighlightedColour, true);
+                    SelectHexWithUnitActive(closetHexSelected);
+                    return;
+                }
+
+                if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+                {
+                    SelectHexWithVehicleActive(closetHexSelected);
+                    return;
                 }
             }
             else
             {
-                //  Debug.Log("Hit an object on layer: " + LayerMask.LayerToName(hitLayer));
+                SelectHex(closetHexSelected);
             }
         }
     }
@@ -203,13 +282,13 @@ public class EntitySelectionManager : MonoBehaviour
         
         if (closestUnitHovered != null)
         {
-            //Debug.Log($"EntitySelectionManager: Unit Hovered {closestUnitHovered.name}");
+            HoverUnit(closestUnitHovered);
             return;
         }
         
         if (closetVehicleHovered != null)
         {
-            //Debug.Log($"EntitySelectionManager: Vehicle Hovered {closetVehicleHovered.name}");
+            HoverVehicle(closetVehicleHovered);
         }
         
 
@@ -248,10 +327,11 @@ public class EntitySelectionManager : MonoBehaviour
                     // 2. Get the correct mover and smooth the path if it's a vehicle
                     if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
                     {
+                        HoverHexWithVehicleActive(closetHexHovered);
                         VehiclePathMover mover = EntityCommander.GetEntityInCommand().GetComponent<VehiclePathMover>();
                         if (mover != null)
                         {
-                            finalPath = mover.SmoothPathForVehicle(rawPath);
+                            finalPath = mover.GetSmoothPathForVehicle(rawPath);
                         }
                         else
                         {
@@ -260,7 +340,7 @@ public class EntitySelectionManager : MonoBehaviour
                     }
                     else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                     {
-                        // For units, the raw path is the final path
+                        HoverHexWithUnitActive(closetHexHovered);
                         finalPath = rawPath;
                     }
                     else // Add crafts and crap here
@@ -290,7 +370,7 @@ public class EntitySelectionManager : MonoBehaviour
             }
             else
             {
-              //  Debug.Log("Hit an object on layer: " + LayerMask.LayerToName(hitLayer));
+              HoverHex(closetHexHovered);
             }
         }
     }

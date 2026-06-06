@@ -204,7 +204,7 @@ public class SimpleHexGrid : MonoBehaviour
                 // Now, GetHexWorldPosition requires the height.
                 Vector3 worldPosition = GetHexWorldPosition(gridCoords, 0);
                 
-                HexagonsInGrid.Add(gridCoords, new HexData(gridCoords,0, true, true));
+                HexagonsInGrid.Add(gridCoords, new HexData(gridCoords,0, true, true, false));
             }
         }
         
@@ -249,6 +249,7 @@ public class SimpleHexGrid : MonoBehaviour
                 float hexHeight = tile.Height * singleHexHeightAdjustment;
                 bool isWalkable = tile.IsWalkable;
                 bool isClimbable = tile.IsClimbable;
+                bool isCommandSeat = tile.IsCommandSeat;
 
                 // Only create the hex if it's 'walkable' or has a type (or keep it if you want to allow gaps)
                 // If you want to skip empty tiles, check for a 'none' state here.
@@ -256,7 +257,7 @@ public class SimpleHexGrid : MonoBehaviour
                 Vector2Int hexCoords = new Vector2Int(q, r - rowOffset);
             
                 // Pass the data to your HexData constructor
-                HexagonsInGrid.Add(hexCoords, new HexData(hexCoords, hexHeight, isWalkable, isClimbable));
+                HexagonsInGrid.Add(hexCoords, new HexData(hexCoords, hexHeight, isWalkable, isClimbable, isCommandSeat));
                 Debug.Log($"Row(q): {q} | Col(r): {r} | Calculated Offset: {rowOffset} | Final Coords: {q}, {r - rowOffset}");
             }
         }
