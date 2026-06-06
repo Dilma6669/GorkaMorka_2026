@@ -102,12 +102,8 @@ public class EntityCommander : MonoBehaviour
         if (path != null && path.Count > 0)
         {
             Debug.Log($"EntityCommander: Found path for '{entityToCommand.name}'. Commanding entity to move.");
-            
-            // This will call the StartMoving method on the correct component (PathMover or VehiclePathMover)
-            if (moverComponent is { } pathMover)
-            {
-                pathMover.StartMoving(path);
-            }
+  
+            entityToCommand.MoveUnitAlongPath(path);
         }
         else
         {

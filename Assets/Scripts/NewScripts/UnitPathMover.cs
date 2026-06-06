@@ -19,7 +19,10 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     private List<PathNode> currentPath;
     private int currentNodeIndex;
     private bool isMoving = false;
-
+    private bool targetReached  = false;
+    
+    private List<float> pathWorldHeights;
+    
     private void Awake()
     {
         entity = GetComponent<Entity>();
@@ -44,8 +47,17 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         }
 
         currentPath = path;
+        pathWorldHeights = new List<float>();
         currentNodeIndex = 0;
         isMoving = true;
+
+        // Pre-calculate heights once when the path is created
+        foreach (var node in currentPath)
+        {
+            float h = node.GridReference.GetHexWorldPosition(node.GridCoordinates, 
+                node.GridReference.GetHexData(node.GridCoordinates).Height).y;
+            pathWorldHeights.Add(h);
+        }
 
         HexData hexData = currentPath[0].GridReference.GetHexData(currentPath[0].GridCoordinates);
         
@@ -54,6 +66,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         Vector3 startHexWorldPos = currentPath[0].GridReference.GetHexWorldPosition(currentPath[0].GridCoordinates, hexData.Height);
         transform.position = new Vector3(startHexWorldPos.x, transform.position.y, startHexWorldPos.z);
 
+        targetReached = true;
         Debug.Log($"PathMover on '{name}': Started moving along path with {path.Count} nodes.");
     }
     
@@ -70,9 +83,14 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     {
         return isMoving;
     }
-
+    
     public void MoveAlongPath()
     {
+        if (currentPath == null || currentPath.Count == 0)
+        {
+            return;
+        }
+
         if (currentNodeIndex >= currentPath.Count)
         {
             // Reached the end of the path
@@ -80,29 +98,45 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
             Debug.Log($"PathMover on '{name}': Path complete!");
             return;
         }
-
-        // --- NEW: VERTICAL SKIP CONSTRAINT ---
+        
         // Calculate heights of current and potential target
         int nextIndex = currentNodeIndex + 1;
         int skipIndex = Mathf.Min(currentNodeIndex + 2, currentPath.Count - 1);
-
+        
         PathNode currentNode = currentPath[currentNodeIndex];
+        float currentHeight = pathWorldHeights[currentNodeIndex];
+        
         if (currentPath.Count <= nextIndex)
             return;
+        PathNode nextNode = currentPath[nextIndex];
+        float nextHeight = pathWorldHeights[nextIndex];
+        
+        
         if (currentPath.Count <= skipIndex)
             return;
-        PathNode nextNode = currentPath[nextIndex];
         PathNode skipNode = currentPath[skipIndex];
+        float skipHeight = pathWorldHeights[skipIndex];
 
-        float currentHeight = currentNode.GridReference.GetHexData(currentNode.GridCoordinates).Height;
-        float nextHeight = nextNode.GridReference.GetHexData(nextNode.GridCoordinates).Height;
-        float skipHeight = skipNode.GridReference.GetHexData(skipNode.GridCoordinates).Height;
-
+        int targetIndex;
+        bool targetJumping = false;
         
-        // Only skip to skipIndex if the height doesn't change on the way there
-        int targetIndex = (Mathf.Approximately(currentHeight, nextHeight) && Mathf.Approximately(nextHeight, skipHeight)) 
-            ? skipIndex 
-            : nextIndex;
+        // If next node is same height as current
+        if (Mathf.Approximately(currentHeight, nextHeight))
+        {
+            targetIndex = nextIndex;
+            
+            // If skip node is same height as current
+            if (currentPath.Count > 2 && Mathf.Approximately(nextHeight, skipHeight))
+            {
+                targetIndex = skipIndex;
+            }
+
+        }
+        else // If next node is NOT the same height as current
+        {
+            targetIndex = nextIndex;
+            targetJumping = true;
+        }
         
         // --------------------------------------
         
@@ -125,14 +159,23 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
 
         float dist = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z),
             new Vector3(targetHexWorldPos.x, 0, targetHexWorldPos.z));
-
-        // Check if we are close enough to the target position in XZ plane
-        if (dist < 0.3f) // Small threshold for "reached"
+        
+        // larger threshold for skipping
+        if (dist < 0.3f)
         {
             entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
-
+            
             currentNodeIndex = targetIndex; // Good here!
         }
+        
+        // Smaller threshold for Jumping
+        if (dist < 0.05f && targetJumping)
+        {
+             entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
+             
+            currentNodeIndex = targetIndex; // Good here!
+        }
+
     }
 
 }
