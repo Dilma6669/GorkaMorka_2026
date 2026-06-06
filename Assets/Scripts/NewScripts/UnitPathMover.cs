@@ -75,6 +75,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         isMoving = false;
         currentPath = null;
         currentNodeIndex = 0;
+        pathWorldHeights = null;
         Debug.Log($"PathMover on '{name}': Stopped moving.");
     }
 
