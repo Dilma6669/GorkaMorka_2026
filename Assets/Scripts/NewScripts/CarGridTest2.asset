@@ -40,7 +40,7 @@ MonoBehaviour:
       IsEnabled: 0
       IsCommandSeat: 0
     - Height: 0
-      IsWalkable: 1
+      IsWalkable: 0
       IsClimbable: 0
       IsEnabled: 0
       IsCommandSeat: 0
@@ -101,7 +101,7 @@ MonoBehaviour:
       IsClimbable: 0
       IsEnabled: 1
       IsCommandSeat: 0
-    - Height: 0
+    - Height: 1
       IsWalkable: 1
       IsClimbable: 0
       IsEnabled: 1

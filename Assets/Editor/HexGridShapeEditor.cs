@@ -4,6 +4,8 @@ using UnityEditor;
 [CustomEditor(typeof(HexGridShape))]
 public class HexGridShapeEditor : Editor
 {
+    private HexGridShape.HexTileData selectedTile;
+    
     public override void OnInspectorGUI()
     {
         HexGridShape shape = (HexGridShape)target;
@@ -25,50 +27,83 @@ public class HexGridShapeEditor : Editor
             for (int j = 0; j < shape.Rows[i].Tiles.Count; j++)
             {
                 var tile = shape.Rows[i].Tiles[j];
+             
+                Color buttonColor = Color.white; // Default
+                if (!tile.IsEnabled) 
+                {
+                    buttonColor = Color.black;
+                }
+                // 3. Property Rules: Only color it if it's actually enabled
+                else 
+                {
+                    if (tile.IsCommandSeat) buttonColor = Color.green;
+                    else if (tile.IsClimbable) buttonColor = Color.cyan;
+                    else if (tile.IsWalkable == false) buttonColor = Color.red; // Changed to Red as you requested
+                }
+                
+                GUI.backgroundColor = buttonColor;
+                
                 // Visualizing the tile status with a simple button
-                string label = !tile.IsEnabled ? "-" 
-                    : (tile.IsCommandSeat ? "D" 
-                        : (tile.IsClimbable ? "C" 
-                            : (!tile.IsWalkable ? "X" : tile.Height.ToString())));
+                string label = !tile.IsEnabled ? "-" : tile.Height.ToString();
 
                 // 1. Get the Rect for the button so we can handle manual events
-                Rect r = GUILayoutUtility.GetRect(30, 20);
+                Rect r = GUILayoutUtility.GetRect(30, 30);
 
                 // 2. Draw the button
                 if (GUI.Button(r, label))
                 {
                     // 3. Detect the mouse button
                     Event e = Event.current;
-                    bool forward = (e.button == 0); // Left Click = Forward (your current logic)
-                    bool backward = (e.button == 1); // Right Click = Backward
 
-                    if (forward)
+                    if (e.button == 2) // MIDDLE CLICK: Select this tile
                     {
-                        // --- UPDATED FORWARD CYCLE LOGIC ---
-                        if (!tile.IsEnabled) { tile.IsEnabled = true; tile.IsWalkable = true; tile.IsClimbable = false; tile.IsCommandSeat = false; tile.Height = 0; }
-                        else if (tile.IsWalkable && !tile.IsClimbable && !tile.IsCommandSeat && tile.Height < 5) { tile.Height++; }
-                        else if (tile.Height >= 5) { tile.IsClimbable = true; tile.IsWalkable = true; tile.IsCommandSeat = false; tile.Height = 0; }
-                        else if (tile.IsClimbable) { tile.IsClimbable = false; tile.IsCommandSeat = true; tile.IsWalkable = true; } // D is now also Walkable
-                        else if (tile.IsCommandSeat) { tile.IsCommandSeat = false; tile.IsWalkable = false; }
+                        selectedTile = tile;
+                    }
+                    else if (e.button == 0) // LEFT CLICK: Forward
+                    {
+                        if (!tile.IsEnabled) { tile.IsEnabled = true; tile.Height = 0; }
+                        else if (tile.Height < 5) { tile.Height++; }
                         else { tile.IsEnabled = false; }
                     }
-                    else if (backward)
+                    else if (e.button == 1) // RIGHT CLICK: Backward
                     {
-                        if (!tile.IsEnabled) { tile.IsEnabled = true; tile.IsWalkable = true; tile.IsClimbable = false; tile.IsCommandSeat = true; } 
-                        else if (tile.IsCommandSeat) { tile.IsCommandSeat = false; tile.IsClimbable = true; tile.IsWalkable = false; } 
-                        else if (tile.IsClimbable) { tile.IsClimbable = false; tile.IsWalkable = true; tile.Height = 5; } 
-                        else if (tile.IsWalkable && !tile.IsClimbable && !tile.IsCommandSeat && tile.Height > 0) { tile.Height--; } 
-                        else if (tile.IsWalkable && tile.Height == 0) { tile.IsWalkable = false; tile.IsCommandSeat = false; } 
+                        if (!tile.IsEnabled) { tile.IsEnabled = true; tile.Height = 5; }
+                        else if (tile.Height > 0) { tile.Height--; }
                         else { tile.IsEnabled = false; }
                     }
 
                     EditorUtility.SetDirty(shape);
                 }
+                
+                GUI.backgroundColor = Color.white;
             }
             if (GUILayout.Button("+", GUILayout.Width(20))) { shape.Rows[i].Tiles.Add(new HexGridShape.HexTileData()); }
             EditorGUILayout.EndHorizontal();
         }
 
         if (GUI.changed) EditorUtility.SetDirty(shape);
+        
+        if (selectedTile != null)
+        {
+            // Find the current coordinates of the selected tile
+            int rowIdx = -1;
+            int colIdx = -1;
+            for (int i = 0; i < shape.Rows.Count; i++)
+            {
+                int foundIdx = shape.Rows[i].Tiles.IndexOf(selectedTile);
+                if (foundIdx != -1) { rowIdx = i; colIdx = foundIdx; break; }
+            }
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField($"Selected Tile Properties (Row: {rowIdx}, Col: {colIdx})", EditorStyles.boldLabel);
+    
+            EditorGUILayout.HelpBox("Middle-click a grid button to select/refresh a different tile.", MessageType.Info);
+    
+            selectedTile.IsWalkable = EditorGUILayout.Toggle("Is Walkable", selectedTile.IsWalkable);
+            selectedTile.IsClimbable = EditorGUILayout.Toggle("Is Climbable", selectedTile.IsClimbable);
+            selectedTile.IsCommandSeat = EditorGUILayout.Toggle("Is Command Seat", selectedTile.IsCommandSeat);
+    
+            if (GUILayout.Button("Deselect")) { selectedTile = null; }
+        }
     }
 }
