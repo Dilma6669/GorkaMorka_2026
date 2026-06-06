@@ -33,6 +33,23 @@ public class HexVisualTile : MonoBehaviour
         
         hexRenderer.SetPropertyBlock(null);
     }
+    
+    
+    public void SetIsClimbable(bool climbable)
+    {
+        IsClimbable = climbable;
+    }
+    
+    
+    public void SetIsWalkable(bool walkable)
+    {
+        IsWalkable = walkable;
+    }
+    
+    public void SetIsOccupied(bool occupied)
+    {
+        IsOccupied = occupied;
+    }
 
     public void SetBaseColor(Color newColor)
     {

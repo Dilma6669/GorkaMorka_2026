@@ -122,9 +122,9 @@ GameObject:
   - component: {fileID: 6520707023299228574}
   - component: {fileID: 4296798820256556944}
   - component: {fileID: 6035871503466350850}
-  m_Layer: 7
+  m_Layer: 3
   m_Name: HexagonCollider
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -232,6 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Entity: {fileID: 1484217331270654107}
   currentlyBlockedTiles: []
+  SetRandomOccupier: 0
 --- !u!54 &6035871503466350850
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -329,7 +330,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   rotationSpeed: 10
-  rotationBuffer: 5
 --- !u!33 &8940988944267044720
 MeshFilter:
   m_ObjectHideFlags: 0

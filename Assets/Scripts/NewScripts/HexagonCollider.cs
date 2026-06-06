@@ -35,16 +35,19 @@ public class HexagonCollider : MonoBehaviour
             // Block the tile
             if (!currentlyBlockedTiles.Contains(tile))
             {
-                currentlyBlockedTiles.Add(tile);
-                
                 // IMPORTANT: You need to tell the Pathfinding that this hex is blocked
                 // Update the HexData directly
                 if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
+                    if (data.GetIsOccupied())
+                        return;
+                    
                     data.SetIsOccupied(true);
+                    tile.SetIsOccupied(true);
                     data.SetOccupier(SetRandomOccupier ? Guid.NewGuid().ToString() : Entity.EntityGUID);
                     tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
                     tile.SetBaseColor(Color.red);
+                    currentlyBlockedTiles.Add(tile);
                 }
             }
         }
@@ -56,15 +59,26 @@ public class HexagonCollider : MonoBehaviour
         {
             if (currentlyBlockedTiles.Contains(tile))
             {
-                currentlyBlockedTiles.Remove(tile);
-                
                 // Re-enable walking
                 if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
+                    if (data.GetIsOccupied())
+                    {
+                        // Sometimes units trigger vehicle shadow hexagons and they fight to be the occupier, this stops that.
+                        string occupierGUID = data.GetOccupier();
+                        if (Entity.EntityGUID != occupierGUID)
+                        {
+                            return;
+                        }
+                    }
+
                     data.SetIsOccupied(false);
+                    tile.SetIsOccupied(false);
                     data.SetOccupier(null);
                     tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
                     tile.ResetBaseColor();
+                    currentlyBlockedTiles.Remove(tile);
+
                 }
             }
         }
