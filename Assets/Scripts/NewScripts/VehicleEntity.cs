@@ -2,6 +2,8 @@
 
 public class VehicleEntity : Entity
 {
+    public SimpleHexGrid VehicleInteriorGrid;
+    
     [SerializeField] private HexagonCollider leftArc;
     [SerializeField] private HexagonCollider rightArc;
 

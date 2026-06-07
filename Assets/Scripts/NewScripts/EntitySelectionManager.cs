@@ -96,7 +96,10 @@ public class EntitySelectionManager : MonoBehaviour
         SimpleHexGrid closestHexGrid = hex.GridReference;
         selectedHexGrid = closestHexGrid;
         
-        if (closestHexGrid == EntityCommander.GetEntityInCommand().currentGrid)
+        VehicleEntity vehicle = EntityCommander.GetEntityInCommand() as VehicleEntity;
+        
+        // Dont allow vehicles to use their own internal grid as a possible path
+        if (closestHexGrid == vehicle.VehicleInteriorGrid)
             return;
 
         EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, selectedHexCoords);
@@ -192,9 +195,10 @@ public class EntitySelectionManager : MonoBehaviour
             if (closetHexSelected != null)
             {
                 SimpleHexGrid closestHexGrid = closetHexSelected.GridReference;
-                selectedHexGrid = closestHexGrid;
-
-                if (closetVehicleSelected.currentGrid != closestHexGrid)
+  
+               VehicleEntity vehicle = closetVehicleSelected as VehicleEntity;
+      
+               if (vehicle.VehicleInteriorGrid != closestHexGrid)
                 {
                     SelectVehicle(closetVehicleSelected);
                     return;
@@ -204,8 +208,6 @@ public class EntitySelectionManager : MonoBehaviour
         
         if (closetHexSelected != null)
         {
-            //Debug.Log($"EntitySelectionManager: Hexagon Hovered {closetHexHovered.name}");
-
             if (EntityCommander.GetEntityInCommand() != null)
             {
                 if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
@@ -295,6 +297,7 @@ public class EntitySelectionManager : MonoBehaviour
             //Debug.Log($"EntitySelectionManager: Hexagon Hovered {closetHexHovered.name}");
             
             if (hoveredHexCoords == closetHexHovered.GridCoordinates) return;
+ 
             hoveredHexCoords = closetHexHovered.GridCoordinates;
 
             SimpleHexGrid hexGrid = closetHexHovered.GridReference;
@@ -312,12 +315,13 @@ public class EntitySelectionManager : MonoBehaviour
                 Vector2Int targetCoords = closetHexHovered.GridCoordinates;
             
                 // Re-use your pathfinding/visualization code here using hexHitResult.point
-                PathNode startNode = new PathNode(EntityCommander.GetEntityInCommand().currentGridCoordinates, EntityCommander.GetEntityInCommand().currentGrid);
+                PathNode startNode = new PathNode(EntityCommander.GetEntityInCommand().CurrentGridCoordinates, EntityCommander.GetEntityInCommand().CurrentGrid);
                 PathNode endNode = new PathNode(targetCoords, hexGrid);
                 List<PathNode> rawPath = pathfinder.FindPath(startNode, endNode);
 
                 if (rawPath != null && rawPath.Count > 0)
                 {
+
                     List<PathNode> finalPath;
 
                     // 2. Get the correct mover and smooth the path if it's a vehicle
@@ -345,21 +349,23 @@ public class EntitySelectionManager : MonoBehaviour
                     }
 
                     // 3. Visualize the final path
+                    HexGridVisualizer gridVisualizer = hoveredHexGrid.HexGridVisualiser;
+
                     foreach (PathNode pathNode in finalPath)
                     {
                         foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
                         {
-                            if (pathNode.GridCoordinates != targetCoords)
+                            if (pathNode.GridReference == otherGrid)
                             {
                                 otherGrid.HexGridVisualiser.HighlightHexOverlay(pathNode.GridCoordinates,
                                     PathHexagonHighlightedColour);
                             }
-                            else
-                            {
-                                otherGrid.HexGridVisualiser.HighlightHexOverlay(targetCoords, TargetHexagonHighlightedColour);
-                            }
                         }
                     }
+
+                    // Highlight the target hex
+                    gridVisualizer.HighlightHexOverlay(targetCoords, TargetHexagonHighlightedColour);
+
                 }
             }
             else

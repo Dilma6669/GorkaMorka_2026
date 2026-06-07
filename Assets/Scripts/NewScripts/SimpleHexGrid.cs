@@ -45,9 +45,6 @@ public class SimpleHexGrid : MonoBehaviour
         new Vector2Int(-1, 1), // Down-Left (q-1, r+1)
         new Vector2Int(0, 1) // Down-Right (q, r+1)
     };
-    
-    public int NOTWALKABLEINDEX = 9;
-    public int NOTCLIMBABLEINDEX = 8;
 
     // --- MonoBehaviour Lifecycle ---
 

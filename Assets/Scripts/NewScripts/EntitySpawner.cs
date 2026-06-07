@@ -260,7 +260,7 @@ public class EntitySpawner : MonoBehaviour
         entityData.currentHealth = 100;
         entityData.baseMoveSpeed = 5;
         entityData.spawnGrid = defaultSpawnGrid;
-        entityData.spawnCoordinates = Vector2Int.zero;
+        entityData.spawnCoordinates = new Vector2Int(-7,5);
         
         // This will now simply create a new unit each time the button is clicked.
         SpawnVehicle(entityData);

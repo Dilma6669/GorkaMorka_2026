@@ -183,8 +183,8 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         {
             if (entity != null)
             {
-                entity.currentGrid = targetNode.GridReference;
-                entity.currentGridCoordinates = targetNode.GridCoordinates;
+                entity.CurrentGrid = targetNode.GridReference;
+                entity.CurrentGridCoordinates = targetNode.GridCoordinates;
             }
 
             currentNodeIndex += 2;

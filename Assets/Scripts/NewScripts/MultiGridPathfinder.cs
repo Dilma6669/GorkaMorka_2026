@@ -179,6 +179,20 @@ public class MultiGridPathfinder : MonoBehaviour
         Vector3 currentWorldPos =
             currentNode.GridReference.GetHexWorldPosition(currentNode.GridCoordinates, currentHexData.Height);
 
+        // Need to check vehicles internal grid here so caching retrieval of vehicle for performance
+        VehicleEntity vehicleAlreadySelected = null;
+        if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+        {
+            vehicleAlreadySelected = EntityCommander.GetEntityInCommand() as VehicleEntity;
+        }
+        
+        // Dont need this yet but may do it future
+        UnitEntity unitAlreadySelected = null;
+        if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
+        {
+            unitAlreadySelected = EntityCommander.GetEntityInCommand() as UnitEntity;
+        }
+        
         // --- 1. Intra-Grid Neighbors (SAME GRID AS ENTITY) ---
         List<Vector2Int> localNeighborCoords = currentNode.GridReference.GetHexNeighbors(currentNode.GridCoordinates);
         foreach (Vector2Int coords in localNeighborCoords)
@@ -186,9 +200,9 @@ public class MultiGridPathfinder : MonoBehaviour
             HexData neighbourHexData = currentNode.GridReference.GetHexData(coords);
             Vector3 neighbourWorldPos = currentNode.GridReference.GetHexWorldPosition(coords, neighbourHexData.Height);
 
-            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+            if (vehicleAlreadySelected != null)
             {
-                if (currentNode.GridReference == EntityCommander.GetEntityInCommand().currentGrid)
+                if (currentNode.GridReference == vehicleAlreadySelected.VehicleInteriorGrid)
                 {
                     continue;
                 }
@@ -231,11 +245,10 @@ public class MultiGridPathfinder : MonoBehaviour
         foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
         {
             // If its a vehicle we want to not allow the vehicle to pathfind over itself 
-            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+            if (vehicleAlreadySelected != null)
             {
-                if (EntityCommander.GetEntityInCommand().currentGrid == otherGrid)
+                if (vehicleAlreadySelected.VehicleInteriorGrid == otherGrid)
                 {
-                 //   Debug.Log("fuck here");
                     continue;
                 }
             }

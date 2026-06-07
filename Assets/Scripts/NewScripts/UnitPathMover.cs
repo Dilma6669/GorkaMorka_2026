@@ -55,9 +55,9 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         currentNodeIndex = 0;
         
         // Check to Clear unit as driver
-        if (entity.isDriver && entity.currentGrid.griEntity != null)
+        if (entity.isDriver && entity.CurrentGrid.griEntity != null)
         {
-            string gridGUID = entity.currentGrid.griEntity.EntityGUID;
+            string gridGUID = entity.CurrentGrid.griEntity.EntityGUID;
                 
             // issue here
             if (EntityManager.TryGetEntity(gridGUID, out Entity vehicleEntity))
@@ -65,7 +65,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
                 entity.isDriver = false;
                 VehicleEntity vehicle = (VehicleEntity)vehicleEntity;
                 vehicle.ClearDriver();
-                Debug.Log($"Unit {entity.name} has stopped being Driver for  grid {entity.currentGrid.name}!");
+                Debug.Log($"Unit {entity.name} has stopped being Driver for  grid {entity.CurrentGrid.name}!");
             }
         }
         
@@ -227,7 +227,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
 
     private void CheckForBoardingVehicle(SimpleHexGrid grid)
     {
-        if (entity.currentGrid != grid)
+        if (entity.CurrentGrid != grid)
         {
             Debug.Log($"Unit {entity.name} has boarded new grid {grid.name}!");
             entity.SetEntityToNewGrid(grid);
@@ -246,7 +246,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         // If the tile is a Command Seat
         if (hexData.IsCommandSeat)
         {
-            string gridGUID = entity.currentGrid.griEntity.EntityGUID;
+            string gridGUID = entity.CurrentGrid.griEntity.EntityGUID;
             
             if(EntityManager.TryGetEntity(gridGUID, out Entity vehicleEntity))
             {
@@ -254,7 +254,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
                 VehicleEntity vehicle = (VehicleEntity)vehicleEntity;
                 vehicle.SetDriver(entity);
                 EntitySelectionManager.SelectVehicle(vehicle);
-                Debug.Log($"Unit {entity.name} has become Driver for new grid {entity.currentGrid.name}!");
+                Debug.Log($"Unit {entity.name} has become Driver for new grid {entity.CurrentGrid.name}!");
             }
         }
     }

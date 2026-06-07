@@ -28,8 +28,7 @@ public class HexagonCollider : MonoBehaviour
                         Debug.Log($"fuck hex is occupied by = {data.GetOccupier()}");
                         return;
                     }
-
-                    Debug.Log($"fuck Entity.EntityGUID = {Entity.EntityGUID} ");
+                    
                     data.SetIsOccupied(true);
                     data.SetOccupier(string.IsNullOrEmpty(SetUniqueGUID) ? Entity.EntityGUID : SetUniqueGUID);
                     tile.SetIsOccupied(true);

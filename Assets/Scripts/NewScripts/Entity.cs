@@ -18,26 +18,26 @@ public class Entity : MonoBehaviour
     
     [Header("Grid State")]
     [Tooltip("The SimpleHexGrid this unit is currently occupying.")]
-    public SimpleHexGrid currentGrid;
+    public SimpleHexGrid CurrentGrid;
     [Tooltip("The axial coordinates of the hex this unit is currently occupying.")]
-    public Vector2Int currentGridCoordinates;
+    public Vector2Int CurrentGridCoordinates;
     
     [Header("Movement Components")]
     [Tooltip("Reference to the PathMover component on this GameObject.")]
-    public IEntityPathMover entityPathMover; // Reference to the PathMover
+    public IEntityPathMover EntityPathMover; // Reference to the PathMover
 
     [FormerlySerializedAs("unitHeightOffset")]
     [Header("Visual Offset")]
     [Tooltip("The vertical offset from the center of the hex to the unit's pivot point. Adjust this so the unit sits correctly on the hex surface.")]
     public float entityHeightOffset = 0.5f; // Default offset, adjust in Inspector per unit type
-
+    
     void Awake()
     {
         // Ensure unitPathMover is assigned, either manually or found automatically
-        if (entityPathMover == null)
+        if (EntityPathMover == null)
         {
-            entityPathMover = GetComponent<IEntityPathMover>();
-            if (entityPathMover == null)
+            EntityPathMover = GetComponent<IEntityPathMover>();
+            if (EntityPathMover == null)
             {
                 Debug.LogError($"Unit '{name}': No PathMover component found! Unit will not be able to move.", this);
             }
@@ -73,14 +73,14 @@ public class Entity : MonoBehaviour
         HexGridManager.Instance.UpdateUnwalkableHexagonsOnAllGrids();
         
         // Ensure we specifically look for the component
-        entityPathMover = GetComponent<IEntityPathMover>();
+        EntityPathMover = GetComponent<IEntityPathMover>();
 
-        if (entityPathMover == null)
+        if (EntityPathMover == null)
         {
             Debug.LogError($"Unit '{name}': PathMover component not found on this object!", this);
         }
             
-        Debug.Log($"Unit '{name}' initialized on grid '{currentGrid.name}' at {currentGridCoordinates}.");
+        Debug.Log($"Unit '{name}' initialized on grid '{CurrentGrid.name}' at {CurrentGridCoordinates}.");
     }
 
     /// <summary>
@@ -102,8 +102,8 @@ public class Entity : MonoBehaviour
             return;
         }
 
-        currentGrid = grid;
-        currentGridCoordinates = coords;
+        CurrentGrid = grid;
+        CurrentGridCoordinates = coords;
         transform.SetParent(grid.EntityContainer.transform);
 
         HexData hexData = grid.GetHexData(coords);
@@ -122,9 +122,9 @@ public class Entity : MonoBehaviour
     /// <param name="path">The list of PathNodes defining the path.</param>
     public void MoveUnitAlongPath(List<PathNode> path)
     {
-        if (entityPathMover != null)
+        if (EntityPathMover != null)
         {
-            entityPathMover.StartMoving(path);
+            EntityPathMover.StartMoving(path);
         }
         else
         {
@@ -135,7 +135,7 @@ public class Entity : MonoBehaviour
     
     public void SetEntityToNewGrid(SimpleHexGrid grid)
     {
-        currentGrid = grid;
+        CurrentGrid = grid;
     }
     
     public virtual void EntitySelected(bool isSelected)

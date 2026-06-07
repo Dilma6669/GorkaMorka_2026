@@ -94,7 +94,7 @@ public class EntityCommander : MonoBehaviour
         }
     
         // 2. Get the path from the pathfinder
-        PathNode startNode = new PathNode(entityToCommand.currentGridCoordinates, entityToCommand.currentGrid);
+        PathNode startNode = new PathNode(entityToCommand.CurrentGridCoordinates, entityToCommand.CurrentGrid);
         PathNode endNode = new PathNode(targetCoordinates, targetGrid);
         List<PathNode> path = MultiGridPathfinder.Instance.FindPath(startNode, endNode);
     
