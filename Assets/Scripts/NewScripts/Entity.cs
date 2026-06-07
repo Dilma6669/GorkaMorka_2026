@@ -8,7 +8,15 @@ using UnityEngine.Serialization;
 // and orchestrating its movement via an attached PathMover.
 public class Entity : MonoBehaviour
 {
-    [Header("Unit Grid State")]
+    [Header("Entity Data")]
+    public string UnitName;
+    public int MaxHealth;
+    public int CurrentHealth;
+    public float BaseMoveSpeed;
+    public EntitySpawner.EntityType EntityType;
+    public string EntityGUID;
+    
+    [Header("Grid State")]
     [Tooltip("The SimpleHexGrid this unit is currently occupying.")]
     public SimpleHexGrid currentGrid;
     [Tooltip("The axial coordinates of the hex this unit is currently occupying.")]
@@ -22,14 +30,6 @@ public class Entity : MonoBehaviour
     [Header("Visual Offset")]
     [Tooltip("The vertical offset from the center of the hex to the unit's pivot point. Adjust this so the unit sits correctly on the hex surface.")]
     public float entityHeightOffset = 0.5f; // Default offset, adjust in Inspector per unit type
-
-    public SimpleHexGrid EntityGrid;
-    
-    public EntitySpawner.EntityType EntityType;
-
-    public string EntityGUID;
-    
-    public Vector2Int DefaultSpawnCoordinates;
 
     void Awake()
     {
@@ -50,22 +50,36 @@ public class Entity : MonoBehaviour
     /// </summary>
     /// <param name="grid">The SimpleHexGrid to spawn on.</param>
     /// <param name="coords">The axial coordinates on the grid.</param>
-    public void Initialize(EntitySpawner.EntityType entityType, SimpleHexGrid grid, Vector2Int coords)
+    public virtual void Initialize(EntitySpawner.EntityType entityType, EntityData entityData)
     {
-        if (grid == null)
+        if (entityData.spawnGrid == null)
         {
             Debug.LogError($"Unit '{name}': Attempted to initialize with a null grid.", this);
             return;
         }
-        if (!grid.IsValidCoordinates(coords))
+        if (!entityData.spawnGrid.IsValidCoordinates(entityData.spawnCoordinates))
         {
-            Debug.LogWarning($"Unit '{name}': Attempted to initialize on invalid coordinates {coords} on grid '{grid.name}'.", this);
+            Debug.LogWarning($"Unit '{name}': Attempted to initialize on invalid coordinates {entityData.spawnCoordinates} on grid '{entityData.spawnGrid.name}'.", this);
             return;
         }
 
         EntityType = entityType;
-        SnapToHex(grid, coords); // Snap to the initial position
+        UnitName = entityData.unitName;
+        MaxHealth = entityData.maxHealth;
+        CurrentHealth = entityData.maxHealth;
+        BaseMoveSpeed = entityData.baseMoveSpeed;
+        
+        SnapToHex(entityData.spawnGrid, entityData.spawnCoordinates); // Snap to the initial position
         HexGridManager.Instance.UpdateUnwalkableHexagonsOnAllGrids();
+        
+        // Ensure we specifically look for the component
+        entityPathMover = GetComponent<IEntityPathMover>();
+
+        if (entityPathMover == null)
+        {
+            Debug.LogError($"Unit '{name}': PathMover component not found on this object!", this);
+        }
+            
         Debug.Log($"Unit '{name}' initialized on grid '{currentGrid.name}' at {currentGridCoordinates}.");
     }
 

@@ -3,7 +3,8 @@ using UnityEngine;
 public class HexVisualTile : MonoBehaviour
 {
     [HideInInspector] public SimpleHexGrid GridReference;
-
+    public Vector2Int GridCoordinates;
+    
     public HexData hexData => GridReference.GetHexData(GridCoordinates);
     
     public Renderer pathOverlayRenderer;
@@ -12,7 +13,6 @@ public class HexVisualTile : MonoBehaviour
     // Use "_BaseColor" if you are using URP/HDRP shaders, use "_Color" for standard Legacy shaders
     private static readonly int ColorID = Shader.PropertyToID("_BaseColor"); 
     
-    public Vector2Int GridCoordinates;
     public float Height; 
     public bool IsWalkable;
     public bool IsOccupied;

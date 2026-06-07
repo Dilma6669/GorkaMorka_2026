@@ -188,7 +188,7 @@ public class MultiGridPathfinder : MonoBehaviour
 
             if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
             {
-                if (currentNode.GridReference == EntityCommander.GetEntityInCommand().EntityGrid)
+                if (currentNode.GridReference == EntityCommander.GetEntityInCommand().currentGrid)
                 {
                     continue;
                 }

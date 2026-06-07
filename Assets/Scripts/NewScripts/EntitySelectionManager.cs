@@ -96,7 +96,7 @@ public class EntitySelectionManager : MonoBehaviour
         SimpleHexGrid closestHexGrid = hex.GridReference;
         selectedHexGrid = closestHexGrid;
         
-        if (closestHexGrid == EntityCommander.GetEntityInCommand().EntityGrid)
+        if (closestHexGrid == EntityCommander.GetEntityInCommand().currentGrid)
             return;
 
         EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, selectedHexCoords);
@@ -194,7 +194,7 @@ public class EntitySelectionManager : MonoBehaviour
                 SimpleHexGrid closestHexGrid = closetHexSelected.GridReference;
                 selectedHexGrid = closestHexGrid;
 
-                if (closetVehicleSelected.EntityGrid != closestHexGrid)
+                if (closetVehicleSelected.currentGrid != closestHexGrid)
                 {
                     SelectVehicle(closetVehicleSelected);
                     return;
