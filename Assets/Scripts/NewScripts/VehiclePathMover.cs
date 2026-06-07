@@ -82,6 +82,8 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         isMoving = false;
         currentPath = null;
         currentNodeIndex = 0;
+        entity.RefreshShadowHexCollider();
+        entity.RefreshArcsHexColliders();
     }
 
     public bool IsMoving()

@@ -148,15 +148,14 @@ public class EntitySpawner : MonoBehaviour
         // --- Important for Multi-Unit Spawning ---
         // For now, the UnitCommander will just command the *last* unit spawned.
         // In a later step, we will implement unit selection (clicking) to pick which unit to command.
-        if (entityCommander != null)
-        {
-            EntitySelectionManager.SelectVehicle(newEntity);
-        }
-        else
-        {
-            Debug.LogWarning("EntitySpawner: EntityCommander reference not set in Inspector. Spawned vehicle will not be assigned to commander automatically.");
-        }
-        // --- End Multi-Unit Spawning adjustment ---
+        // if (entityCommander != null)
+        // {
+        //     EntitySelectionManager.SelectVehicle(newEntity);
+        // }
+        // else
+        // {
+        //     Debug.LogWarning("EntitySpawner: EntityCommander reference not set in Inspector. Spawned vehicle will not be assigned to commander automatically.");
+        // }
         
         newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
 

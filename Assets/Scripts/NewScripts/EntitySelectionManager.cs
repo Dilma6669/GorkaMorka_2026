@@ -246,6 +246,20 @@ public class EntitySelectionManager : MonoBehaviour
         HexVisualTile closetHexHovered = null!;
         Entity closetVehicleHovered = null!;
         
+        // Need to check vehicles internal grid here so caching retrieval of vehicle for performance
+        VehicleEntity vehicleAlreadySelected = null;
+        if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+        {
+            vehicleAlreadySelected = EntityCommander.GetEntityInCommand() as VehicleEntity;
+        }
+        
+        // Dont need this yet but may do it future
+        UnitEntity unitAlreadySelected = null;
+        if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
+        {
+            unitAlreadySelected = EntityCommander.GetEntityInCommand() as UnitEntity;
+        }
+        
         foreach (var hit in hits)
         {
             int layer = hit.collider.gameObject.layer;
@@ -327,6 +341,9 @@ public class EntitySelectionManager : MonoBehaviour
                     // 2. Get the correct mover and smooth the path if it's a vehicle
                     if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
                     {
+                        if (vehicleAlreadySelected.GetDriver() == null)
+                            return;
+                        
                         HoverHexWithVehicleActive(closetHexHovered);
                         VehiclePathMover mover = EntityCommander.GetEntityInCommand().GetComponent<VehiclePathMover>();
                         if (mover != null)

@@ -81,5 +81,11 @@ public class VehicleEntity : Entity
         shadowHexCollider.gameObject.SetActive(false);
         shadowHexCollider.gameObject.SetActive(true);
     }
+    
+    public void RefreshArcsHexColliders()
+    {
+        ShowArcs = false;
+        ShowArcs = true;
+    }
 
 }
