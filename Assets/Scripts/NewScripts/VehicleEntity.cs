@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class VehicleEntity : Entity
 {
     public SimpleHexGrid VehicleInteriorGrid;
     
-    [SerializeField] private HexagonCollider leftArc;
-    [SerializeField] private HexagonCollider rightArc;
+    [SerializeField] private HexagonCollider shadowHexCollider;
+    [SerializeField] private HexagonCollider leftArcHexCollider;
+    [SerializeField] private HexagonCollider rightArcHexCollider;
 
     [SerializeField] private Entity Driver;
     [SerializeField] private bool showArcs;
@@ -13,6 +15,7 @@ public class VehicleEntity : Entity
     public override void EntitySelected(bool isSelected)
     {
         ShowArcs = isSelected;
+        RefreshShadowHexCollider();
     }
     
     public bool ShowArcs 
@@ -58,19 +61,25 @@ public class VehicleEntity : Entity
         
         bool active = showArcs;
 
-        if (leftArc != null)
+        if (leftArcHexCollider != null)
         {
-            leftArc.gameObject.SetActive(active);
-            if (!active) leftArc.ClearBlockedHexes();
+            leftArcHexCollider.gameObject.SetActive(active);
+            if (!active) leftArcHexCollider.ClearBlockedHexes();
         }
 
-        if (rightArc != null)
+        if (rightArcHexCollider != null)
         {
-            rightArc.gameObject.SetActive(active);
-            if (!active) rightArc.ClearBlockedHexes();
+            rightArcHexCollider.gameObject.SetActive(active);
+            if (!active) rightArcHexCollider.ClearBlockedHexes();
         }
 
         Physics.SyncTransforms();
+    }
+
+    public void RefreshShadowHexCollider()
+    {
+        shadowHexCollider.gameObject.SetActive(false);
+        shadowHexCollider.gameObject.SetActive(true);
     }
 
 }
