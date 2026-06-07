@@ -245,21 +245,24 @@ public class EntitySelectionManager : MonoBehaviour
         Entity closestUnitHovered = null!;
         HexVisualTile closetHexHovered = null!;
         Entity closetVehicleHovered = null!;
-        
-        // Need to check vehicles internal grid here so caching retrieval of vehicle for performance
+
         VehicleEntity vehicleAlreadySelected = null;
-        if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
-        {
-            vehicleAlreadySelected = EntityCommander.GetEntityInCommand() as VehicleEntity;
-        }
-        
-        // Dont need this yet but may do it future
         UnitEntity unitAlreadySelected = null;
-        if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
+        if (EntityCommander.GetEntityInCommand() != null)
         {
-            unitAlreadySelected = EntityCommander.GetEntityInCommand() as UnitEntity;
+            // Need to check vehicles internal grid here so caching retrieval of vehicle for performance
+            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+            {
+                vehicleAlreadySelected = EntityCommander.GetEntityInCommand() as VehicleEntity;
+            }
+
+            // Dont need this yet but may do it future
+            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
+            {
+                unitAlreadySelected = EntityCommander.GetEntityInCommand() as UnitEntity;
+            }
         }
-        
+
         foreach (var hit in hits)
         {
             int layer = hit.collider.gameObject.layer;

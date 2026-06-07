@@ -310,12 +310,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cd04a6e22e64f8ba619c2d2df7ad76c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentGrid: {fileID: 0}
-  currentGridCoordinates: {x: 0, y: 0}
-  entityHeightOffset: 0.5
-  EntityGrid: {fileID: 0}
+  UnitName: 
+  MaxHealth: 100
+  CurrentHealth: 100
+  BaseMoveSpeed: 1
   EntityType: 0
   EntityGUID: 
+  CurrentGrid: {fileID: 0}
+  CurrentGridCoordinates: {x: 0, y: 0}
+  entityHeightOffset: 0.5
   isDriver: 0
 --- !u!114 &1184689143085087290
 MonoBehaviour:
