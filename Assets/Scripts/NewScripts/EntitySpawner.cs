@@ -29,7 +29,8 @@ public class EntitySpawner : MonoBehaviour
 
     private void Start()
     {
-        //TestSpawnDefaultUnit();
+        TestSpawnDefaultUnit();
+        TestSpawnDefaultVehicle();
     }
 
     /// <summary>

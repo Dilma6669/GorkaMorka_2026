@@ -8,9 +8,8 @@ public class VehicleEntity : Entity
     [SerializeField] private Entity Driver;
     [SerializeField] private bool showArcs;
 
-    public override void SetSelected(bool isSelected)
+    public override void EntitySelected(bool isSelected)
     {
-        // If we are selected, show arcs. If deselected, hide them.
         ShowArcs = isSelected;
     }
     
@@ -22,6 +21,11 @@ public class VehicleEntity : Entity
             showArcs = value;
             ApplyArcState();
         }
+    }
+    
+    public Entity GetDriver()
+    {
+        return Driver;
     }
 
     public void SetDriver(Entity driver)

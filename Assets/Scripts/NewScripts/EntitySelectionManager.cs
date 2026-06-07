@@ -48,13 +48,13 @@ public class EntitySelectionManager : MonoBehaviour
         if (EntityCommander.GetEntityInCommand() != null && EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
         {
             VehicleEntity previousVehicle = (VehicleEntity)EntityCommander.GetEntityInCommand();
-            previousVehicle.SetSelected(false);
+            previousVehicle.EntitySelected(false);
         }
         
         Debug.Log($"EntitySelectionManager: Selected {entity.name}");
         EntityCommander.SetEntityToCommand(entity);
         VehicleEntity vehicle = (VehicleEntity)entity;
-        vehicle.SetSelected(true);
+        vehicle.EntitySelected(true);
     }
     
     public static void SelectUnit(Entity entity)
@@ -62,7 +62,7 @@ public class EntitySelectionManager : MonoBehaviour
         if (EntityCommander.GetEntityInCommand() != null && EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
         {
             VehicleEntity previousVehicle = (VehicleEntity)EntityCommander.GetEntityInCommand();
-            previousVehicle.SetSelected(false);
+            previousVehicle.EntitySelected(false);
         }
         
         Debug.Log($"EntitySelectionManager: Selected {entity.name}");
@@ -208,9 +208,6 @@ public class EntitySelectionManager : MonoBehaviour
 
             if (EntityCommander.GetEntityInCommand() != null)
             {
-                Vector2Int targetCoords = closetHexSelected.GridCoordinates;
-                
-
                 if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                 {
                     SelectHexWithUnitActive(closetHexSelected);
@@ -321,7 +318,6 @@ public class EntitySelectionManager : MonoBehaviour
 
                 if (rawPath != null && rawPath.Count > 0)
                 {
-
                     List<PathNode> finalPath;
 
                     // 2. Get the correct mover and smooth the path if it's a vehicle
@@ -349,23 +345,21 @@ public class EntitySelectionManager : MonoBehaviour
                     }
 
                     // 3. Visualize the final path
-                    HexGridVisualizer gridVisualizer = hoveredHexGrid.HexGridVisualiser;
-
                     foreach (PathNode pathNode in finalPath)
                     {
                         foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
                         {
-                            if (pathNode.GridReference == otherGrid)
+                            if (pathNode.GridCoordinates != targetCoords)
                             {
                                 otherGrid.HexGridVisualiser.HighlightHexOverlay(pathNode.GridCoordinates,
                                     PathHexagonHighlightedColour);
                             }
+                            else
+                            {
+                                otherGrid.HexGridVisualiser.HighlightHexOverlay(targetCoords, TargetHexagonHighlightedColour);
+                            }
                         }
                     }
-
-                    // Highlight the target hex
-                    gridVisualizer.HighlightHexOverlay(targetCoords, TargetHexagonHighlightedColour);
-
                 }
             }
             else

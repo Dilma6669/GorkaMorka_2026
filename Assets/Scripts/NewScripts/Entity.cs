@@ -28,6 +28,8 @@ public class Entity : MonoBehaviour
     public EntitySpawner.EntityType EntityType;
 
     public string EntityGUID;
+    
+    public Vector2Int DefaultSpawnCoordinates;
 
     void Awake()
     {
@@ -115,28 +117,16 @@ public class Entity : MonoBehaviour
             Debug.LogError($"Unit '{name}': Cannot move, no PathMover component assigned or found!", this);
         }
     }
-
-    /// <summary>
-    /// Stops any ongoing movement for this unit.
-    /// </summary>
-    public void StopUnitMovement()
+    
+    
+    public void SetEntityToNewGrid(SimpleHexGrid grid)
     {
-        if (entityPathMover != null)
-        {
-            entityPathMover.StopMoving();
-        }
-    }
-
-    /// <summary>
-    /// Returns true if the unit is currently moving.
-    /// </summary>
-    public bool IsUnitMoving()
-    {
-        return entityPathMover != null && entityPathMover.IsMoving();
+        currentGrid = grid;
     }
     
-    public virtual void SetSelected(bool isSelected)
+    public virtual void EntitySelected(bool isSelected)
     {
-       // Change entity colour here or something
+
     }
+
 }

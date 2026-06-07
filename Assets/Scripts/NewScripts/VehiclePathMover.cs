@@ -23,7 +23,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
     public List<PathNode> currentPath;
     private int currentNodeIndex = 0;
     
-    private Entity entity;
+    private VehicleEntity entity;
     
     private bool isMoving = false;
 
@@ -42,7 +42,12 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
     
     private void Awake()
     {
-        entity = GetComponent<Entity>();
+        entity = GetComponent<VehicleEntity>();
+        
+        if (entity == null)
+        {
+            Debug.LogError($"VehiclePathMover on {gameObject.name} needs a VehicleEntity component!");
+        }
     }
 
     void Update()
@@ -62,11 +67,12 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
             return;
         }
 
+        currentNodeIndex = 0;
         currentPath = GetSmoothPathForVehicle(path);
     
         // CHANGE THIS FROM 0 TO 1:
         // Skip the first node because it's the hex the vehicle is currently occupying
-        currentNodeIndex = currentPath.Count > 1 ? 1 : 0; 
+      //  currentNodeIndex = currentPath.Count > 1 ? 1 : 0; 
     
         isMoving = true;
     }
@@ -86,12 +92,19 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
     
     public void MoveAlongPath()
     {
+
         if (currentNodeIndex >= currentPath.Count)
         {
             StopMoving();
             return;
         }
-    
+
+        if (entity.GetDriver() == null)
+        {
+            return;
+        }
+
+        
         // NEW RE-ASSESSMENT LAYER: 
         // If the vehicle can see the final destination or is close enough,
         // skip all intermediate breadcrumbs and head straight for the final tile!

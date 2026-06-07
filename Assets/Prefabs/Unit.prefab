@@ -117,10 +117,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2707634043224181038}
+  - component: {fileID: 4296798820256556944}
   - component: {fileID: 7263269333663405553}
   - component: {fileID: 4811310351087041674}
   - component: {fileID: 6520707023299228574}
-  - component: {fileID: 4296798820256556944}
   - component: {fileID: 6035871503466350850}
   m_Layer: 3
   m_Name: HexagonCollider
@@ -144,6 +144,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2582168007552485900}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4296798820256556944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3191656106165510946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2772e63f70bb214daede50c72dc3eeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Entity: {fileID: 1695146958402388932}
+  currentlyBlockedTiles: []
+  SetUniqueGUID: 
 --- !u!33 &7263269333663405553
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -218,21 +233,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4296798820256556944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3191656106165510946}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2772e63f70bb214daede50c72dc3eeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Entity: {fileID: 1484217331270654107}
-  currentlyBlockedTiles: []
-  SetRandomOccupier: 0
 --- !u!54 &6035871503466350850
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -269,7 +269,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2582168007552485900}
-  - component: {fileID: 1484217331270654107}
+  - component: {fileID: 1695146958402388932}
   - component: {fileID: 1184689143085087290}
   - component: {fileID: 8940988944267044720}
   - component: {fileID: 4990066813900013274}
@@ -298,7 +298,7 @@ Transform:
   - {fileID: 1241639355677978287}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1484217331270654107
+--- !u!114 &1695146958402388932
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -307,7 +307,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3250799445468387014}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44f556eab23a472e938745d8219d30b3, type: 3}
+  m_Script: {fileID: 11500000, guid: 7cd04a6e22e64f8ba619c2d2df7ad76c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   currentGrid: {fileID: 0}
@@ -316,6 +316,7 @@ MonoBehaviour:
   EntityGrid: {fileID: 0}
   EntityType: 0
   EntityGUID: 
+  isDriver: 0
 --- !u!114 &1184689143085087290
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -63,6 +63,7 @@ public class HexVisualTile : MonoBehaviour
         if(IsWalkable == false) SetBaseColor(Color.red);
         if(IsOccupied) SetBaseColor(Color.red);
         if(IsClimbable) SetBaseColor(Color.blue);
+        if(IsCommandSeat) SetBaseColor(Color.green);
     }
     
 

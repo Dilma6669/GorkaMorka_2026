@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 // Phase 9.1 (Refactored): PathMover Class
 // Purpose: Moves a GameObject along a given list of PathNodes.
 // It no longer directly references the MultiGridPathfinder or initiates pathfinding itself.
 public class UnitPathMover : MonoBehaviour, IEntityPathMover
 {
-    private Entity entity;
+    // pathfinding fucks up when change this to UnitEntity... look into this when sober
+    private UnitEntity entity;
     
     [Tooltip("The speed at which the object moves along the path.")]
     public float moveSpeed = 5f;
@@ -25,7 +27,9 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     
     private void Awake()
     {
-        entity = GetComponent<Entity>();
+        entity = GetComponent<UnitEntity>() ??
+                 GetComponentInParent<UnitEntity>() ??
+                 GetComponentInChildren<UnitEntity>();
     }
 
     void Update()
@@ -49,6 +53,22 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         currentPath = path;
         pathWorldHeights = new List<float>();
         currentNodeIndex = 0;
+        
+        // Check to Clear unit as driver
+        if (entity.isDriver && entity.currentGrid.griEntity != null)
+        {
+            string gridGUID = entity.currentGrid.griEntity.EntityGUID;
+                
+            // issue here
+            if (EntityManager.TryGetEntity(gridGUID, out Entity vehicleEntity))
+            {
+                entity.isDriver = false;
+                VehicleEntity vehicle = (VehicleEntity)vehicleEntity;
+                vehicle.ClearDriver();
+                Debug.Log($"Unit {entity.name} has stopped being Driver for  grid {entity.currentGrid.name}!");
+            }
+        }
+        
         isMoving = true;
 
         // Pre-calculate heights once when the path is created
@@ -72,6 +92,8 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     
     public void StopMoving()
     {
+        PathNode finalNode = currentPath.Last();
+        NodeArrival(finalNode);
         isMoving = false;
         currentPath = null;
         currentNodeIndex = 0;
@@ -87,18 +109,29 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     
     public void MoveAlongPath()
     {
+        if (isMoving == false)
+            return;
+        
         if (currentPath == null || currentPath.Count == 0)
         {
             return;
         }
 
-        if (currentNodeIndex >= currentPath.Count)
+        // Final destination check
+        PathNode finalNode = currentPath.Last();
+        HexData finalHexData = finalNode.GridReference.GetHexData(finalNode.GridCoordinates);
+        Vector3 finalPos = finalNode.GridReference.GetHexWorldPosition(finalNode.GridCoordinates, finalHexData.Height);
+    
+        // Check if we are close enough to the final destination to declare "Done"
+        float distToFinal = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), 
+            new Vector3(finalPos.x, 0, finalPos.z));
+
+        if (distToFinal < 0.05f) // Arrival threshold
         {
-            // Reached the end of the path
-            StopMoving();
-            Debug.Log($"PathMover on '{name}': Path complete!");
-            return;
+            StopMoving(); 
+            return; // Exit early so we don't keep moving
         }
+        // --------------------------------------
         
         // Calculate heights of current and potential target
         int nextIndex = currentNodeIndex + 1;
@@ -161,22 +194,69 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         float dist = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z),
             new Vector3(targetHexWorldPos.x, 0, targetHexWorldPos.z));
         
-        // larger threshold for skipping
-        if (dist < 0.3f)
-        {
-            entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
-            
-            currentNodeIndex = targetIndex; // Good here!
-        }
         
         // Smaller threshold for Jumping
         if (dist < 0.05f && targetJumping)
         {
-             entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
-             
+            NodeArrival(targetNode);
+
+            currentNodeIndex = targetIndex; // Good here!
+            return;
+        }
+        
+        // larger threshold for skipping
+        if (dist < 0.3f)
+        {
+            NodeArrival(targetNode);
+            
             currentNodeIndex = targetIndex; // Good here!
         }
 
+    }
+
+    private void NodeArrival(PathNode targetNode)
+    {
+        entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
+        
+        // Boarding
+        CheckForBoardingVehicle(targetNode.GridReference);
+        
+        //Driving
+        CheckForDrivingVehicle(targetNode);
+    }
+
+    private void CheckForBoardingVehicle(SimpleHexGrid grid)
+    {
+        if (entity.currentGrid != grid)
+        {
+            Debug.Log($"Unit {entity.name} has boarded new grid {grid.name}!");
+            entity.SetEntityToNewGrid(grid);
+        }
+    }
+
+    private void CheckForDrivingVehicle(PathNode targetNode)
+    {
+        if (currentPath == null || currentPath.Count == 0)
+        {
+            return;
+        }
+        
+        HexData hexData = targetNode.GridReference.GetHexData(targetNode.GridCoordinates);
+        
+        // If the tile is a Command Seat
+        if (hexData.IsCommandSeat)
+        {
+            string gridGUID = entity.currentGrid.griEntity.EntityGUID;
+            
+            if(EntityManager.TryGetEntity(gridGUID, out Entity vehicleEntity))
+            {
+                entity.isDriver = true;
+                VehicleEntity vehicle = (VehicleEntity)vehicleEntity;
+                vehicle.SetDriver(entity);
+                EntitySelectionManager.SelectVehicle(vehicle);
+                Debug.Log($"Unit {entity.name} has become Driver for new grid {entity.currentGrid.name}!");
+            }
+        }
     }
 
 }

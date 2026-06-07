@@ -9,6 +9,8 @@ public class SimpleHexGrid : MonoBehaviour
 {
     [HideInInspector]
     public HexGridVisualizer HexGridVisualiser;
+    [HideInInspector]
+    public Entity griEntity;
 
     [Header("Grid Settings")] 
     public HexGridManager.GridType GridType;
@@ -52,6 +54,10 @@ public class SimpleHexGrid : MonoBehaviour
     void Awake()
     {
         HexGridVisualiser = GetComponent<HexGridVisualizer>();
+
+        griEntity = GetComponent<Entity>() ??
+                 GetComponentInParent<Entity>() ??
+                 GetComponentInChildren<Entity>();
         
         // This is a more robust way to set the grid's initial position.
       //  transform.position = new Vector3(transform.position.x, entireGridHeightOffset, transform.position.z);
