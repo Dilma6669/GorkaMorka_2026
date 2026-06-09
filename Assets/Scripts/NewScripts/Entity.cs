@@ -89,30 +89,50 @@ public class Entity : MonoBehaviour
     /// </summary>
     /// <param name="grid">The target SimpleHexGrid.</param>
     /// <param name="coords">The target axial coordinates on the grid.</param>
+    // public void SnapToHex(SimpleHexGrid grid, Vector2Int coords)
+    // {
+    //     if (grid == null)
+    //     {
+    //         Debug.LogError($"Unit '{name}': Cannot snap to hex, provided grid is null.", this);
+    //         return;
+    //     }
+    //     if (!grid.IsValidCoordinates(coords))
+    //     {
+    //         Debug.LogWarning($"Unit '{name}': Attempted to snap to invalid coordinates {coords} on grid '{grid.name}'. Unit will remain at current position.", this);
+    //         return;
+    //     }
+    //
+    //     CurrentGrid = grid;
+    //     CurrentGridCoordinates = coords;
+    //     transform.SetParent(grid.EntityContainer.transform);
+    //
+    //     HexData hexData = grid.GetHexData(coords);
+    //     
+    //     // Calculate the world position of the hex center
+    //     Vector3 hexCenterWorldPos = grid.GetHexWorldPosition(coords, hexData.Height);
+    //
+    //     // Apply the unit's specific height offset
+    //     transform.position = new Vector3(hexCenterWorldPos.x, hexCenterWorldPos.y + entityHeightOffset, hexCenterWorldPos.z);
+    // }
+    //
+    // Inside Entity.cs
+
     public void SnapToHex(SimpleHexGrid grid, Vector2Int coords)
     {
-        if (grid == null)
-        {
-            Debug.LogError($"Unit '{name}': Cannot snap to hex, provided grid is null.", this);
-            return;
-        }
-        if (!grid.IsValidCoordinates(coords))
-        {
-            Debug.LogWarning($"Unit '{name}': Attempted to snap to invalid coordinates {coords} on grid '{grid.name}'. Unit will remain at current position.", this);
-            return;
-        }
-
         CurrentGrid = grid;
         CurrentGridCoordinates = coords;
         transform.SetParent(grid.EntityContainer.transform);
 
-        HexData hexData = grid.GetHexData(coords);
-        
-        // Calculate the world position of the hex center
-        Vector3 hexCenterWorldPos = grid.GetHexWorldPosition(coords, hexData.Height);
-
-        // Apply the unit's specific height offset
-        transform.position = new Vector3(hexCenterWorldPos.x, hexCenterWorldPos.y + entityHeightOffset, hexCenterWorldPos.z);
+        // Get the Y level of the top surface of the hex
+        float surfaceY = grid.GetHexTopSurfaceY(coords);
+    
+        // Apply the surface Y + the unit's "standing height" 
+        // (Use a small offset for the unit's feet relative to the top of the hex)
+        transform.position = new Vector3(
+            transform.position.x, 
+            surfaceY + entityHeightOffset, 
+            transform.position.z
+        );
     }
 
     /// <summary>
@@ -141,6 +161,27 @@ public class Entity : MonoBehaviour
     public virtual void EntitySelected(bool isSelected)
     {
 
+    }
+    
+    public virtual void SetEntityToNewGrid(SimpleHexGrid newGrid, Vector2Int newCoords)
+    {
+
+    }
+    
+    public void SnapToGround()
+    {
+        // Find a grid that is of type 'Ground'
+        // This is safer than just using CurrentGrid
+        SimpleHexGrid groundGrid = HexGridManager.Instance.GetAllGrids()
+            .Find(g => g.GridType == HexGridManager.GridType.Ground);
+
+        if (groundGrid != null && groundGrid.TryGetClosestHexagon(transform.position, out HexData groundHex))
+        {
+            Vector3 groundPos = groundGrid.GetHexWorldPosition(groundHex.GridCoordinates, groundHex.Height);
+        
+            // Snap only the Y position
+            transform.position = new Vector3(transform.position.x, groundPos.y + entityHeightOffset, transform.position.z);
+        }
     }
 
 }

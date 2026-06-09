@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,18 +23,17 @@ public class EntitySpawner : MonoBehaviour
     public Vector2Int defaultSpawnCoordinates = Vector2Int.zero; // Default to grid center
     
     public List<UnitData> unitsToSpawn;
-    
-    private EntityCommander entityCommander;
 
     private void Awake()
     {
-        entityCommander = GetComponent<EntityCommander>();
+        defaultSpawnGrid.OnGridReady += SpawnInitialModels;
     }
-
+    
+    
     private void Start()
     {
-         TestSpawnDefaultUnit();
-         TestSpawnDefaultVehicle();
+        // Subscribe to the event
+
     }
     
     public void SpawnAllUnits()
@@ -69,11 +69,29 @@ public class EntitySpawner : MonoBehaviour
             Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {unitData.spawnCoordinates} are invalid on grid '{unitData.spawnGrid.name}'.");
             return null;
         }
-
+        
         // This rotates the car to face the positive X-axis upon creation.
         Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
         
-        GameObject spawnedGameObject = Instantiate(unitPrefab, transform.position, rotationToMatchGridCreation);
+        
+        float targetHeight = 0f;
+        if (unitData.spawnGrid is GroundHexGrid groundGrid)
+        {
+            targetHeight = groundGrid.GetHexHeight(unitData.spawnCoordinates);
+        }
+        else 
+        {
+            // Fallback for non-ground grids
+            targetHeight = unitData.spawnGrid.HexagonsInGrid[unitData.spawnCoordinates].Height;
+        }
+
+        // Now calculate position with the REAL height
+        Vector3 spawnPos = unitData.spawnGrid.GetHexWorldPosition(unitData.spawnCoordinates, targetHeight);
+        
+        
+        Debug.Log($"Spawning unit at: {unitData.spawnCoordinates} | Height: {targetHeight} | WorldPos: {spawnPos}");
+        
+        GameObject spawnedGameObject = Instantiate(unitPrefab, spawnPos, rotationToMatchGridCreation);
         
         // This might fuck things up
         spawnedGameObject.transform.SetParent(unitData.spawnGrid.EntityContainer.transform);
@@ -93,15 +111,8 @@ public class EntitySpawner : MonoBehaviour
         // --- Important for Multi-Unit Spawning ---
         // For now, the UnitCommander will just command the *last* unit spawned.
         // In a later step, we will implement unit selection (clicking) to pick which unit to command.
-        if (entityCommander != null)
-        {
-            EntitySelectionManager.SelectUnit(newEntity);
-        }
-        else
-        {
-            Debug.LogWarning(
-                "EntitySpawner: EntityCommander reference not set in Inspector. Spawned unit will not be assigned to commander automatically.");
-        }
+        EntitySelectionManager.SelectUnit(newEntity);
+
         // --- End Multi-Unit Spawning adjustment ---
         
         newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
@@ -129,8 +140,25 @@ public class EntitySpawner : MonoBehaviour
         
         // This rotates the car to face the positive X-axis upon creation.
         Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
+        
+        float targetHeight = 0f;
+        if (vehicleData.spawnGrid is GroundHexGrid groundGrid)
+        {
+            targetHeight = groundGrid.GetHexHeight(vehicleData.spawnCoordinates);
+        }
+        else 
+        {
+            // Fallback for non-ground grids
+            targetHeight = vehicleData.spawnGrid.HexagonsInGrid[vehicleData.spawnCoordinates].Height;
+        }
 
-        GameObject spawnedGameObject = Instantiate(vehiclePrefab, transform.position, rotationToMatchGridCreation);
+        // Now calculate position with the REAL height
+        Vector3 spawnPos = vehicleData.spawnGrid.GetHexWorldPosition(vehicleData.spawnCoordinates, targetHeight);
+        
+        
+        Debug.Log($"Spawning unit at: {vehicleData.spawnCoordinates} | Height: {targetHeight} | WorldPos: {spawnPos}");
+        
+        GameObject spawnedGameObject = Instantiate(vehiclePrefab, spawnPos, rotationToMatchGridCreation);
        
         // Vehicles are anchored to the grid that they are spawning on
         spawnedGameObject.transform.SetParent(vehicleData.spawnGrid.EntityContainer.transform);
@@ -144,18 +172,7 @@ public class EntitySpawner : MonoBehaviour
         }
 
         newEntity.Initialize(EntityType.Vehicle, vehicleData);
-
-        // --- Important for Multi-Unit Spawning ---
-        // For now, the UnitCommander will just command the *last* unit spawned.
-        // In a later step, we will implement unit selection (clicking) to pick which unit to command.
-        // if (entityCommander != null)
-        // {
-        //     EntitySelectionManager.SelectVehicle(newEntity);
-        // }
-        // else
-        // {
-        //     Debug.LogWarning("EntitySpawner: EntityCommander reference not set in Inspector. Spawned vehicle will not be assigned to commander automatically.");
-        // }
+        
         
         newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
 
@@ -266,6 +283,18 @@ public class EntitySpawner : MonoBehaviour
         HexGridManager.Instance.UpdateUnwalkableHexagonsOnAllGrids();
     }
     
+    private void OnDestroy()
+    {
+        // Always unsubscribe when the spawner is destroyed
+        defaultSpawnGrid.OnGridReady -= SpawnInitialModels;
+    }
+    
+    private void SpawnInitialModels()
+    {
+        Debug.Log("Spawner: Grid is ready, spawning units now!");
+        TestSpawnDefaultUnit();
+        TestSpawnDefaultVehicle();
+    }
 
     
     public enum EntityType

@@ -18,6 +18,9 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
     [Tooltip("The speed at which the object rotates to face the next waypoint.")]
     public float rotationSpeed = 10f;
 
+    [Tooltip("The maximum vertical difference (On the same grid) between two adjacent hexes where the unit will treat the terrain as 'flat' and skip unnecessary height-adjustment logic.")]
+    public float heightThreshold = 0.2f; 
+    
     private List<PathNode> currentPath;
     private int currentNodeIndex;
     private bool isMoving = false;
@@ -154,19 +157,20 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         int targetIndex;
         bool targetJumping = false;
         
-        // If next node is same height as current
-        if (Mathf.Approximately(currentHeight, nextHeight))
+
+        // Calculate the absolute difference
+        if (Mathf.Abs(currentHeight - nextHeight) <= heightThreshold)
         {
             targetIndex = nextIndex;
             
             // If skip node is same height as current
-            if (currentPath.Count > 2 && Mathf.Approximately(nextHeight, skipHeight))
+            if (currentPath.Count > 2)
             {
                 targetIndex = skipIndex;
             }
 
         }
-        else // If next node is NOT the same height as current
+        else // If next node is much larger/lower height than current
         {
             targetIndex = nextIndex;
             targetJumping = true;

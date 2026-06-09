@@ -34,6 +34,9 @@ public class MultiGridPathfinder : MonoBehaviour
     [Tooltip("A penalty applied for each unit of vertical distance for a jump.")]
     public float heightDifferencePenalty = 10.0f; 
     
+    [Header("Jump Constraints")]
+    public float maxClimbHeight = 1.0f; // Limit for jumping UP onto things
+    public float maxDropHeight = 3.0f;  // Limit for jumping DOWN off things
 
     // --- Internal A* Data Structures ---
     private List<PathNode> openSet;   // Nodes to be evaluated
@@ -162,7 +165,7 @@ public class MultiGridPathfinder : MonoBehaviour
         Vector3 targetWorldPos = goalNode.GridReference.GetHexWorldPosition(goalNode.GridCoordinates, goalNode.GridReference.GetHexData(goalNode.GridCoordinates).Height);
     
         float distanceToTarget = Vector3.Distance(toPos, targetWorldPos);
-        float directionalBias = distanceToTarget * 0.05f; 
+        float directionalBias = distanceToTarget * 10f; 
     
         return defaultMovementCost + heightCost + directionalBias;
     }
@@ -193,21 +196,26 @@ public class MultiGridPathfinder : MonoBehaviour
             unitAlreadySelected = EntityCommander.GetEntityInCommand() as UnitEntity;
         }
         
+        //******************************************************************************
         // --- 1. Intra-Grid Neighbors (SAME GRID AS ENTITY) ---
         List<Vector2Int> localNeighborCoords = currentNode.GridReference.GetHexNeighbors(currentNode.GridCoordinates);
         foreach (Vector2Int coords in localNeighborCoords)
         {
             HexData neighbourHexData = currentNode.GridReference.GetHexData(coords);
             Vector3 neighbourWorldPos = currentNode.GridReference.GetHexWorldPosition(coords, neighbourHexData.Height);
-
-            if (vehicleAlreadySelected != null)
+            
+            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
             {
                 if (currentNode.GridReference == vehicleAlreadySelected.VehicleInteriorGrid)
                 {
                     continue;
                 }
                 if (!neighbourHexData.GetIsWalkable()) continue;
-                if (neighbourHexData.GetIsOccupied() && neighbourHexData.GetOccupier() != EntityCommander.GetEntityInCommand().EntityGUID) continue;
+                // I think catch to allow vehicle driving over its own tiles 
+                if (neighbourHexData.GetIsOccupied() && neighbourHexData.GetOccupier() != EntityCommander.GetEntityInCommand().EntityGUID)
+                {
+                    continue;
+                }
             }
             else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
             {
@@ -240,7 +248,10 @@ public class MultiGridPathfinder : MonoBehaviour
                 }
             }
         }
-
+        //******************************************************************************
+        
+        
+        //******************************************************************************
         // --- 2. Inter-Grid Neighbors (JUMPING TO DIFFERENT GRID) ---
         foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
         {
@@ -252,44 +263,108 @@ public class MultiGridPathfinder : MonoBehaviour
                     continue;
                 }
             }
-
+            
+            // Needs to be here coz This is meant for stop looking for nodes in the IntRA grid section
             if (otherGrid == currentNode.GridReference)
             {
                 continue;
             }
-
+            
+            // --- Inside your loop ---
             foreach (HexData otherHexData in otherGrid.HexagonsInGrid.Values)
             {
                 if (!otherHexData.GetIsWalkable()) continue;
                 if (!otherHexData.GetIsClimbable()) continue;
                 if (otherHexData.GetIsOccupied()) continue;
 
+                Vector3 otherHexWorldPos = otherGrid.GetHexWorldPosition(otherHexData.GridCoordinates, otherHexData.Height);
 
-                Vector3 otherHexWorldPos =
-                    otherGrid.GetHexWorldPosition(otherHexData.GridCoordinates, otherHexData.Height);
+                float horizontalDist = Vector2.Distance(
+                    new Vector2(currentWorldPos.x, currentWorldPos.z),
+                    new Vector2(otherHexWorldPos.x, otherHexWorldPos.z)
+                );
 
-                // Calculate horizontal and vertical distance
-                float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
-                    new Vector2(otherHexWorldPos.x, otherHexWorldPos.z));
-                float verticalDist = Mathf.Abs(currentWorldPos.y - otherHexWorldPos.y);
+                if (horizontalDist > connectionRange) continue; // Ignore hexes that are too far!
 
-                // Check if within jump range
-                if (horizontalDist <= connectionRange && verticalDist <= maxVerticalDifference)
+                // 2. Now run your other checks only on the nearby hexes
+                if (!otherHexData.GetIsWalkable()) continue;
+            
+                // Calculate the actual difference (no Abs() here, so we keep direction)
+                float heightDiff = currentWorldPos.y - otherHexWorldPos.y; 
+
+                // Determine if the jump is valid
+                bool canJump = false;
+                if (horizontalDist <= connectionRange)
                 {
-                    // Found a valid jump point!
-                    if (currentWorldPos.y > otherHexWorldPos.y) // If jumping DOWN
+                    if (heightDiff < 0) // We are jumping UP
                     {
-                        if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
-                        {
-                            neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
-                        }
+                        if (Mathf.Abs(heightDiff) <= maxClimbHeight) canJump = true;
                     }
-                    else // If jumping UP or staying at the same height
+                    else // We are jumping DOWN (heightDiff is positive or zero)
                     {
-                        neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
+                        if (heightDiff <= maxDropHeight) canJump = true;
                     }
                 }
+
+                if (canJump)
+                {
+                    // Calculate cost: 0.1f to board a vehicle, or defaultMovementCost otherwise
+                    bool isVehicle = (otherGrid.GridType == HexGridManager.GridType.Floating);
+                    float moveCost = isVehicle ? 0.1f : defaultMovementCost;
+
+                    neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
+                }
+                else 
+                {
+                    // ADD THIS:
+                    Debug.Log($"Pathfinder rejected jump: Grid={otherGrid.name}, Dist={horizontalDist}, HeightDiff={heightDiff}");
+                }
             }
+            //******************************************************************************
+
+            // foreach (HexData otherHexData in otherGrid.HexagonsInGrid.Values)
+            // {
+            //     if (!otherHexData.GetIsWalkable()) continue;
+            //     if (!otherHexData.GetIsClimbable()) continue;
+            //     if (otherHexData.GetIsOccupied()) continue;
+            //
+            //
+            //     Vector3 otherHexWorldPos =
+            //         otherGrid.GetHexWorldPosition(otherHexData.GridCoordinates, otherHexData.Height);
+            //
+            //     // Calculate horizontal and vertical distance
+            //     float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
+            //         new Vector2(otherHexWorldPos.x, otherHexWorldPos.z));
+            //     float verticalDist = Mathf.Abs(currentWorldPos.y - otherHexWorldPos.y);
+            //     
+            //     // Check if this is a vehicle
+            //     bool isVehicleGrid = otherGrid.GridType == HexGridManager.GridType.Floating;
+            //
+            //     // Only enforce the vertical limit if it's NOT a vehicle, 
+            //     // OR if you want to enforce it, make the limit specific to boarding
+            //     if (horizontalDist <= connectionRange && (verticalDist <= maxVerticalDifference || isVehicleGrid))
+            //     {
+            //         // If it's a vehicle, you might want a special "boarding" cost instead of height penalty
+            //         neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
+            //     }
+            //
+            //     // Check if within jump range
+            //     //     if (horizontalDist <= connectionRange && verticalDist <= maxVerticalDifference)
+            //     //     {
+            //     //         // Found a valid jump point!
+            //     //         if (currentWorldPos.y > otherHexWorldPos.y) // If jumping DOWN
+            //     //         {
+            //     //             if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
+            //     //             {
+            //     //                 neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
+            //     //             }
+            //     //         }
+            //     //         else // If jumping UP or staying at the same height
+            //     //         {
+            //     //             neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
+            //     //         }
+            //     //     }
+            // }
         }
 
         return neighbors;

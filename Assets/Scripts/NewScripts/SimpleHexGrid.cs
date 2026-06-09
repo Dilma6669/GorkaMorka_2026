@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
@@ -46,9 +47,9 @@ public class SimpleHexGrid : MonoBehaviour
         new Vector2Int(0, 1) // Down-Right (q, r+1)
     };
 
-    // --- MonoBehaviour Lifecycle ---
+    public event Action OnGridReady;
 
-    void Awake()
+    private void Awake()
     {
         HexGridVisualiser = GetComponent<HexGridVisualizer>();
 
@@ -57,10 +58,29 @@ public class SimpleHexGrid : MonoBehaviour
                  GetComponentInChildren<Entity>();
         
         // This is a more robust way to set the grid's initial position.
-      //  transform.position = new Vector3(transform.position.x, entireGridHeightOffset, transform.position.z);
+        transform.position = new Vector3(transform.position.x, entireGridHeightOffset, transform.position.z);
         
         // Initialize the dictionary once in Awake.
         HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
+        
+    }
+
+    private void Start()
+    {
+        transform.position = new Vector3(transform.position.x, entireGridHeightOffset, transform.position.z);
+        
+        GenerateDataGrid();
+    }
+    
+    
+    void OnDestroy()
+    {
+        RegisterGridToSystem(false);
+    }
+
+    protected virtual void GenerateDataGrid()
+    {
+        Debug.Log($"fuck simple hex generate");
 
         if (customGridShape != null)
         {
@@ -70,30 +90,37 @@ public class SimpleHexGrid : MonoBehaviour
         {
             GenerateDefaultGrid();
         }
-
-        HexGridManager.Instance.RegisterGrid(this);
+        
+        RegisterGridToSystem(true);
     }
-    
-    void OnDestroy()
+
+    protected void RegisterGridToSystem(bool register)
     {
-        if (HexGridManager.Instance != null)
+        if (register)
         {
-            HexGridManager.Instance.UnregisterGrid(this);
+            if (HexGridManager.Instance != null)
+            {
+                HexGridManager.Instance.RegisterGrid(this);
+            }
+
+            OnGridFinish();
+        }
+        else
+        {
+            if (HexGridManager.Instance != null)
+            {
+                HexGridManager.Instance.UnregisterGrid(this);
+            }
         }
     }
 
-    // --- Public Access Methods ---
-
-    /// <summary>
-    /// Safely retrieves the HexData for a given coordinate.
-    /// </summary>
-    /// <param name="coords">The grid coordinates of the hex.</param>
-    /// <param name="hexData">The HexData found at the coordinates, or a default value if not found.</param>
-    /// <returns>True if the hex was found, false otherwise.</returns>
-    public bool TryGetHexData(Vector2Int coords, out HexData hexData)
+    private void OnGridFinish()
     {
-        return HexagonsInGrid.TryGetValue(coords, out hexData);
+        Debug.Log($"fuck invoke ya cunt");
+        OnGridReady?.Invoke();
     }
+
+    // --- Public Access Methods ---
     
     /// <summary>
     /// Retrieves the HexData (coordinates and walkability) for a specific grid coordinate.
@@ -184,11 +211,10 @@ public class SimpleHexGrid : MonoBehaviour
 
         return HexagonsInGrid.ContainsKey(coords);
     }
-
-    // --- Private Grid Generation Logic (Now Circular) ---
+    
 
     /// <summary>
-    public void GenerateDefaultGrid()
+    protected void GenerateDefaultGrid()
     {
         if (HexagonsInGrid == null)
         {
@@ -267,50 +293,6 @@ public class SimpleHexGrid : MonoBehaviour
     
         CenterGridOnTransform();
     }
-    
-    // public void GenerateCustomGrid()
-    // {
-    //     if (HexagonsInGrid == null)
-    //     {
-    //         HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
-    //     }
-    //     HexagonsInGrid.Clear(); // Clears the dictionary instead of creating a new one.
-    //
-    //     if (customGridShape == null || customGridShape.shapeRows == null || customGridShape.shapeRows.Length == 0)
-    //     {
-    //         Debug.LogError("Grid shape is null or empty. Cannot generate grid.");
-    //         GenerateDefaultGrid();
-    //         return;
-    //     }
-    //
-    //     for (int q = 0; q < customGridShape.shapeRows.Length; q++)
-    //     {
-    //         string rowString = customGridShape.shapeRows[q];
-    //         string cleanedRowString = rowString.Replace(".", "");
-    //         int rowOffset = q / 2;
-    //
-    //         for (int r = 0; r < cleanedRowString.Length; r++)
-    //         {
-    //             char character = cleanedRowString[r];
-    //
-    //             if (character == '_')
-    //             {
-    //                 continue;
-    //             }
-    //
-    //             if (char.IsDigit(character))
-    //             {
-    //                 int heightLevel = int.Parse(character.ToString());
-    //                 float hexHeight = heightLevel * singleHexHeightAdjustment;
-    //                 Vector2Int hexCoords = new Vector2Int(q, r - rowOffset);
-    //                 
-    //                 HexagonsInGrid.Add(hexCoords, new HexData(hexCoords,hexHeight));
-    //             }
-    //         }
-    //     }
-    //     
-    //     CenterGridOnTransform();
-    // }
     
     /// <summary>
     /// Centers the grid around the parent GameObject's world position.
@@ -425,6 +407,13 @@ public class SimpleHexGrid : MonoBehaviour
         return false;
     }
     
+    public float GetHexVisualHeight()
+    {
+        // If you have the visualizer on the same object
+        var visualizer = GetComponent<HexGridVisualizer>();
+        return (visualizer != null) ? visualizer.hexVisualHeight : 0.1f;
+    }
+    
     /// <summary>
     /// Finds the HexData of the hexagon closest to a given world position.
     /// </summary>
@@ -448,5 +437,21 @@ public class SimpleHexGrid : MonoBehaviour
             }
         }
         return found;
+    }
+    
+    public float GetHexTopSurfaceY(Vector2Int coords)
+    {
+        if (HexGridVisualiser != null && HexGridVisualiser.TryGetVisualTile(coords, out HexVisualTile tile))
+        {
+            // Use the mesh bounds to find the exact top
+            Renderer rend = tile.GetComponentInChildren<Renderer>();
+            if (rend != null)
+            {
+                return rend.bounds.max.y; // The absolute highest Y point of the mesh
+            }
+        }
+    
+        // Fallback if visualizer isn't ready
+        return GetHexWorldPosition(coords, GetHexData(coords).Height).y;
     }
 }

@@ -87,5 +87,17 @@ public class VehicleEntity : Entity
         ShowArcs = false;
         ShowArcs = true;
     }
-
+    
+    public override void SetEntityToNewGrid(SimpleHexGrid newGrid, Vector2Int newCoords)
+    {
+        // 1. Do the normal grid snapping (sets parent, coordinates, etc.)
+        base.SetEntityToNewGrid(newGrid, newCoords);
+    
+        // 2. If this is a vehicle, perform a secondary ground-height check
+        // We only want to snap to ground if we are sitting on the world grid, not our own interior
+        if (newGrid.GridType == HexGridManager.GridType.Ground)
+        {
+            SnapToGround();
+        }
+    }
 }

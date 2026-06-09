@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic; // Required for List and Dictionary
 
@@ -10,39 +11,34 @@ public class HexGridVisualizer : MonoBehaviour
     [Header("Visuals Settings")]
     [Tooltip("The prefab GameObject to use for each hexagon (must have a HexVisualTile component and a Renderer).")]
     public GameObject hexPrefab;
-   
+
     public GameObject HexagonsContainer;
-    
+
     [Tooltip("The SimpleHexGrid data source this visualizer will represent.")]
     public SimpleHexGrid targetGrid;
 
     [Tooltip("The desired vertical scale (thickness) of the visual hexagon meshes.")]
     public float hexVisualHeight = 0.1f; // New parameter for controlling thickness
-    
-    [Header("Tile Colors")]
-    public Color unwalkableColor = Color.red;
+
+    [Header("Tile Colors")] public Color unwalkableColor = Color.red;
     public Color climbableColor = Color.blue;
     public Color occupiedColour = Color.red;
     public Color commandSeatColour = Color.green;
-    
+
     // A dictionary to quickly find a HexVisualTile by its axial coordinates
     private Dictionary<Vector2Int, HexVisualTile> visualTiles;
 
     private bool edgeHexagonsVisible;
-    
+
     void Awake()
     {
         targetGrid = GetComponent<SimpleHexGrid>();
-        
+        targetGrid.OnGridReady += GenerateVisualGrid;
+
         if (targetGrid == null)
         {
             Debug.LogError($"HexGridVisualizer on '{name}': Target Grid is not assigned!", this);
         }
-    }
-
-    private void Start()
-    {
-        GenerateVisualGrid();
     }
 
     /// <summary>
@@ -60,21 +56,24 @@ public class HexGridVisualizer : MonoBehaviour
             Debug.LogError("HexGridVisualizer: Hex Prefab is not assigned!");
             return;
         }
+
         if (targetGrid == null)
         {
             Debug.LogError("HexGridVisualizer: Target Grid is not assigned!");
             return;
         }
-        if (targetGrid.HexagonsInGrid == null || targetGrid.HexagonsInGrid.Count == 0)
+
+        if (targetGrid.HexagonsInGrid.Count == 0)
         {
-           // Debug.LogWarning("HexGridVisualizer: Target grid has no hex data. Generating grid first.");
-            targetGrid.GenerateCustomGrid();
+            Debug.LogError("Visualizer cannot generate: Grid data has not been initialized yet!");
+            return;
         }
 
+
         visualTiles = new Dictionary<Vector2Int, HexVisualTile>(); // Initialize the dictionary
-        
-       // Debug.Log("fuck targetGrid.HexagonsInGrid.Count = " + targetGrid.HexagonsInGrid.Count);
-        
+
+        // Debug.Log("fuck targetGrid.HexagonsInGrid.Count = " + targetGrid.HexagonsInGrid.Count);
+
         // Iterate through all hexes in the data grid and create their visual counterparts
         foreach (KeyValuePair<Vector2Int, HexData> hexDataPair in targetGrid.HexagonsInGrid)
         {
@@ -82,7 +81,7 @@ public class HexGridVisualizer : MonoBehaviour
             Vector3 worldPos = targetGrid.GetHexWorldPosition(coords, hexDataPair.Value.Height);
 
             GameObject hexInstance = Instantiate(hexPrefab, worldPos, Quaternion.identity);
-       
+
             hexInstance.transform.SetParent(HexagonsContainer.transform); // Parent to visualizer for organization
             hexInstance.name = $"Hex_{coords.x},{coords.y}"; // Name for easier debugging
 
@@ -92,37 +91,39 @@ public class HexGridVisualizer : MonoBehaviour
             // So, we need to scale the prefab by (hexSize / 0.5) in X and Z, which simplifies to hexSize * 2.
             float scaleFactorXZ = targetGrid.hexSize * 2f;
             hexInstance.transform.localScale = new Vector3(scaleFactorXZ, hexVisualHeight, scaleFactorXZ);
-            
+
             // --- NEW: Get and Initialize HexVisualTile ---
             HexVisualTile visualTile = hexInstance.GetComponent<HexVisualTile>();
-            
-           // Debug.Log($"Tile {coords}: Walkable={hexDataPair.Value.isWalkable}, Climbable={hexDataPair.Value.isClimbable}");
-            
+
+            // Debug.Log($"Tile {coords}: Walkable={hexDataPair.Value.isWalkable}, Climbable={hexDataPair.Value.isClimbable}");
+
             if (visualTile != null)
             {
-                visualTile.Initialize(targetGrid, coords, hexDataPair.Value.Height, hexDataPair.Value.GetIsWalkable(), hexDataPair.Value.GetIsClimbable(), hexDataPair.Value.GetIsOccupied(), hexDataPair.Value.GetIsCommandSeat());
+                visualTile.Initialize(targetGrid, coords, hexDataPair.Value.Height, hexDataPair.Value.GetIsWalkable(),
+                    hexDataPair.Value.GetIsClimbable(), hexDataPair.Value.GetIsOccupied(),
+                    hexDataPair.Value.GetIsCommandSeat());
                 visualTiles.Add(coords, visualTile); // Store the reference
             }
             else
             {
-              //  Debug.LogWarning($"HexGridVisualizer: Hex Prefab '{hexPrefab.name}' is missing a HexVisualTile component! Cannot control its visuals.", hexPrefab);
+                //  Debug.LogWarning($"HexGridVisualizer: Hex Prefab '{hexPrefab.name}' is missing a HexVisualTile component! Cannot control its visuals.", hexPrefab);
             }
-            
+
             if (!hexDataPair.Value.GetIsWalkable())
             {
                 visualTile.ColourLocked = false; // Ensure we can change it
-                visualTile.SetBaseColor(unwalkableColor); 
+                visualTile.SetBaseColor(unwalkableColor);
                 visualTile.ColourLocked = true;
             }
             else if (hexDataPair.Value.GetIsClimbable())
             {
                 visualTile.ColourLocked = false;
                 visualTile.SetBaseColor(climbableColor);
-               // visualTile.ColourLocked = true;
+                // visualTile.ColourLocked = true;
             }
             else if (hexDataPair.Value.GetIsOccupied())
             {
-               // visualTile.ColourLocked = false;
+                // visualTile.ColourLocked = false;
                 visualTile.SetBaseColor(occupiedColour);
                 //visualTile.ColourLocked = true;
             }
@@ -139,7 +140,11 @@ public class HexGridVisualizer : MonoBehaviour
                 visualTile.ResetBaseColor();
             }
         }
-       // Debug.Log($"Generated visual grid for '{targetGrid.name}' with {visualTiles.Count} hex tiles.");
+    }
+
+    public bool TryGetVisualTile(Vector2Int coords, out HexVisualTile tile)
+    {
+        return visualTiles.TryGetValue(coords, out tile);
     }
 
     /// <summary>
@@ -157,11 +162,12 @@ public class HexGridVisualizer : MonoBehaviour
                     DestroyImmediate(tile.gameObject); // Use DestroyImmediate for editor context menu
                 }
             }
+
             visualTiles.Clear();
-          //  Debug.Log($"Cleared visual grid for '{targetGrid.name}'.");
+            //  Debug.Log($"Cleared visual grid for '{targetGrid.name}'.");
         }
     }
-    
+
     [ContextMenu("Refresh Grid Data")]
     public void RefreshGridData()
     {
@@ -169,12 +175,12 @@ public class HexGridVisualizer : MonoBehaviour
 
         // 1. Force the data to update
         targetGrid.GenerateCustomGrid();
-    
+
         // 2. Clear then Rebuild
         ClearVisualGrid();
         GenerateVisualGrid();
-    
-     //   Debug.Log("HexGridVisualizer: Grid data and visuals refreshed.");
+
+        //   Debug.Log("HexGridVisualizer: Grid data and visuals refreshed.");
     }
 
     // --- NEW: Public Methods for Color Control ---
@@ -190,12 +196,12 @@ public class HexGridVisualizer : MonoBehaviour
         if (visualTiles != null && visualTiles.TryGetValue(coords, out HexVisualTile tile))
         {
             // Highlight via overlay, NOT core tile color
-            tile.SetHighlightColour(color, true); 
-        
+            tile.SetHighlightColour(color, true);
+
             // You no longer need to worry about ColourLocked for pathfinding!
         }
     }
-    
+
     public void ClearOverlayHighlights()
     {
         if (visualTiles == null) return;
@@ -205,7 +211,7 @@ public class HexGridVisualizer : MonoBehaviour
             tile.SetHighlightColour(Color.clear, false);
         }
     }
-    
+
     public void VisualizeEdgeHexes()
     {
         bool showEdges = !edgeHexagonsVisible;
@@ -215,7 +221,7 @@ public class HexGridVisualizer : MonoBehaviour
 
         // A distinct color for the edges, for example, yellow
         Color edgeColor = Color.yellow;
-    
+
         foreach (var entry in hexGridData)
         {
             Vector2Int coords = entry.Key;
@@ -260,7 +266,7 @@ public class HexGridVisualizer : MonoBehaviour
         {
             tile.ResetBaseColor();
 
-          //  currentColouredTiles.Remove(coords);
+            //  currentColouredTiles.Remove(coords);
         }
     }
 
@@ -284,5 +290,7 @@ public class HexGridVisualizer : MonoBehaviour
     void OnDestroy()
     {
         ClearVisualGrid(); // Clean up spawned hexes when this component is destroyed
+        targetGrid.OnGridReady -= GenerateVisualGrid;
+
     }
 }

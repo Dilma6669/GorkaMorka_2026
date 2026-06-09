@@ -395,6 +395,11 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &647497032 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3227663583596440984, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 727156828}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &677585704
 GameObject:
   m_ObjectHideFlags: 0
@@ -437,6 +442,10 @@ PrefabInstance:
     - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_Name
       value: SimpleHexGrid
+      objectReference: {fileID: 0}
+    - target: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: gridRadius
@@ -486,6 +495,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: targetGrid
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: hexVisualHeight
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7355252563365779604, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_TagString
       value: GroundGrid
@@ -493,24 +510,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 2045115133}
   m_SourcePrefab: {fileID: 100100000, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
 --- !u!4 &727156829 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
   m_PrefabInstance: {fileID: 727156828}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &727156830 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
-  m_PrefabInstance: {fileID: 727156828}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 228f942f3148419ca14134cfe927cc26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,6 +569,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1011478121 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7355252563365779604, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 727156828}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1030389473
 GameObject:
   m_ObjectHideFlags: 0
@@ -727,6 +741,8 @@ MonoBehaviour:
   connectionRange: 3
   maxVerticalDifference: 1
   heightDifferencePenalty: 10
+  maxClimbHeight: 3
+  maxDropHeight: 3
 --- !u!114 &1284890849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -744,8 +760,9 @@ MonoBehaviour:
   craftPrefab: {fileID: 7364709448439807745, guid: d817cf2b60e943847a272d152a84829e, type: 3}
   GroundedGridsContainer: {fileID: 1030389473}
   FloatingGridsContainer: {fileID: 677585704}
-  defaultSpawnGrid: {fileID: 727156830}
+  defaultSpawnGrid: {fileID: 2045115133}
   defaultSpawnCoordinates: {x: 0, y: 0}
+  unitsToSpawn: []
 --- !u!114 &1284890850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1072,6 +1089,48 @@ MonoBehaviour:
   directMoveDecalPrefab: {fileID: 0}
   loopingMoveDecalPrefab: {fileID: 0}
   unreachableDecalPrefab: {fileID: 0}
+--- !u!1 &2045115128 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 727156828}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2045115133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045115128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16b1adb27ee24489a08e1e8b2a095dbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HexGridVisualiser: {fileID: 0}
+  griEntity: {fileID: 0}
+  GridType: 0
+  HexagonsContainer: {fileID: 647497032}
+  EntityContainer: {fileID: 1011478121}
+  customGridShape: {fileID: 0}
+  gridRadius: 30
+  hexSize: 1
+  entireGridHeightOffset: 0
+  singleHexHeightAdjustment: 1
+  noiseScale: 0.15
+  heightMultiplier: 2
+  seed: 0
+  baseHeight: 0
+  seedOffsetMultiplier: 1000
+  duneScale: 0.05
+  duneHeight: 8
+  duneOctaves: 3
+  dunePersistence: 0.5
+  rockScale: 0.5
+  rockHeight: 15
+  rockThreshold: 0.6
+  rockSharpness: 2
+  terrainSmoothness: 0.8
+  neighborHeightLimit: 0.8
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
