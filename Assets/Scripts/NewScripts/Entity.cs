@@ -43,6 +43,13 @@ public class Entity : MonoBehaviour
             }
         }
     }
+    
+    void Update() {
+        if (CurrentGrid != null) {
+            float surfaceY = CurrentGrid.GetHexTopSurfaceY(CurrentGridCoordinates);
+            Debug.DrawLine(transform.position, new Vector3(transform.position.x, surfaceY, transform.position.z), Color.green);
+        }
+    }
 
     /// <summary>
     /// Initializes the unit's starting position and grid state.
@@ -162,26 +169,4 @@ public class Entity : MonoBehaviour
     {
 
     }
-    
-    public virtual void SetEntityToNewGrid(SimpleHexGrid newGrid, Vector2Int newCoords)
-    {
-
-    }
-    
-    public void SnapToGround()
-    {
-        // Find a grid that is of type 'Ground'
-        // This is safer than just using CurrentGrid
-        SimpleHexGrid groundGrid = HexGridManager.Instance.GetAllGrids()
-            .Find(g => g.GridType == HexGridManager.GridType.Ground);
-
-        if (groundGrid != null && groundGrid.TryGetClosestHexagon(transform.position, out HexData groundHex))
-        {
-            Vector3 groundPos = groundGrid.GetHexWorldPosition(groundHex.GridCoordinates, groundHex.Height);
-        
-            // Snap only the Y position
-            transform.position = new Vector3(transform.position.x, groundPos.y + entityHeightOffset, transform.position.z);
-        }
-    }
-
 }

@@ -22,7 +22,7 @@ public class WheelSnapper : MonoBehaviour
 
     void Update()
     {
-        Vector3 rayStart = new Vector3(transform.position.x, transform.parent.position.y + raycastHeight, transform.position.z);
+        Vector3 rayStart = new Vector3(transform.position.x, transform.parent.position.y, transform.position.z);
         Debug.DrawRay(rayStart, Vector3.down * (raycastHeight * 2f), Color.red);
 
         if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, raycastHeight * 2f, groundLayer))

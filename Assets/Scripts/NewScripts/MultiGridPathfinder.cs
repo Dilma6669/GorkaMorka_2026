@@ -229,7 +229,13 @@ public class MultiGridPathfinder : MonoBehaviour
             // Calculate horizontal and vertical distance
             float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
                 new Vector2(neighbourWorldPos.x, neighbourWorldPos.z));
-            float verticalDist = Mathf.Abs(currentHexData.Height - neighbourHexData.Height);
+           // float verticalDist = Mathf.Abs(currentHexData.Height - neighbourHexData.Height);
+            
+            float currentTopY = currentNode.GridReference.GetHexTopSurfaceY(currentNode.GridCoordinates);
+            float neighbourTopY = currentNode.GridReference.GetHexTopSurfaceY(coords);
+
+            // Calculate the vertical difference based on surface-to-surface
+            float verticalDist = Mathf.Abs(currentTopY - neighbourTopY);
             
             if (horizontalDist <= connectionRange && verticalDist <= maxVerticalDifference)
             {
@@ -290,7 +296,13 @@ public class MultiGridPathfinder : MonoBehaviour
                 if (!otherHexData.GetIsWalkable()) continue;
             
                 // Calculate the actual difference (no Abs() here, so we keep direction)
-                float heightDiff = currentWorldPos.y - otherHexWorldPos.y; 
+              //  float heightDiff = currentWorldPos.y - otherHexWorldPos.y;
+                
+                float currentTopY = currentNode.GridReference.GetHexTopSurfaceY(currentNode.GridCoordinates);
+                float otherTopY = otherGrid.GetHexTopSurfaceY(otherHexData.GridCoordinates);
+
+                // This gives you the true jump height (negative if jumping up, positive if jumping down)
+                float heightDiff = currentTopY - otherTopY;
 
                 // Determine if the jump is valid
                 bool canJump = false;
@@ -321,50 +333,6 @@ public class MultiGridPathfinder : MonoBehaviour
                 }
             }
             //******************************************************************************
-
-            // foreach (HexData otherHexData in otherGrid.HexagonsInGrid.Values)
-            // {
-            //     if (!otherHexData.GetIsWalkable()) continue;
-            //     if (!otherHexData.GetIsClimbable()) continue;
-            //     if (otherHexData.GetIsOccupied()) continue;
-            //
-            //
-            //     Vector3 otherHexWorldPos =
-            //         otherGrid.GetHexWorldPosition(otherHexData.GridCoordinates, otherHexData.Height);
-            //
-            //     // Calculate horizontal and vertical distance
-            //     float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
-            //         new Vector2(otherHexWorldPos.x, otherHexWorldPos.z));
-            //     float verticalDist = Mathf.Abs(currentWorldPos.y - otherHexWorldPos.y);
-            //     
-            //     // Check if this is a vehicle
-            //     bool isVehicleGrid = otherGrid.GridType == HexGridManager.GridType.Floating;
-            //
-            //     // Only enforce the vertical limit if it's NOT a vehicle, 
-            //     // OR if you want to enforce it, make the limit specific to boarding
-            //     if (horizontalDist <= connectionRange && (verticalDist <= maxVerticalDifference || isVehicleGrid))
-            //     {
-            //         // If it's a vehicle, you might want a special "boarding" cost instead of height penalty
-            //         neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
-            //     }
-            //
-            //     // Check if within jump range
-            //     //     if (horizontalDist <= connectionRange && verticalDist <= maxVerticalDifference)
-            //     //     {
-            //     //         // Found a valid jump point!
-            //     //         if (currentWorldPos.y > otherHexWorldPos.y) // If jumping DOWN
-            //     //         {
-            //     //             if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
-            //     //             {
-            //     //                 neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
-            //     //             }
-            //     //         }
-            //     //         else // If jumping UP or staying at the same height
-            //     //         {
-            //     //             neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
-            //     //         }
-            //     //     }
-            // }
         }
 
         return neighbors;
