@@ -9,6 +9,7 @@ TagManager:
   - Unit
   - Hexagon
   - CraftVessel
+  - Vehicle
   layers:
   - Default
   - TransparentFX

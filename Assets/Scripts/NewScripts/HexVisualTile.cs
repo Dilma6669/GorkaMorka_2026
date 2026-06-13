@@ -78,24 +78,24 @@ public class HexVisualTile : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        // Ensure you have a reference to your HexData
-        string occupied = hexData.GetIsOccupied() ? "Occupied" : "Free";
-        string occupier = string.IsNullOrEmpty(hexData.GetOccupier()) ? "-" : hexData.GetOccupier();
-        // Assuming your properties are named isClimbable and isWalkable
-        string climbable = hexData.GetIsClimbable() ? "Climbable" : "Not Climbable";
-        string walkable = hexData.GetIsWalkable() ? "Walkable" : "Blocked";
-
-        Color textColor = hexData.GetIsOccupied() || !hexData.GetIsWalkable() ? Color.red : Color.green;
-
-        // Draw the text in the Scene View
-        UnityEditor.Handles.color = textColor;
-        UnityEditor.Handles.Label(transform.position + Vector3.up * 0.5f,
-            $"Coords: {hexData.GridCoordinates}\n" +
-            $"Occupied: {occupied}\n" +
-            $"Occupier: {occupier}\n" +
-            $"Move: {walkable}\n" +
-            $"Climb: {climbable}");
-    }
+    // private void OnDrawGizmos()
+    // {
+    //     // Ensure you have a reference to your HexData
+    //     string occupied = hexData.GetIsOccupied() ? "Occupied" : "Free";
+    //     string occupier = string.IsNullOrEmpty(hexData.GetOccupier()) ? "-" : hexData.GetOccupier();
+    //     // Assuming your properties are named isClimbable and isWalkable
+    //     string climbable = hexData.GetIsClimbable() ? "Climbable" : "Not Climbable";
+    //     string walkable = hexData.GetIsWalkable() ? "Walkable" : "Blocked";
+    //
+    //     Color textColor = hexData.GetIsOccupied() || !hexData.GetIsWalkable() ? Color.red : Color.green;
+    //
+    //     // Draw the text in the Scene View
+    //     UnityEditor.Handles.color = textColor;
+    //     UnityEditor.Handles.Label(transform.position + Vector3.up * 0.5f,
+    //         $"Coords: {hexData.GridCoordinates}\n" +
+    //         $"Occupied: {occupied}\n" +
+    //         $"Occupier: {occupier}\n" +
+    //         $"Move: {walkable}\n" +
+    //         $"Climb: {climbable}");
+    // }
 }
