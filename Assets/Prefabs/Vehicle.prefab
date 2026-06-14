@@ -788,8 +788,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e74f61d1e9b2c1a489511856881143a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastHeight: 2
-  verticalOffset: 0.2
+  raycastHeight: 5
+  verticalOffset: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -896,8 +896,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e74f61d1e9b2c1a489511856881143a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastHeight: 2
-  verticalOffset: 0.2
+  raycastHeight: 5
+  verticalOffset: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -1689,8 +1689,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e74f61d1e9b2c1a489511856881143a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastHeight: 2
-  verticalOffset: 0.2
+  raycastHeight: 5
+  verticalOffset: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -1797,8 +1797,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e74f61d1e9b2c1a489511856881143a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastHeight: 2
-  verticalOffset: 0.2
+  raycastHeight: 5
+  verticalOffset: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
