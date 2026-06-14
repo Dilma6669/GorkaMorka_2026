@@ -496,6 +496,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: targetGrid
       value: 
       objectReference: {fileID: 0}
@@ -507,13 +511,18 @@ PrefabInstance:
       propertyPath: m_TagString
       value: GroundGrid
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+    - {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
-      insertIndex: 1
+      insertIndex: -1
       addedObject: {fileID: 2045115133}
+    - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2045115137}
   m_SourcePrefab: {fileID: 100100000, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
 --- !u!4 &727156829 stripped
 Transform:
@@ -1158,7 +1167,7 @@ MonoBehaviour:
   HexagonsContainer: {fileID: 647497032}
   EntityContainer: {fileID: 1011478121}
   customGridShape: {fileID: 0}
-  gridRadius: 30
+  gridRadius: 500
   hexSize: 1
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
@@ -1177,6 +1186,26 @@ MonoBehaviour:
   rockSharpness: 2
   terrainSmoothness: 0.8
   neighborHeightLimit: 0.8
+--- !u!114 &2045115137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045115128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cda0e0579db54afabdaf650e1d143639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HexagonsContainer: {fileID: 647497032}
+  hexVisualHeight: 30
+  highDetailMesh: {fileID: -4575734979276873811, guid: 79357c7aeab13d94e9270b6bd1272d05, type: 3}
+  lowDetailMesh: {fileID: -4575734979276873811, guid: 79357c7aeab13d94e9270b6bd1272d05, type: 3}
+  hexMaterial_HighRes: {fileID: 2100000, guid: 112f3e43f74254ba2b792534a6468e8c, type: 2}
+  hexMaterial_LowRes: {fileID: 2100000, guid: c3ec504e06cda4b64926fc381227e09b, type: 2}
+  lodDistance: 200
+  extremeDistance: 999999
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

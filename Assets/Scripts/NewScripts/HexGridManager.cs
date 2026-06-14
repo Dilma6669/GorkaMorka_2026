@@ -173,15 +173,15 @@ public class HexGridManager : MonoBehaviour
         foreach (SimpleHexGrid hexGrid in registeredGrids)
         {
             Debug.Log("fuck name of grid = " + hexGrid.gameObject.name);
-            HexGridVisualizer gridVisualizer = hexGrid.HexGridVisualiser;
+            HexGridVisualizerFloating gridVisualizerFloating = hexGrid.HexGridVisualiser;
             
-            if (gridVisualizer == null)
+            if (gridVisualizerFloating == null)
             {
                 Debug.LogError("HexGridVisualizer reference is null.");
                 return;
             }
             
-            gridVisualizer.VisualizeEdgeHexes();
+            gridVisualizerFloating.VisualizeEdgeHexes();
         }
     }
     

@@ -6,7 +6,7 @@ using System.Collections.Generic; // Required for List and Dictionary
 // Phase 2.1 (Revised for GameObject Hexes and Visual Control): HexGridVisualizer Class
 // Purpose: Instantiates visual hexagon GameObjects for a SimpleHexGrid.
 // Now also manages references to individual HexVisualTiles for color manipulation.
-public class HexGridVisualizer : MonoBehaviour
+public class HexGridVisualizerFloating : MonoBehaviour
 {
     [Header("Visuals Settings")]
     [Tooltip("The prefab GameObject to use for each hexagon (must have a HexVisualTile component and a Renderer).")]
@@ -15,7 +15,7 @@ public class HexGridVisualizer : MonoBehaviour
     public GameObject HexagonsContainer;
 
     [Tooltip("The SimpleHexGrid data source this visualizer will represent.")]
-    public SimpleHexGrid targetGrid;
+    private SimpleHexGrid targetGrid;
 
     [Tooltip("The desired vertical scale (thickness) of the visual hexagon meshes.")]
     public float hexVisualHeight = 0.1f; // New parameter for controlling thickness
@@ -45,14 +45,14 @@ public class HexGridVisualizer : MonoBehaviour
     public void GenerateVisual()
     {
         targetGrid.GenerateDataGrid();
-        GenerateVisualGrid();
+        GenerateVisualGrid(targetGrid);
     }
 
     /// <summary>
     /// Instantiates visual hex GameObjects for the target SimpleHexGrid.
     /// Now initializes and stores HexVisualTile components.
     /// </summary>
-    public void GenerateVisualGrid()
+    public void GenerateVisualGrid(SimpleHexGrid hexGrid)
     {
         // Clear any existing visual hexes before generating new ones
         ClearVisualGrid();
@@ -184,7 +184,7 @@ public class HexGridVisualizer : MonoBehaviour
 
         // 2. Clear then Rebuild
         ClearVisualGrid();
-        GenerateVisualGrid();
+        GenerateVisualGrid(targetGrid);
 
         //   Debug.Log("HexGridVisualizer: Grid data and visuals refreshed.");
     }

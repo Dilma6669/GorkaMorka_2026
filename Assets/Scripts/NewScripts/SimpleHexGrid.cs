@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 public class SimpleHexGrid : MonoBehaviour
 {
     [HideInInspector]
-    public HexGridVisualizer HexGridVisualiser;
+    public HexGridVisualizerFloating HexGridVisualiser;
     [HideInInspector]
     public Entity griEntity;
 
@@ -47,11 +47,11 @@ public class SimpleHexGrid : MonoBehaviour
         new Vector2Int(0, 1) // Down-Right (q, r+1)
     };
 
-    public event Action OnGridReady;
+    public event Action<SimpleHexGrid> OnGridReady;
 
     private void Awake()
     {
-        HexGridVisualiser = GetComponent<HexGridVisualizer>();
+        HexGridVisualiser = GetComponent<HexGridVisualizerFloating>();
 
         griEntity = GetComponent<Entity>() ??
                  GetComponentInParent<Entity>() ??
@@ -117,7 +117,7 @@ public class SimpleHexGrid : MonoBehaviour
     private void OnGridFinish()
     {
         Debug.Log($"fuck invoke ya cunt");
-        OnGridReady?.Invoke();
+        OnGridReady?.Invoke(this);
     }
 
     // --- Public Access Methods ---
@@ -410,7 +410,7 @@ public class SimpleHexGrid : MonoBehaviour
     public float GetHexVisualHeight()
     {
         // If you have the visualizer on the same object
-        var visualizer = GetComponent<HexGridVisualizer>();
+        var visualizer = GetComponent<HexGridVisualizerFloating>();
         return (visualizer != null) ? visualizer.hexVisualHeight : 0.1f;
     }
     

@@ -288,7 +288,7 @@ public class EntitySpawner : MonoBehaviour
         defaultSpawnGrid.OnGridReady -= SpawnInitialModels;
     }
     
-    private void SpawnInitialModels()
+    private void SpawnInitialModels(SimpleHexGrid hexGrid)
     {
         Debug.Log("Spawner: Grid is ready, spawning units now!");
         TestSpawnDefaultUnit();
