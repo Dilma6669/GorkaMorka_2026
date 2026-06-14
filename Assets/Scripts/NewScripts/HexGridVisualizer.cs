@@ -41,11 +41,17 @@ public class HexGridVisualizer : MonoBehaviour
         }
     }
 
+    [ContextMenu("Generate Visual Grid")] // Allows manual triggering from Inspector
+    public void GenerateVisual()
+    {
+        targetGrid.GenerateDataGrid();
+        GenerateVisualGrid();
+    }
+
     /// <summary>
     /// Instantiates visual hex GameObjects for the target SimpleHexGrid.
     /// Now initializes and stores HexVisualTile components.
     /// </summary>
-    [ContextMenu("Generate Visual Grid")] // Allows manual triggering from Inspector
     public void GenerateVisualGrid()
     {
         // Clear any existing visual hexes before generating new ones
@@ -182,35 +188,7 @@ public class HexGridVisualizer : MonoBehaviour
 
         //   Debug.Log("HexGridVisualizer: Grid data and visuals refreshed.");
     }
-
-    // --- NEW: Public Methods for Color Control ---
-
-    /// <summary>
-    /// Highlights a specific hexagon by changing its color.
-    /// </summary>
-    /// <param name="coords">The axial coordinates of the hex to highlight.</param>
-    /// <param name="color">The color to apply.</param>
-    /// <param name="lockColour"></param>
-    public void HighlightHexOverlay(Vector2Int coords, Color color, bool lockColour = false)
-    {
-        if (visualTiles != null && visualTiles.TryGetValue(coords, out HexVisualTile tile))
-        {
-            // Highlight via overlay, NOT core tile color
-            tile.SetHighlightColour(color, true);
-
-            // You no longer need to worry about ColourLocked for pathfinding!
-        }
-    }
-
-    public void ClearOverlayHighlights()
-    {
-        if (visualTiles == null) return;
-        foreach (var tile in visualTiles.Values)
-        {
-            // Simply turn off the overlay
-            tile.SetHighlightColour(Color.clear, false);
-        }
-    }
+    
 
     public void VisualizeEdgeHexes()
     {

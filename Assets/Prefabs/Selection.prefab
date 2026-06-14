@@ -101,5 +101,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 45
   pulseSpeed: 2
-  minScale: 0.9
+  minScale: 0.6
   maxScale: 1.1

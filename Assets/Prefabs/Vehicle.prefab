@@ -4280,7 +4280,7 @@ PrefabInstance:
       objectReference: {fileID: 1945751487590092140}
     - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: hexVisualHeight
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: occupiedColour.g

@@ -226,24 +226,26 @@ public class MultiGridPathfinder : MonoBehaviour
                 }
             }
             
-            // Calculate horizontal and vertical distance
-            float horizontalDist = Vector2.Distance(new Vector2(currentWorldPos.x, currentWorldPos.z),
-                new Vector2(neighbourWorldPos.x, neighbourWorldPos.z));
-           // float verticalDist = Mathf.Abs(currentHexData.Height - neighbourHexData.Height);
-            
-            float currentTopY = currentNode.GridReference.GetHexTopSurfaceY(currentNode.GridCoordinates);
-            float neighbourTopY = currentNode.GridReference.GetHexTopSurfaceY(coords);
+            // Get positions using your new helper method
+            Vector3 currentSurfacePos = currentNode.GridReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridReference.GetHexData(currentNode.GridCoordinates).Height);
+            Vector3 neighbourSurfacePos = currentNode.GridReference.GetHexTopSurfacePosition(coords, neighbourHexData.Height);
 
-            // Calculate the vertical difference based on surface-to-surface
-            float verticalDist = Mathf.Abs(currentTopY - neighbourTopY);
+            // Calculate horizontal distance using X and Z
+            float horizontalDist = Vector2.Distance(
+                new Vector2(currentSurfacePos.x, currentSurfacePos.z),
+                new Vector2(neighbourSurfacePos.x, neighbourSurfacePos.z)
+            );
+
+            // Calculate vertical distance using Y
+            float verticalDist = Mathf.Abs(currentSurfacePos.y - neighbourSurfacePos.y);
             
-            if (horizontalDist <= connectionRange && verticalDist <= maxVerticalDifference)
+            if (verticalDist <= maxVerticalDifference)
             {
-                neighbors.Add(new PathNode(coords, currentNode.GridReference));
+              //  neighbors.Add(new PathNode(coords, currentNode.GridReference));
 
                 if (currentWorldPos.y > neighbourWorldPos.y) // If jumping DOWN
                 {
-                    if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
+                   // if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
                     {
                         neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridReference));
                     }
@@ -282,27 +284,20 @@ public class MultiGridPathfinder : MonoBehaviour
                 if (!otherHexData.GetIsWalkable()) continue;
                 if (!otherHexData.GetIsClimbable()) continue;
                 if (otherHexData.GetIsOccupied()) continue;
+                
+                Vector3 currentSurfacePos = currentNode.GridReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridReference.GetHexData(currentNode.GridCoordinates).Height);
+                Vector3 otherSurfacePos = otherGrid.GetHexTopSurfacePosition(otherHexData.GridCoordinates, otherHexData.Height);
 
-                Vector3 otherHexWorldPos = otherGrid.GetHexWorldPosition(otherHexData.GridCoordinates, otherHexData.Height);
-
+                // Calculate distance
                 float horizontalDist = Vector2.Distance(
-                    new Vector2(currentWorldPos.x, currentWorldPos.z),
-                    new Vector2(otherHexWorldPos.x, otherHexWorldPos.z)
+                    new Vector2(currentSurfacePos.x, currentSurfacePos.z),
+                    new Vector2(otherSurfacePos.x, otherSurfacePos.z)
                 );
 
-                if (horizontalDist > connectionRange) continue; // Ignore hexes that are too far!
+                if (horizontalDist > connectionRange) continue;
 
-                // 2. Now run your other checks only on the nearby hexes
-                if (!otherHexData.GetIsWalkable()) continue;
-            
-                // Calculate the actual difference (no Abs() here, so we keep direction)
-              //  float heightDiff = currentWorldPos.y - otherHexWorldPos.y;
-                
-                float currentTopY = currentNode.GridReference.GetHexTopSurfaceY(currentNode.GridCoordinates);
-                float otherTopY = otherGrid.GetHexTopSurfaceY(otherHexData.GridCoordinates);
-
-                // This gives you the true jump height (negative if jumping up, positive if jumping down)
-                float heightDiff = currentTopY - otherTopY;
+                // Calculate TRUE height difference based on top surfaces
+                float heightDiff = currentSurfacePos.y - otherSurfacePos.y;
 
                 // Determine if the jump is valid
                 bool canJump = false;
@@ -320,10 +315,6 @@ public class MultiGridPathfinder : MonoBehaviour
 
                 if (canJump)
                 {
-                    // Calculate cost: 0.1f to board a vehicle, or defaultMovementCost otherwise
-                    bool isVehicle = (otherGrid.GridType == HexGridManager.GridType.Floating);
-                    float moveCost = isVehicle ? 0.1f : defaultMovementCost;
-
                     neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
                 }
                 else 

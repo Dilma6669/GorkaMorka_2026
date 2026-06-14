@@ -77,7 +77,6 @@ public class Entity : MonoBehaviour
         BaseMoveSpeed = entityData.baseMoveSpeed;
         
         SnapToHex(entityData.spawnGrid, entityData.spawnCoordinates); // Snap to the initial position
-        HexGridManager.Instance.UpdateUnwalkableHexagonsOnAllGrids();
         
         // Ensure we specifically look for the component
         EntityPathMover = GetComponent<IEntityPathMover>();
@@ -90,55 +89,23 @@ public class Entity : MonoBehaviour
         Debug.Log($"Unit '{name}' initialized on grid '{CurrentGrid.name}' at {CurrentGridCoordinates}.");
     }
 
-    /// <summary>
-    /// Snaps the unit's transform to the center of the specified hexagon,
-    /// applying the unitHeightOffset. Updates the unit's current grid state.
-    /// </summary>
-    /// <param name="grid">The target SimpleHexGrid.</param>
-    /// <param name="coords">The target axial coordinates on the grid.</param>
-    // public void SnapToHex(SimpleHexGrid grid, Vector2Int coords)
-    // {
-    //     if (grid == null)
-    //     {
-    //         Debug.LogError($"Unit '{name}': Cannot snap to hex, provided grid is null.", this);
-    //         return;
-    //     }
-    //     if (!grid.IsValidCoordinates(coords))
-    //     {
-    //         Debug.LogWarning($"Unit '{name}': Attempted to snap to invalid coordinates {coords} on grid '{grid.name}'. Unit will remain at current position.", this);
-    //         return;
-    //     }
-    //
-    //     CurrentGrid = grid;
-    //     CurrentGridCoordinates = coords;
-    //     transform.SetParent(grid.EntityContainer.transform);
-    //
-    //     HexData hexData = grid.GetHexData(coords);
-    //     
-    //     // Calculate the world position of the hex center
-    //     Vector3 hexCenterWorldPos = grid.GetHexWorldPosition(coords, hexData.Height);
-    //
-    //     // Apply the unit's specific height offset
-    //     transform.position = new Vector3(hexCenterWorldPos.x, hexCenterWorldPos.y + entityHeightOffset, hexCenterWorldPos.z);
-    // }
-    //
-    // Inside Entity.cs
-
     public void SnapToHex(SimpleHexGrid grid, Vector2Int coords)
     {
         CurrentGrid = grid;
         CurrentGridCoordinates = coords;
         transform.SetParent(grid.EntityContainer.transform);
 
+        HexData hexData = grid.GetHexData(CurrentGridCoordinates);
+        
         // Get the Y level of the top surface of the hex
-        float surfaceY = grid.GetHexTopSurfaceY(coords);
+        Vector3 hexSurfacePosition = grid.GetHexTopSurfacePosition(coords, hexData.Height);
     
         // Apply the surface Y + the unit's "standing height" 
         // (Use a small offset for the unit's feet relative to the top of the hex)
         transform.position = new Vector3(
-            transform.position.x, 
-            surfaceY + entityHeightOffset, 
-            transform.position.z
+            hexSurfacePosition.x, 
+            hexSurfacePosition.y + entityHeightOffset, 
+            hexSurfacePosition.z
         );
     }
 

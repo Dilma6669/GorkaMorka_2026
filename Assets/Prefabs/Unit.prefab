@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 4811310351087041674}
   - component: {fileID: 6520707023299228574}
   - component: {fileID: 6035871503466350850}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: HexagonCollider
   m_TagString: Unit
   m_Icon: {fileID: 0}
@@ -334,6 +334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   rotationSpeed: 10
+  heightThreshold: 0.2
 --- !u!33 &8940988944267044720
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -78,7 +78,7 @@ public class SimpleHexGrid : MonoBehaviour
         RegisterGridToSystem(false);
     }
 
-    protected virtual void GenerateDataGrid()
+    public virtual void GenerateDataGrid()
     {
         Debug.Log($"fuck simple hex generate");
 
@@ -437,6 +437,20 @@ public class SimpleHexGrid : MonoBehaviour
             }
         }
         return found;
+    }
+
+    public Vector3 GetHexTopSurfacePosition(Vector2Int coords, float height)
+    {
+        if (HexGridVisualiser != null && HexGridVisualiser.TryGetVisualTile(coords, out HexVisualTile tile))
+        {
+            Vector3 pos = tile.GridReference.GetHexWorldPosition(coords, height);
+            float surfaceY = tile.GridReference.GetHexTopSurfaceY(coords);
+            
+            return new Vector3(pos.x, surfaceY, pos.z);
+
+        }
+        
+        return GetHexWorldPosition(coords, height);
     }
     
     public float GetHexTopSurfaceY(Vector2Int coords)

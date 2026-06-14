@@ -39,13 +39,11 @@ public class GroundHexGrid : SimpleHexGrid
         GenerateDataGrid();
     }
 
-    protected override void GenerateDataGrid()
+    public override void GenerateDataGrid()
     {
-       GenerateDefaultGrid(); // geMINI here!!! Do I need to create a default grid fot eh ground grid to spawn its tiles properly?
+       GenerateDefaultGrid();
         
         List<Vector2Int> keys = new List<Vector2Int>(HexagonsInGrid.Keys);
-    
-        Debug.Log($"fuck ground hex generate keys.Count = {keys.Count}");
         
         foreach (Vector2Int coords in keys)
         {

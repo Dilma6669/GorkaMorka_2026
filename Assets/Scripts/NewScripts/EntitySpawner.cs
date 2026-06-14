@@ -280,7 +280,6 @@ public class EntitySpawner : MonoBehaviour
         
         // This will now simply create a new unit each time the button is clicked.
         SpawnVehicle(entityData);
-        HexGridManager.Instance.UpdateUnwalkableHexagonsOnAllGrids();
     }
     
     private void OnDestroy()

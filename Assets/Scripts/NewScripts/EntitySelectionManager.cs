@@ -24,10 +24,12 @@ public class EntitySelectionManager : MonoBehaviour
     private SimpleHexGrid selectedHexGrid;
     
     private MultiGridPathfinder pathfinder;
+    private HexOverlayManager hexOverlayManager;
     
     private void Awake()
     {
         pathfinder = GetComponent<MultiGridPathfinder>();
+        hexOverlayManager = GetComponent<HexOverlayManager>();
     }
     
     void Update()
@@ -84,7 +86,6 @@ public class EntitySelectionManager : MonoBehaviour
         selectedHexGrid = closestHexGrid;
         EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, selectedHexCoords);
         EntityCommander.CommandUnitToMove();
-        hex.SetHighlightColour(TargetHexagonHighlightedColour, true);
     }
     
     private void SelectHexWithVehicleActive(HexVisualTile hex)
@@ -104,7 +105,6 @@ public class EntitySelectionManager : MonoBehaviour
 
         EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, selectedHexCoords);
         EntityCommander.CommandUnitToMove();
-        hex.SetHighlightColour(TargetHexagonHighlightedColour, true);
     }
     
     private void HoverVehicle(Entity entity)
@@ -320,11 +320,7 @@ public class EntitySelectionManager : MonoBehaviour
             SimpleHexGrid hexGrid = closetHexHovered.GridReference;
             hoveredHexGrid = hexGrid;
 
-            // Clear existing highlights
-            foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
-            {
-                otherGrid.HexGridVisualiser.ClearOverlayHighlights();
-            }
+            hexOverlayManager.ClearAll();
 
             // --- Visualization Logic ---
             if (EntityCommander.GetEntityInCommand())
@@ -368,23 +364,14 @@ public class EntitySelectionManager : MonoBehaviour
                         finalPath = rawPath;
                     }
 
-                    // 3. Visualize the final path
-                    HexGridVisualizer gridVisualizer = hoveredHexGrid.HexGridVisualiser;
-
                     foreach (PathNode pathNode in finalPath)
                     {
-                        foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
-                        {
-                            if (pathNode.GridReference == otherGrid)
-                            {
-                                otherGrid.HexGridVisualiser.HighlightHexOverlay(pathNode.GridCoordinates,
-                                    PathHexagonHighlightedColour);
-                            }
-                        }
+                        hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(pathNode.GridCoordinates, pathNode.GridReference),
+                            PathHexagonHighlightedColour, true);
                     }
 
                     // Highlight the target hex
-                    gridVisualizer.HighlightHexOverlay(targetCoords, TargetHexagonHighlightedColour);
+                    hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(targetCoords, closetHexHovered.GridReference), TargetHexagonHighlightedColour, true);
 
                 }
             }
