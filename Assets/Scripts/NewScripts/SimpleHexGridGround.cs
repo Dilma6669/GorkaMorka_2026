@@ -7,43 +7,44 @@ public class SimpleHexGridGround : SimpleHexGridBase
 {
     [Header("Procedural Terrain Settings")]
     public float noiseScale = 0.15f;
+
     public float heightMultiplier = 2.0f;
 
     [Header("Desert Height/Noise Settings")]
-    [Tooltip("Enter a value here to get a different terrain layout. Changing this value will generate a new environment.")]
-    public int seed = 0; 
+    [Tooltip(
+        "Enter a value here to get a different terrain layout. Changing this value will generate a new environment.")]
+    public int seed = 0;
+
     public float baseHeight = 0f;
 
     [Tooltip("A large multiplier for the seed to create distinct noise patterns.")]
-    public float seedOffsetMultiplier = 1000f; 
+    public float seedOffsetMultiplier = 1000f;
 
-    [Header("Sand Dunes (Smooth Hills)")]
-    public float duneScale = 0.05f;
+    [Header("Sand Dunes (Smooth Hills)")] public float duneScale = 0.05f;
     public float duneHeight = 8f;
     public float duneOctaves = 3;
     public float dunePersistence = 0.5f;
 
     [Header("Rocky Outcroppings (Sharp Peaks)")]
     public float rockScale = 0.08f;
+
     public float rockHeight = 15f;
     public float rockThreshold = 0.6f;
     public float rockSharpness = 2f;
 
-    [Header("Noise Mixing")]
-    public float terrainSmoothness = 0.8f;
-    [Range(0.1f, 2.0f)]
-    public float neighborHeightLimit = 0.8f;
-    
+    [Header("Noise Mixing")] public float terrainSmoothness = 0.8f;
+    [Range(0.1f, 2.0f)] public float neighborHeightLimit = 0.8f;
+
     HexGridVisualizerGround visualizer;
     public float entityPlacementHeightOffset = 0.05f;
-    
+
     private new void Awake()
     {
         base.Awake();
-        
+
         visualizer = GetComponent<HexGridVisualizerGround>();
     }
-    
+
     private new void Start()
     {
         base.Start();
@@ -63,26 +64,26 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 if (Mathf.Abs(q + r) <= gridRadius)
                 {
                     Vector2Int coords = new Vector2Int(q, r);
-                
+
                     // Start with base data (default height 0)
                     HexData data = new HexData(coords, 0f, true, false, false);
                     HexagonsInGrid[coords] = data;
                 }
             }
         }
-        
+
         foreach (var coords in new List<Vector2Int>(HexagonsInGrid.Keys))
         {
             // Remove the RoundToInt to keep the smooth float value
-            float height = CalculatePerlinHeight(coords); 
-    
+            float height = CalculatePerlinHeight(coords);
+
             HexData data = HexagonsInGrid[coords];
             data.Height = height + baseHeight; // Store as float
             HexagonsInGrid[coords] = data;
         }
 
         ApplySmoothingPass();
-        
+
         RegisterGridToSystem(true);
     }
 
@@ -126,9 +127,10 @@ public class SimpleHexGridGround : SimpleHexGridBase
             amplitude *= persistence;
             frequency *= 2f;
         }
+
         return value / maxValue;
     }
-    
+
     private void ApplySmoothingPass(int iterations = 1)
     {
         for (int i = 0; i < iterations; i++)
@@ -169,11 +171,12 @@ public class SimpleHexGridGround : SimpleHexGridBase
     {
         float total = 0;
         int count = 0;
-    
+
         // Check all 6 hex directions
-        Vector2Int[] directions = { 
-            new Vector2Int(1, 0), new Vector2Int(1, -1), new Vector2Int(0, -1), 
-            new Vector2Int(-1, 0), new Vector2Int(-1, 1), new Vector2Int(0, 1) 
+        Vector2Int[] directions =
+        {
+            new Vector2Int(1, 0), new Vector2Int(1, -1), new Vector2Int(0, -1),
+            new Vector2Int(-1, 0), new Vector2Int(-1, 1), new Vector2Int(0, 1)
         };
 
         foreach (var dir in directions)
@@ -184,38 +187,108 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 count++;
             }
         }
+
         return count > 0 ? total / count : HexagonsInGrid[coords].Height;
     }
-    
+
     public float GetHexHeight(Vector2Int coords)
     {
         if (HexagonsInGrid.TryGetValue(coords, out HexData data))
         {
             return data.Height;
         }
+
         return 0f;
     }
-    
+
     public override Vector3 GetHexTopSurfacePosition(Vector2Int coords, float height)
     {
         // 1. Get the X and Z from the standard math
         Vector3 basePos = GetHexWorldPosition(coords, height);
-    
+
         // 2. Get the specific Y surface height from our override
         float surfaceY = GetHexTopSurfaceY(coords);
-    
+
         // 3. Return the corrected vector
         return new Vector3(basePos.x, surfaceY, basePos.z);
     }
-    
+
     public override float GetHexTopSurfaceY(Vector2Int coords)
     {
         float hexThickness = visualizer.hexVisualHeight;
-    
+
         // Get the base world position Y
         float baseHexHeight = GetHexWorldPosition(coords, GetHexData(coords).Height).y;
-    
+
         // Return the top of the mesh
         return baseHexHeight + (hexThickness * entityPlacementHeightOffset);
+    }
+
+    public bool TryGetHexCoordsFromWorld(Vector3 worldPos, out Vector2Int coords)
+    {
+        // 1. Convert World XZ to Grid Axial Q, R coordinates
+        // This is the inverse of your GetHexWorldPosition math
+        float q = (2.0f / 3.0f * worldPos.x) / hexSize;
+        float r = (-1.0f / 3.0f * worldPos.x + Mathf.Sqrt(3.0f) / 3.0f * worldPos.z) / hexSize;
+
+        // 2. Round axial coordinates to get the nearest valid hex
+        coords = RoundAxial(q, r);
+
+        // 3. Check if that coordinate actually exists in our grid
+        return HexagonsInGrid.ContainsKey(coords);
+    }
+
+    private Vector2Int RoundAxial(float q, float r)
+    {
+        float x = q;
+        float z = r;
+        float y = -x - z;
+
+        int rx = Mathf.RoundToInt(x);
+        int ry = Mathf.RoundToInt(y);
+        int rz = Mathf.RoundToInt(z);
+
+        float xDiff = Mathf.Abs(rx - x);
+        float yDiff = Mathf.Abs(ry - y);
+        float zDiff = Mathf.Abs(rz - z);
+
+        if (xDiff > yDiff && xDiff > zDiff) rx = -ry - rz;
+        else if (yDiff > zDiff) ry = -rx - rz;
+        else rz = -rx - ry;
+
+        return new Vector2Int(rx, rz);
+    }
+
+    public bool TryGetHexFromRay(Ray ray, out HexData foundData)
+    {
+        foundData = default;
+    
+        // We step along the ray in short increments
+        float step = 0.5f; 
+        for (float distance = 0; distance < 200f; distance += step)
+        {
+            Vector3 pos = ray.GetPoint(distance);
+        
+            Vector2Int coords;
+            if (TryGetHexCoordsFromWorld(pos, out coords))
+            {
+                if (HexagonsInGrid.TryGetValue(coords, out HexData data))
+                {
+                    // CHANGE: Use your existing TopSurfaceY method 
+                    // This accounts for the baseHeight + thickness + offset
+                    float surfaceHeight = GetHexTopSurfaceY(coords);
+                
+                    // If the ray's Y is close to the surface height, we hit it!
+                    // Using a small buffer (e.g., 2.0f) helps because rays 
+                    // rarely land EXACTLY on the surface.
+                    if (Mathf.Abs(pos.y - surfaceHeight) < 0.1f)
+                    {
+                        foundData = data;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

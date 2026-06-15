@@ -450,7 +450,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_Enabled
@@ -704,7 +704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_Enabled
@@ -909,7 +909,7 @@ MonoBehaviour:
   craftPrefab: {fileID: 7364709448439807745, guid: d817cf2b60e943847a272d152a84829e, type: 3}
   GroundedGridsContainer: {fileID: 1030389473}
   FloatingGridsContainer: {fileID: 677585704}
-  defaultSpawnGridBase: {fileID: 2144170100}
+  defaultSpawnGridBase: {fileID: 2045115133}
   defaultSpawnCoordinates: {x: 0, y: 0}
   unitsToSpawn: []
 --- !u!114 &1284890850
@@ -1311,7 +1311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexagonsContainer: {fileID: 647497032}
-  hexVisualHeight: 100
+  hexVisualHeight: 30
   highDetailMesh: {fileID: -4575734979276873811, guid: 79357c7aeab13d94e9270b6bd1272d05, type: 3}
   lowDetailMesh: {fileID: -4575734979276873811, guid: 79357c7aeab13d94e9270b6bd1272d05, type: 3}
   hexMaterial_HighRes: {fileID: 2100000, guid: 112f3e43f74254ba2b792534a6468e8c, type: 2}

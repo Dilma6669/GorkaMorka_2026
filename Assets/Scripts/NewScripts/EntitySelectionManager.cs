@@ -26,6 +26,9 @@ public class EntitySelectionManager : MonoBehaviour
     private MultiGridPathfinder pathfinder;
     private HexOverlayManager hexOverlayManager;
     
+    private HexData _groundHexDataHovered;
+    private SimpleHexGridBase _hoveredGroundGrid;
+    
     private void Awake()
     {
         pathfinder = GetComponent<MultiGridPathfinder>();
@@ -71,39 +74,38 @@ public class EntitySelectionManager : MonoBehaviour
         EntityCommander.SetEntityToCommand(entity);
     }
 
-    private static void SelectHex(HexVisualTile hex)
+// Overload for Ground Hexagons
+    private void SelectHex(Vector2Int coords, SimpleHexGridBase grid)
     {
-        Debug.Log($"EntitySelectionManager: Selected {hex.GridCoordinates}");
+        Debug.Log($"EntitySelectionManager: Selected Ground {coords}");
     }
-    
-    private void SelectHexWithUnitActive(HexVisualTile hex)
-    {
-        Debug.Log($"EntitySelectionManager: Selected {hex.GridCoordinates} with Unit Active");
-        if (selectedHexCoords == hex.GridCoordinates) return;
-        selectedHexCoords = hex.GridCoordinates;
 
-        SimpleHexGridBase closestHexGridBase = hex.gridBaseReference;
-        _selectedHexGridBase = closestHexGridBase;
-        EntityCommander.SetTargetGridAndCoordinates(closestHexGridBase, selectedHexCoords);
+    private void SelectHexWithUnitActive(Vector2Int coords, SimpleHexGridBase grid)
+    {
+        Debug.Log($"EntitySelectionManager: Selected Ground {coords} with Unit Active");
+        if (selectedHexCoords == coords && _selectedHexGridBase == grid) return;
+    
+        selectedHexCoords = coords;
+        _selectedHexGridBase = grid;
+    
+        EntityCommander.SetTargetGridAndCoordinates(grid, selectedHexCoords);
         EntityCommander.CommandUnitToMove();
     }
-    
-    private void SelectHexWithVehicleActive(HexVisualTile hex)
-    {
-        Debug.Log($"EntitySelectionManager: Selected {hex.GridCoordinates} with Vehicle Active");
-        if (selectedHexCoords == hex.GridCoordinates) return;
-        selectedHexCoords = hex.GridCoordinates;
 
-        SimpleHexGridBase closestHexGridBase = hex.gridBaseReference;
-        _selectedHexGridBase = closestHexGridBase;
-        
+    private void SelectHexWithVehicleActive(Vector2Int coords, SimpleHexGridBase grid)
+    {
+        Debug.Log($"EntitySelectionManager: Selected Ground {coords} with Vehicle Active");
+        if (selectedHexCoords == coords && _selectedHexGridBase == grid) return;
+
+        selectedHexCoords = coords;
+        _selectedHexGridBase = grid;
+    
         VehicleEntity vehicle = EntityCommander.GetEntityInCommand() as VehicleEntity;
-        
-        // Dont allow vehicles to use their own internal grid as a possible path
-        if (closestHexGridBase == vehicle.vehicleInteriorGridBase)
+    
+        if (grid == vehicle.vehicleInteriorGridBase)
             return;
 
-        EntityCommander.SetTargetGridAndCoordinates(closestHexGridBase, selectedHexCoords);
+        EntityCommander.SetTargetGridAndCoordinates(grid, selectedHexCoords);
         EntityCommander.CommandUnitToMove();
     }
     
@@ -117,19 +119,19 @@ public class EntitySelectionManager : MonoBehaviour
         Debug.Log($"EntitySelectionManager: Hovered {entity.name}");
     }
 
-    private void HoverHex(HexVisualTile hex)
+    private void HoverHex(Vector2Int coords, SimpleHexGridBase grid)
     {
-        Debug.Log($"EntitySelectionManager: Hovered {hex.GridCoordinates}");
-    }
-    
-    private void HoverHexWithUnitActive(HexVisualTile hex)
-    {
-        Debug.Log($"EntitySelectionManager: Hovered {hex.GridCoordinates} with Unit Active");
+        Debug.Log($"EntitySelectionManager: Hovered Ground {coords}");
     }
 
-    private void HoverHexWithVehicleActive(HexVisualTile hex)
+    private void HoverHexWithUnitActive(Vector2Int coords, SimpleHexGridBase grid)
     {
-        Debug.Log($"EntitySelectionManager: Hovered {hex.GridCoordinates} with Vehicle Active");
+        Debug.Log($"EntitySelectionManager: Hovered Ground {coords} with Unit Active");
+    }
+
+    private void HoverHexWithVehicleActive(Vector2Int coords, SimpleHexGridBase grid)
+    {
+        Debug.Log($"EntitySelectionManager: Hovered Ground {coords} with Vehicle Active");
     }
 
     /// <summary>
@@ -138,8 +140,6 @@ public class EntitySelectionManager : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity);
-        
-        RaycastHit hitResult = default;
 
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
@@ -147,40 +147,44 @@ public class EntitySelectionManager : MonoBehaviour
 
         Entity closestUnitSelected = null!;
         HexVisualTile closetHexSelected = null!;
-        Entity closetVehicleSelected = null!;
-        
+        Entity closestVehicleSelected = null!;
+
+        // --- NEW: Ground Data Tracking ---
+        HexData groundHexData = default;
+        SimpleHexGridBase groundGridSelected = null;
+
         foreach (var hit in hits)
         {
-            Debug.Log($"Ray hit: {hit.collider.name} (Layer: {LayerMask.LayerToName(hit.collider.gameObject.layer)}) at distance: {hit.distance}");
-            
             int layer = hit.collider.gameObject.layer;
         
             if (layer == LayerMask.NameToLayer("UnitCollider"))
             {
                 if (!(hit.distance < minUnitDist)) continue;
-                
                 minUnitDist = hit.distance;
-                closestUnitSelected = hit.collider.GetComponent<Entity>() ??
-                                      hit.collider.GetComponentInParent<Entity>() ??
-                                      hit.collider.GetComponentInChildren<Entity>();
+                closestUnitSelected = hit.collider.GetComponent<Entity>() ?? hit.collider.GetComponentInParent<Entity>() ?? hit.collider.GetComponentInChildren<Entity>();
             } 
             else if (layer == LayerMask.NameToLayer("HexagonCollider"))
             {
                 if (!(hit.distance < minHexDist)) continue;
-                
                 minHexDist = hit.distance;
-                closetHexSelected = hit.collider.GetComponent<HexVisualTile>() ??
-                                    hit.collider.GetComponentInParent<HexVisualTile>() ??
-                                    hit.collider.GetComponentInChildren<HexVisualTile>();
+                closetHexSelected = hit.collider.GetComponent<HexVisualTile>() ?? hit.collider.GetComponentInParent<HexVisualTile>() ?? hit.collider.GetComponentInChildren<HexVisualTile>();
             }
             else if (layer == LayerMask.NameToLayer("VehicleCollider"))
             {
                 if (!(hit.distance < minVehicleDist)) continue;
-                
                 minVehicleDist = hit.distance;
-                closetVehicleSelected = hit.collider.GetComponent<Entity>() ??
-                                        hit.collider.GetComponentInParent<Entity>() ??
-                                        hit.collider.GetComponentInChildren<Entity>();
+                closestVehicleSelected = hit.collider.GetComponent<Entity>() ?? hit.collider.GetComponentInParent<Entity>() ?? hit.collider.GetComponentInChildren<Entity>();
+            }
+        }
+
+        // --- NEW: Physics-less Fallback for Ground Grids ---
+        if (closetHexSelected == null)
+        {
+            var groundGrid = FindObjectOfType<SimpleHexGridGround>();
+            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data))
+            {
+                groundHexData = data;
+                groundGridSelected = groundGrid;
             }
         }
         
@@ -190,41 +194,48 @@ public class EntitySelectionManager : MonoBehaviour
             return;
         }
         
-        if (closetVehicleSelected != null)
+        if (closestVehicleSelected != null)
         {
+            // Keep your existing vehicle/interior logic
             if (closetHexSelected != null)
             {
                 SimpleHexGridBase closestHexGridBase = closetHexSelected.gridBaseReference;
-  
-               VehicleEntity vehicle = closetVehicleSelected as VehicleEntity;
-      
-               if (vehicle.vehicleInteriorGridBase != closestHexGridBase)
+                VehicleEntity vehicle = closestVehicleSelected as VehicleEntity;
+                if (vehicle.vehicleInteriorGridBase != closestHexGridBase)
                 {
-                    SelectVehicle(closetVehicleSelected);
+                    SelectVehicle(closestVehicleSelected);
                     return;
                 }
             }
         }
-        
-        if (closetHexSelected != null)
+    
+        // --- Unified Selection Logic ---
+        if (closetHexSelected != null || groundGridSelected != null)
         {
+            Vector2Int targetCoords = (closetHexSelected != null) ? closetHexSelected.GridCoordinates : groundHexData.GridCoordinates;
+            SimpleHexGridBase targetGrid = (closetHexSelected != null) ? closetHexSelected.gridBaseReference : groundGridSelected;
+
             if (EntityCommander.GetEntityInCommand() != null)
             {
                 if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                 {
-                    SelectHexWithUnitActive(closetHexSelected);
+                    // Call the correct overload based on what was hit
+                    if (closetHexSelected != null) SelectHexWithUnitActive(closetHexSelected.GridCoordinates, closetHexSelected.gridBaseReference);
+                    else SelectHexWithUnitActive(targetCoords, targetGrid);
                     return;
                 }
 
                 if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
                 {
-                    SelectHexWithVehicleActive(closetHexSelected);
+                    if (closetHexSelected != null) SelectHexWithVehicleActive(closetHexSelected.GridCoordinates, closetHexSelected.gridBaseReference);
+                    else SelectHexWithVehicleActive(targetCoords, targetGrid);
                     return;
                 }
             }
             else
             {
-                SelectHex(closetHexSelected);
+                if (closetHexSelected != null) SelectHex(closetHexSelected.GridCoordinates, closetHexSelected.gridBaseReference);
+                else SelectHex(targetCoords, targetGrid);
             }
         }
     }
@@ -232,12 +243,8 @@ public class EntitySelectionManager : MonoBehaviour
     void HandleMouseHover()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        // 1. Hit EVERYTHING under the mouse
         RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity);
 
-        // 2. Find the Hexagon in the list
-        RaycastHit hitResult = default;
-        
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
         float minVehicleDist = float.MaxValue;
@@ -246,138 +253,159 @@ public class EntitySelectionManager : MonoBehaviour
         HexVisualTile closetHexHovered = null!;
         Entity closetVehicleHovered = null!;
 
+        // Reset ground tracking
+        _groundHexDataHovered = default;
+        _hoveredGroundGrid = null;
+
+        // -------------------------------------------------------------
+
         VehicleEntity vehicleAlreadySelected = null;
         UnitEntity unitAlreadySelected = null;
         if (EntityCommander.GetEntityInCommand() != null)
         {
-            // Need to check vehicles internal grid here so caching retrieval of vehicle for performance
             if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
-            {
                 vehicleAlreadySelected = EntityCommander.GetEntityInCommand() as VehicleEntity;
-            }
-
-            // Dont need this yet but may do it future
             if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
-            {
                 unitAlreadySelected = EntityCommander.GetEntityInCommand() as UnitEntity;
-            }
         }
 
         foreach (var hit in hits)
         {
             int layer = hit.collider.gameObject.layer;
-        
+
             if (layer == LayerMask.NameToLayer("UnitCollider"))
             {
                 if (!(hit.distance < minUnitDist)) continue;
-                
                 minUnitDist = hit.distance;
                 closestUnitHovered = hit.collider.GetComponent<Entity>() ??
                                      hit.collider.GetComponentInParent<Entity>() ??
                                      hit.collider.GetComponentInChildren<Entity>();
-            } 
+            }
             else if (layer == LayerMask.NameToLayer("HexagonCollider"))
             {
                 if (!(hit.distance < minHexDist)) continue;
-                
                 minHexDist = hit.distance;
                 closetHexHovered = hit.collider.GetComponent<HexVisualTile>() ??
                                    hit.collider.GetComponentInParent<HexVisualTile>() ??
                                    hit.collider.GetComponentInChildren<HexVisualTile>();
+                // If we hit a physical tile, clear the mathematical ground hover
+                _hoveredGroundGrid = null;
             }
             else if (layer == LayerMask.NameToLayer("VehicleCollider"))
             {
                 if (!(hit.distance < minVehicleDist)) continue;
-                
                 minVehicleDist = hit.distance;
                 closetVehicleHovered = hit.collider.GetComponent<Entity>() ??
                                        hit.collider.GetComponentInParent<Entity>() ??
                                        hit.collider.GetComponentInChildren<Entity>();
             }
         }
-        
+
+        // 2. If NO specific HexTile collider was hit, use the Math fallback
+        if (closetHexHovered == null)
+        {
+            var groundGrid = FindObjectOfType<SimpleHexGridGround>();
+            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data))
+            {
+                _groundHexDataHovered = data;
+                _hoveredGroundGrid = groundGrid;
+            }
+        }
+
+        // ... Rest of your existing hover/selection logic below ...
+
         if (closestUnitHovered != null)
         {
             HoverUnit(closestUnitHovered);
             return;
         }
-        
+
         if (closetVehicleHovered != null)
         {
             HoverVehicle(closetVehicleHovered);
         }
-        
 
-        // 3. Only run the visualization logic if we actually found a hex
+        SimpleHexGridBase hexGridBase = null;
+        Vector2Int targetCoords = Vector2Int.zero;
+        bool foundHex = false;
+
         if (closetHexHovered != null)
         {
-            //Debug.Log($"EntitySelectionManager: Hexagon Hovered {closetHexHovered.name}");
-            
-            if (hoveredHexCoords == closetHexHovered.GridCoordinates) return;
- 
-            hoveredHexCoords = closetHexHovered.GridCoordinates;
+            targetCoords = closetHexHovered.GridCoordinates;
+            hexGridBase = closetHexHovered.gridBaseReference;
+            foundHex = true;
+        }
+        else if (_hoveredGroundGrid != null)
+        {
+            targetCoords = _groundHexDataHovered.GridCoordinates;
+            hexGridBase = _hoveredGroundGrid;
+            foundHex = true;
+        }
 
-            SimpleHexGridBase hexGridBase = closetHexHovered.gridBaseReference;
+        if (foundHex)
+        {
+            if (hoveredHexCoords == targetCoords && _hoveredHexGridBase == hexGridBase) return;
+
+            hoveredHexCoords = targetCoords;
             _hoveredHexGridBase = hexGridBase;
 
             hexOverlayManager.ClearAll();
 
-            // --- Visualization Logic ---
             if (EntityCommander.GetEntityInCommand())
             {
-                Vector2Int targetCoords = closetHexHovered.GridCoordinates;
-            
-                // Re-use your pathfinding/visualization code here using hexHitResult.point
-                PathNode startNode = new PathNode(EntityCommander.GetEntityInCommand().CurrentGridCoordinates, EntityCommander.GetEntityInCommand().currentGridBase);
+                PathNode startNode = new PathNode(EntityCommander.GetEntityInCommand().CurrentGridCoordinates,
+                    EntityCommander.GetEntityInCommand().currentGridBase);
                 PathNode endNode = new PathNode(targetCoords, hexGridBase);
                 List<PathNode> rawPath = pathfinder.FindPath(startNode, endNode);
 
                 if (rawPath != null && rawPath.Count > 0)
                 {
-
                     List<PathNode> finalPath;
 
-                    // 2. Get the correct mover and smooth the path if it's a vehicle
                     if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
                     {
-                        if (vehicleAlreadySelected.GetDriver() == null)
-                            return;
-                        
-                        HoverHexWithVehicleActive(closetHexHovered);
+                        if (vehicleAlreadySelected.GetDriver() == null) return;
+                
+                        // Call overload if ground, else original
+                        if (closetHexHovered != null) HoverHexWithVehicleActive(closetHexHovered.GridCoordinates, closetHexHovered.gridBaseReference);
+                        else HoverHexWithVehicleActive(targetCoords, hexGridBase);
+                
                         VehiclePathMover mover = EntityCommander.GetEntityInCommand().GetComponent<VehiclePathMover>();
-                        if (mover != null)
-                        {
-                            finalPath = mover.GetSmoothPathForVehicle(rawPath);
-                        }
-                        else
-                        {
-                            finalPath = rawPath;
-                        }
+                        finalPath = (mover != null) ? mover.GetSmoothPathForVehicle(rawPath) : rawPath;
                     }
                     else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                     {
-                        HoverHexWithUnitActive(closetHexHovered);
+                        if (closetHexHovered != null) HoverHexWithUnitActive(closetHexHovered.GridCoordinates, closetHexHovered.gridBaseReference);
+                        else HoverHexWithUnitActive(targetCoords, hexGridBase);
                         finalPath = rawPath;
                     }
-                    else // Add crafts and crap here
+                    else
                     {
                         finalPath = rawPath;
                     }
 
                     foreach (PathNode pathNode in finalPath)
                     {
-                        hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(pathNode.GridCoordinates, pathNode.GridBaseReference),
+                        hexOverlayManager.SetOverlay(
+                            new HexGridManager.HexGridAndCoords(pathNode.GridCoordinates, pathNode.GridBaseReference),
                             PathHexagonHighlightedColour, true);
                     }
 
-                    // Highlight the target hex
-                    hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(targetCoords, closetHexHovered.gridBaseReference), TargetHexagonHighlightedColour, true);
-
+                    hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(targetCoords, hexGridBase),
+                        TargetHexagonHighlightedColour, true);
                 }
             }
-            else
+            else 
             {
-              HoverHex(closetHexHovered);
+                // Updated non-commanded hover call
+                if (closetHexHovered != null)
+                {
+                    HoverHex(closetHexHovered.GridCoordinates, closetHexHovered.gridBaseReference);
+                }
+                else
+                {
+                    HoverHex(targetCoords, hexGridBase);
+                }
             }
         }
     }
