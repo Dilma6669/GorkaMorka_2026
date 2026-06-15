@@ -14,13 +14,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - HexagonCollider
+  - Nothing
   - Water
   - UI
   - UnitCollider
   - VehicleCollider
-  - GroundCollider
-  - 
+  - HexagonCollider
+  - PathfindingObstacle
   - 
   - 
   - 

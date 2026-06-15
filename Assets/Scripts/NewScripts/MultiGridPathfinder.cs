@@ -44,6 +44,10 @@ public class MultiGridPathfinder : MonoBehaviour
     private List<PathNode> openSet;   // Nodes to be evaluated
     private HashSet<PathNode> closedSet;  // Nodes already evaluated
     
+    [Header("Physics Settings")]
+    [Tooltip("The layer used for Vehicle and Unit colliders to block pathfinding.")]
+    public LayerMask obstacleLayer;
+    
     public static MultiGridPathfinder Instance { get; private set; }
 
     private void Awake()
@@ -135,8 +139,8 @@ public class MultiGridPathfinder : MonoBehaviour
 
         // If the hexes are on different grids, add a penalty to the heuristic.
         // This correctly guides the pathfinder to prefer same-grid paths unless necessary.
-       // if (fromNode.GridReference != toNode.GridReference)
-       // {
+        if (fromNode.GridBaseReference != toNode.GridBaseReference)
+        {
             heuristicDistance += jumpCost + verticalPenalty;
             
             // Add a massive penalty if the 'to' node is NOT an edge hex on its grid.
@@ -145,7 +149,7 @@ public class MultiGridPathfinder : MonoBehaviour
             {
                 heuristicDistance += 9999f; // A very high cost to make this path prohibitively expensive.
             }
-       // }
+        }
 
         return heuristicDistance * 1.001f;
     }
@@ -232,25 +236,72 @@ public class MultiGridPathfinder : MonoBehaviour
             Vector3 currentSurfacePos = currentNode.GridBaseReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridBaseReference.GetHexData(currentNode.GridCoordinates).Height);
             Vector3 neighbourSurfacePos = currentNode.GridBaseReference.GetHexTopSurfacePosition(coords, neighbourHexData.Height);
 
+
+            //--- Check for vehicles to ignore their shadow obstacle layer
+            Vector3 checkPos = currentNode.GridBaseReference.GetHexTopSurfacePosition(coords, neighbourHexData.Height);
+            
+            Collider[] colliders = Physics.OverlapSphere(checkPos, 0.4f, obstacleLayer);
+
+            bool isBlockedByOther = false;
+            Transform myTransform = EntityCommander.GetEntityInCommand().transform.root;
+            Entity commandingEntity = EntityCommander.GetEntityInCommand();
+            
+            foreach (var col in colliders)
+            {
+                if (col.gameObject.layer == LayerMask.NameToLayer("PathfindingObstacle"))
+                {
+                    Entity hitEntity = col.GetComponentInParent<Entity>();
+
+                    // CASE 1: If we are a Vehicle
+                    if (commandingEntity.EntityType == EntitySpawner.EntityType.Vehicle)
+                    {
+                        // If it belongs to someone else (or null), it's a block
+                        if (hitEntity != commandingEntity)
+                        {
+                            isBlockedByOther = true;
+                            break;
+                        }
+
+                        // If it belongs to ME (the vehicle):
+                        // Ignore if it's the shadow
+                        if (col.name == "Shadow") continue;
+
+                        // Block ONLY if it's an active Turning Arc
+                        if (col.gameObject.activeSelf && col.name.Contains("NoTurnARC"))
+                        {
+                            isBlockedByOther = true;
+                            break;
+                        }
+                    }
+                    // CASE 2: If we are a Unit
+                    else if (commandingEntity.EntityType == EntitySpawner.EntityType.Unit)
+                    {
+                        // Units treat everything on this layer as a block
+                        isBlockedByOther = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (isBlockedByOther) continue;
+            // -----------------------------------------------
+            
             // Calculate horizontal distance using X and Z
             float horizontalDist = Vector2.Distance(
                 new Vector2(currentSurfacePos.x, currentSurfacePos.z),
                 new Vector2(neighbourSurfacePos.x, neighbourSurfacePos.z)
             );
+            
 
             // Calculate vertical distance using Y
             float verticalDist = Mathf.Abs(currentSurfacePos.y - neighbourSurfacePos.y);
             
             if (verticalDist <= maxVerticalDifference)
             {
-              //  neighbors.Add(new PathNode(coords, currentNode.GridReference));
-
                 if (currentWorldPos.y > neighbourWorldPos.y) // If jumping DOWN
                 {
-                   // if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
-                    {
-                        neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridBaseReference));
-                    }
+                    neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridBaseReference));
+                    
                 }
                 else // If jumping UP or staying at the same height
                 {
@@ -286,6 +337,32 @@ public class MultiGridPathfinder : MonoBehaviour
                 if (!otherHexData.GetIsWalkable()) continue;
                 if (!otherHexData.GetIsClimbable()) continue;
                 if (otherHexData.GetIsOccupied()) continue;
+                
+                // 1. Get the top surface position
+                Vector3 checkPos = currentNode.GridBaseReference.GetHexTopSurfacePosition(otherHexData.GridCoordinates, otherHexData.Height);
+                
+                Transform myTransform = EntityCommander.GetEntityInCommand().transform.root;
+            
+                // Instead of Physics.CheckSphere, use OverlapSphere to ignore self
+                Collider[] colliders = Physics.OverlapSphere(checkPos, 0.4f, obstacleLayer);
+            
+                bool isBlockedByOther = false;
+                foreach (var col in colliders)
+                {
+                    // FIX: Add a specific check for the vehicle's body AND its obstacle collider
+                    // If the hit collider belongs to our own vehicle/unit, ignore it!
+                    if (col.transform.root != myTransform)
+                    {
+                        // One final safety: ensure we aren't hitting our own child colliders
+                        if (!col.transform.IsChildOf(myTransform))
+                        {
+                            isBlockedByOther = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isBlockedByOther) continue;
                 
                 Vector3 currentSurfacePos = currentNode.GridBaseReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridBaseReference.GetHexData(currentNode.GridCoordinates).Height);
                 Vector3 otherSurfacePos = otherGrid.GetHexTopSurfacePosition(otherHexData.GridCoordinates, otherHexData.Height);
