@@ -66,7 +66,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
                     Vector2Int coords = new Vector2Int(q, r);
 
                     // Start with base data (default height 0)
-                    HexData data = new HexData(coords, 0f, true, false, false);
+                    HexData data = new HexData(coords, 0f, true, true, false);
                     HexagonsInGrid[coords] = data;
                 }
             }
@@ -83,6 +83,8 @@ public class SimpleHexGridGround : SimpleHexGridBase
         }
 
         ApplySmoothingPass();
+        
+        GeneratePhysicsProxy();
 
         RegisterGridToSystem(true);
     }
@@ -290,5 +292,54 @@ public class SimpleHexGridGround : SimpleHexGridBase
             }
         }
         return false;
+    }
+    
+    private void GeneratePhysicsProxy()
+    {
+        Mesh mesh = new Mesh();
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        Dictionary<Vector2Int, int> coordToIndex = new Dictionary<Vector2Int, int>();
+
+        // 1. Build Vertices
+        foreach (var kvp in HexagonsInGrid)
+        {
+            Vector3 worldPos = GetHexWorldPosition(kvp.Key, kvp.Value.Height);
+            coordToIndex[kvp.Key] = vertices.Count;
+            vertices.Add(worldPos);
+        }
+
+        // 2. Build Triangles
+        foreach (var kvp in HexagonsInGrid)
+        {
+            Vector2Int current = kvp.Key;
+            List<Vector2Int> neighbors = GetHexNeighbors(current);
+
+            // Connect this center to neighbors to form triangles
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                Vector2Int next = neighbors[(i + 1) % neighbors.Count];
+            
+                if (coordToIndex.ContainsKey(neighbors[i]) && coordToIndex.ContainsKey(next))
+                {
+                    triangles.Add(coordToIndex[current]);
+                    triangles.Add(coordToIndex[neighbors[i]]);
+                    triangles.Add(coordToIndex[next]);
+                }
+            }
+        }
+
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+
+        // 3. Apply to GameObject
+        GameObject physicsObj = new GameObject("PhysicsGround");
+        physicsObj.transform.SetParent(this.transform);
+        physicsObj.transform.localPosition = new Vector3(0, 1.5f, 0);
+        physicsObj.layer = LayerMask.NameToLayer("HexagonCollider");
+
+        MeshCollider col = physicsObj.AddComponent<MeshCollider>();
+        col.sharedMesh = mesh;
     }
 }

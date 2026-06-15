@@ -33,6 +33,8 @@ public class EntitySelectionManager : MonoBehaviour
     public Vector2Int _cachedTargetCoords;
     public SimpleHexGridBase _cachedTargetGrid;
     
+    private object _lastHoveredObject = null;
+    
     private void Awake()
     {
         pathfinder = GetComponent<MultiGridPathfinder>();
@@ -183,7 +185,7 @@ public class EntitySelectionManager : MonoBehaviour
                 closestVehicleSelected = hit.collider.GetComponent<Entity>() ?? hit.collider.GetComponentInParent<Entity>() ?? hit.collider.GetComponentInChildren<Entity>();
             }
         }
-
+        
         // --- NEW: Physics-less Fallback for Ground Grids ---
         if (closetHexSelected == null)
         {
@@ -200,7 +202,7 @@ public class EntitySelectionManager : MonoBehaviour
             SelectUnit(closestUnitSelected);
             return;
         }
-        
+
         if (closestVehicleSelected != null)
         {
             // Keep your existing vehicle/interior logic
@@ -227,8 +229,14 @@ public class EntitySelectionManager : MonoBehaviour
                 if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                 {
                     // Call the correct overload based on what was hit
-                    if (closetHexSelected != null) SelectHexWithUnitActive(closetHexSelected.GridCoordinates, closetHexSelected.gridBaseReference);
-                    else SelectHexWithUnitActive(targetCoords, targetGrid);
+                    if (closetHexSelected != null)
+                    {
+                        SelectHexWithUnitActive(closetHexSelected.GridCoordinates, closetHexSelected.gridBaseReference);
+                    }
+                    else
+                    {
+                        SelectHexWithUnitActive(targetCoords, targetGrid);
+                    }
                     return;
                 }
 
@@ -278,7 +286,7 @@ public class EntitySelectionManager : MonoBehaviour
         // Reset ground tracking
         _groundHexDataHovered = default;
         _hoveredGroundGrid = null;
-
+        
         // -------------------------------------------------------------
 
         VehicleEntity vehicleAlreadySelected = null;
@@ -323,6 +331,15 @@ public class EntitySelectionManager : MonoBehaviour
             }
         }
 
+        // This deosnt work, needs more thought
+        object currentHoveredObject = (object)closestUnitHovered ?? (object)closetVehicleHovered ?? (object)closetHexHovered;
+        
+        // if (currentHoveredObject == _lastHoveredObject && currentHoveredObject != null)
+        // {
+        //     // We are hovering over the exact same object as last frame, do nothing.
+        //     return;
+        // }
+
         // 2. If NO specific HexTile collider was hit, use the Math fallback
         if (closetHexHovered == null)
         {
@@ -334,11 +351,10 @@ public class EntitySelectionManager : MonoBehaviour
             }
         }
 
-        // ... Rest of your existing hover/selection logic below ...
-
         if (closestUnitHovered != null)
         {
             HoverUnit(closestUnitHovered);
+            _lastHoveredObject = currentHoveredObject;
             return;
         }
 
@@ -363,7 +379,7 @@ public class EntitySelectionManager : MonoBehaviour
             hexGridBase = _hoveredGroundGrid;
             foundHex = true;
         }
-
+   
         if (foundHex)
         {
             if (hoveredHexCoords == targetCoords && _hoveredHexGridBase == hexGridBase) return;
@@ -389,16 +405,33 @@ public class EntitySelectionManager : MonoBehaviour
                         if (vehicleAlreadySelected.GetDriver() == null) return;
                 
                         // Call overload if ground, else original
-                        if (closetHexHovered != null) HoverHexWithVehicleActive(closetHexHovered.GridCoordinates, closetHexHovered.gridBaseReference);
-                        else HoverHexWithVehicleActive(targetCoords, hexGridBase);
+                        if (closetHexHovered != null)
+                        {
+                            HoverHexWithVehicleActive(closetHexHovered.GridCoordinates,
+                                closetHexHovered.gridBaseReference);
+                        }
+                        else
+                        {
+                            HoverHexWithVehicleActive(targetCoords, hexGridBase);
+                        }
+                        
+                        _lastHoveredObject = currentHoveredObject;
                 
                         VehiclePathMover mover = EntityCommander.GetEntityInCommand().GetComponent<VehiclePathMover>();
                         finalPath = (mover != null) ? mover.GetSmoothPathForVehicle(rawPath) : rawPath;
                     }
                     else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                     {
-                        if (closetHexHovered != null) HoverHexWithUnitActive(closetHexHovered.GridCoordinates, closetHexHovered.gridBaseReference);
-                        else HoverHexWithUnitActive(targetCoords, hexGridBase);
+                        if (closetHexHovered != null)
+                        {
+                            HoverHexWithUnitActive(closetHexHovered.GridCoordinates,
+                                closetHexHovered.gridBaseReference);
+                        }
+                        else
+                        {
+                            HoverHexWithUnitActive(targetCoords, hexGridBase);
+                        }
+                        _lastHoveredObject = currentHoveredObject;
                         finalPath = rawPath;
                     }
                     else
@@ -436,6 +469,7 @@ public class EntitySelectionManager : MonoBehaviour
                 {
                     HoverHex(targetCoords, hexGridBase);
                 }
+                _lastHoveredObject = currentHoveredObject;
             }
         }
     }

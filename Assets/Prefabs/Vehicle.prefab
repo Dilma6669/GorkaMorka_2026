@@ -2846,7 +2846,7 @@ Transform:
   m_GameObject: {fileID: 7364709448439807745}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2873,10 +2873,10 @@ MonoBehaviour:
   BaseMoveSpeed: 0
   EntityType: 1
   EntityGUID: 
-  CurrentGrid: {fileID: 1945751487590092140}
+  currentGridBase: {fileID: 0}
   CurrentGridCoordinates: {x: 0, y: 0}
   entityHeightOffset: 1
-  VehicleInteriorGrid: {fileID: 1945751487590092140}
+  vehicleInteriorGridBase: {fileID: 8905344439653224207}
   shadowHexCollider: {fileID: 1403446398802841602}
   leftArcHexCollider: {fileID: 2276823894963072473}
   rightArcHexCollider: {fileID: 4332041192618943103}
@@ -4212,7 +4212,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_TagString
@@ -4228,7 +4228,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 99de35ea315d42141b93e6b07312b888, type: 2}
     - target: {fileID: 3227663583596440984, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3227663583596440984, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_TagString
@@ -4275,10 +4275,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
-      propertyPath: targetGrid
-      value: 
-      objectReference: {fileID: 1945751487590092140}
-    - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: hexVisualHeight
       value: 10
       objectReference: {fileID: 0}
@@ -4288,31 +4284,60 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7355252563365779604, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7355252563365779604, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_TagString
       value: CarGrid
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 8905344439653224207}
   m_SourcePrefab: {fileID: 100100000, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
---- !u!114 &1945751487590092140 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+--- !u!1 &534374159807448796 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
   m_PrefabInstance: {fileID: 284402247254590878}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+--- !u!114 &8905344439653224207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534374159807448796}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 228f942f3148419ca14134cfe927cc26, type: 3}
+  m_Script: {fileID: 11500000, guid: 99bb5cc0b24544f19ba67edafa1d0588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  griEntity: {fileID: 0}
+  GridType: 0
+  HexagonsContainer: {fileID: 3402628655108859910}
+  EntityContainer: {fileID: 7341286765440539914}
+  gridRadius: 5
+  hexSize: 1
+  entireGridHeightOffset: 0
+  singleHexHeightAdjustment: 1
+  customGridShape: {fileID: 11400000, guid: 99de35ea315d42141b93e6b07312b888, type: 2}
+--- !u!1 &3402628655108859910 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3227663583596440984, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 284402247254590878}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5029749833185982415 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 284402247254590878}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7341286765440539914 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7355252563365779604, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
   m_PrefabInstance: {fileID: 284402247254590878}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5565519359919793688

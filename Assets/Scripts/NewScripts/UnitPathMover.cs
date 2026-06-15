@@ -8,7 +8,6 @@ using System.Linq;
 // It no longer directly references the MultiGridPathfinder or initiates pathfinding itself.
 public class UnitPathMover : MonoBehaviour, IEntityPathMover
 {
-    // pathfinding fucks up when change this to UnitEntity... look into this when sober
     private UnitEntity entity;
     
     [Tooltip("The speed at which the object moves along the path.")]

@@ -25,8 +25,6 @@ public class SimpleHexGridFloating : SimpleHexGridBase
 
     public override void GenerateGrid()
     {
-       Debug.Log($"fuck simple hex generate");
-
         if (customGridShape != null)
         {
             GenerateCustomGrid();

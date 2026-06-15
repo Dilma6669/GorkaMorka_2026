@@ -144,45 +144,7 @@ public class HexGridManager : MonoBehaviour
             }
         }
     }
-
-    public SimpleHexGridBase FindGridUnderPosition(Vector3 position)
-    {
-        // Simple check: iterate registered grids. 
-        // Optimization: If you have many grids, you can use spatial partitioning.
-        foreach (var grid in registeredGrids)
-        {
-            // Check if the position is within the grid's bounds (using world-to-local)
-            Vector3 local = grid.transform.InverseTransformPoint(position);
-            // Assuming a simple bounds check here
-            if (Mathf.Abs(local.x) < grid.gridRadius * grid.hexSize * 2 && 
-                Mathf.Abs(local.z) < grid.gridRadius * grid.hexSize * 2)
-            {
-                return grid;
-            }
-        }
-        return null;
-    }
-
     
-    // [ContextMenu("Toggle Edge Visualization")]
-    // public void ToggleEdgeVisualization()
-    // {
-    //     // You can modify this to target a specific grid or all grids.
-    //     // Here, we'll assume we want to visualize all grids.
-    //     foreach (SimpleHexGridBase hexGrid in registeredGrids)
-    //     {
-    //         Debug.Log("fuck name of grid = " + hexGrid.gameObject.name);
-    //         HexGridVisualizerBase gridVisualizerFloating = hexGrid.HexGridVisualiser;
-    //         
-    //         if (gridVisualizerFloating == null)
-    //         {
-    //             Debug.LogError("HexGridVisualizer reference is null.");
-    //             return;
-    //         }
-    //         
-    //         gridVisualizerFloating.VisualizeEdgeHexes();
-    //     }
-    // }
     
     public enum GridType
     {

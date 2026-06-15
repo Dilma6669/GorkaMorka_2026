@@ -101,7 +101,7 @@ public class Entity : MonoBehaviour
         // Get the Y level of the top surface of the hex
         Vector3 hexSurfacePosition = gridBase.GetHexTopSurfacePosition(coords, hexData.Height);
 
-        Debug.Log($"fuck snapping entity to = {hexSurfacePosition}");
+        Debug.Log($"Snapping entity of type: {EntityType} to = {hexSurfacePosition}");
     
         // Apply the surface Y + the unit's "standing height" 
         // (Use a small offset for the unit's feet relative to the top of the hex)

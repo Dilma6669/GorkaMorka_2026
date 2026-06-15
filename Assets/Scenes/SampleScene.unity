@@ -947,6 +947,8 @@ MonoBehaviour:
     m_Bits: 8
   TargetHexagonHighlightedColour: {r: 0.2428806, g: 1, b: 0.07075471, a: 1}
   PathHexagonHighlightedColour: {r: 1, g: 0.88035375, b: 0.1273585, a: 1}
+  _cachedTargetCoords: {x: 0, y: 0}
+  _cachedTargetGrid: {fileID: 0}
 --- !u!114 &1284890852
 MonoBehaviour:
   m_ObjectHideFlags: 0

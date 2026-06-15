@@ -94,12 +94,8 @@ public class HexagonCollider : MonoBehaviour
                     // This miiiight cause issues....
                     if(string.IsNullOrEmpty(SetUniqueGUID) == false)
                     {
-                        Debug.Log($"fuck occupierGUID = {occupierGUID}");
-                        Debug.Log($"fuck Entity.EntityGUID = {Entity.EntityGUID}");
-                        
                         if (occupierGUID == Entity.EntityGUID)
                         {
-                            Debug.Log($"fuck here");
                             continue;
                         }
                     }

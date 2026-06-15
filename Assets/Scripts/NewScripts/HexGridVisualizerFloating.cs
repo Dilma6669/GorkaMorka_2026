@@ -26,7 +26,6 @@ public class HexGridVisualizerFloating : HexGridVisualizerBase
     protected override void Awake()
     {
         base.Awake();
-        Debug.Log($"fuck Awke Floating");
 
         _targetGridBase = GetComponent<SimpleHexGridFloating>();
     }
@@ -60,8 +59,6 @@ public class HexGridVisualizerFloating : HexGridVisualizerBase
 
 
         visualTiles = new Dictionary<Vector2Int, HexVisualTile>(); // Initialize the dictionary
-
-        // Debug.Log("fuck targetGrid.HexagonsInGrid.Count = " + targetGrid.HexagonsInGrid.Count);
 
         // Iterate through all hexes in the data grid and create their visual counterparts
         foreach (KeyValuePair<Vector2Int, HexData> hexDataPair in _targetGridBase.HexagonsInGrid)

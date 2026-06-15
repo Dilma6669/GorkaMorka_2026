@@ -100,7 +100,6 @@ public abstract class SimpleHexGridBase : MonoBehaviour
 
     private void OnGridFinish()
     {
-        Debug.Log($"fuck invoke ya cunt");
         OnGridReady?.Invoke(this);
     }
 
