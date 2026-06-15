@@ -114,8 +114,8 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         {
             int finalIndex = currentPath.Count - 1;
             PathNode finalNode = currentPath[finalIndex];
-            HexData finalHexData = finalNode.GridReference.GetHexData(finalNode.GridCoordinates);
-            Vector3 finalPos = finalNode.GridReference.GetHexWorldPosition(finalNode.GridCoordinates, finalHexData.Height);
+            HexData finalHexData = finalNode.GridBaseReference.GetHexData(finalNode.GridCoordinates);
+            Vector3 finalPos = finalNode.GridBaseReference.GetHexWorldPosition(finalNode.GridCoordinates, finalHexData.Height);
     
             // Calculate distance to the final goal
             float distanceToGoal = Vector3.Distance(transform.position, finalPos);
@@ -132,15 +132,15 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         int skipIndex = Mathf.Min(currentNodeIndex + 2, currentPath.Count - 1);
         PathNode targetNode = currentPath[skipIndex];
     
-        HexData hexData = targetNode.GridReference.GetHexData(targetNode.GridCoordinates);
-        Vector3 targetHexWorldPos = targetNode.GridReference.GetHexWorldPosition(targetNode.GridCoordinates, hexData.Height);
+        HexData hexData = targetNode.GridBaseReference.GetHexData(targetNode.GridCoordinates);
+        Vector3 targetHexWorldPos = targetNode.GridBaseReference.GetHexWorldPosition(targetNode.GridCoordinates, hexData.Height);
 
         // 2. Determine steering look-ahead:
         // Look a bit further than the target node for smooth steering.
         int steeringLookAhead = Mathf.Min(skipIndex + lookAheadNodes, currentPath.Count - 1);
         PathNode futureNode = currentPath[steeringLookAhead];
-        HexData futureHexData = futureNode.GridReference.GetHexData(futureNode.GridCoordinates);
-        Vector3 rawSteeringDestination = futureNode.GridReference.GetHexWorldPosition(futureNode.GridCoordinates, futureHexData.Height);
+        HexData futureHexData = futureNode.GridBaseReference.GetHexData(futureNode.GridCoordinates);
+        Vector3 rawSteeringDestination = futureNode.GridBaseReference.GetHexWorldPosition(futureNode.GridCoordinates, futureHexData.Height);
     
         // 1. Calculate direction to the destination
         // 1. Calculate direction to the destination
@@ -185,7 +185,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         {
             if (entity != null)
             {
-                entity.CurrentGrid = targetNode.GridReference;
+                entity.currentGridBase = targetNode.GridBaseReference;
                 entity.CurrentGridCoordinates = targetNode.GridCoordinates;
             }
 
@@ -193,7 +193,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
         }
         
         // PROGRESS WATCHDOG 
-        Vector3 distanceToFinal = (currentPath[currentPath.Count - 1].GridReference.GetHexWorldPosition(currentPath[currentPath.Count - 1].GridCoordinates, 0) - transform.position);
+        Vector3 distanceToFinal = (currentPath[currentPath.Count - 1].GridBaseReference.GetHexWorldPosition(currentPath[currentPath.Count - 1].GridCoordinates, 0) - transform.position);
         float currentDist = distanceToFinal.magnitude;
 
         // If we are not moving closer (threshold of 0.001f prevents jitter issues)
@@ -234,8 +234,8 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
             PathNode previousNode = originalPath[i - 1];
             PathNode currentNode = originalPath[i];
             
-            HexData previousHexData = previousNode.GridReference.GetHexData(previousNode.GridCoordinates);
-            HexData currentHexData = currentNode.GridReference.GetHexData(currentNode.GridCoordinates);
+            HexData previousHexData = previousNode.GridBaseReference.GetHexData(previousNode.GridCoordinates);
+            HexData currentHexData = currentNode.GridBaseReference.GetHexData(currentNode.GridCoordinates);
             
             if (!previousHexData.GetIsWalkable() || !currentHexData.GetIsWalkable() || !previousHexData.GetIsOccupied() || !currentHexData.GetIsOccupied())
             {
@@ -253,7 +253,7 @@ public class VehiclePathMover : MonoBehaviour, IEntityPathMover
             if (incomingDirection != outgoingDirection)
             {
                 // Add a waypoint to smooth the turn.
-                smoothedPath.Add(new PathNode(currentNode.GridCoordinates, currentNode.GridReference));
+                smoothedPath.Add(new PathNode(currentNode.GridCoordinates, currentNode.GridBaseReference));
             }
 
             smoothedPath.Add(currentNode);

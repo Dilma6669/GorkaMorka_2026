@@ -274,6 +274,11 @@ MonoBehaviour:
   minYRotation: -90
   maxYRotation: 90
   movementSpeed: 5
+--- !u!1 &409080911 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7355252563365779604, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 1182573990}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,7 +446,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_Name
-      value: SimpleHexGrid
+      value: SimpleHexGridGround
+      objectReference: {fileID: 0}
+    - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_Enabled
@@ -519,10 +528,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2045115133}
+      addedObject: {fileID: 2045115137}
     - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2045115137}
+      addedObject: {fileID: 2045115133}
   m_SourcePrefab: {fileID: 100100000, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
 --- !u!4 &727156829 stripped
 Transform:
@@ -613,6 +622,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 727156829}
+  - {fileID: 1182573991}
   m_Father: {fileID: 1153555900}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1153555899
@@ -680,6 +690,104 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1593610206}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1182573990
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1030389474}
+    m_Modifications:
+    - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_Name
+      value: SimpleHexGridFloating
+      objectReference: {fileID: 0}
+    - target: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: gridRadius
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3227663583596440984, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_TagString
+      value: GroundGrid
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: targetGrid
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310889350748729316, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: hexVisualHeight
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7355252563365779604, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_TagString
+      value: GroundGrid
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1797733386346825970, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2144170100}
+  m_SourcePrefab: {fileID: 100100000, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+--- !u!4 &1182573991 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 1182573990}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1195995623
 GameObject:
   m_ObjectHideFlags: 0
@@ -773,9 +881,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caf3b457a6e648c4ab0df47bcc607fe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startGrid: {fileID: 0}
+  startGridBase: {fileID: 0}
   startCoords: {x: 0, y: 0}
-  targetGrid: {fileID: 0}
+  targetGridBase: {fileID: 0}
   targetCoords: {x: 0, y: 0}
   defaultMovementCost: 1
   jumpCost: 1
@@ -801,7 +909,7 @@ MonoBehaviour:
   craftPrefab: {fileID: 7364709448439807745, guid: d817cf2b60e943847a272d152a84829e, type: 3}
   GroundedGridsContainer: {fileID: 1030389473}
   FloatingGridsContainer: {fileID: 677585704}
-  defaultSpawnGrid: {fileID: 2045115133}
+  defaultSpawnGridBase: {fileID: 2144170100}
   defaultSpawnCoordinates: {x: 0, y: 0}
   unitsToSpawn: []
 --- !u!114 &1284890850
@@ -817,7 +925,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EntityInCommand: {fileID: 0}
-  TargetGrid: {fileID: 0}
+  targetGridBase: {fileID: 0}
   TargetCoordinates: {x: 0, y: 0}
 --- !u!114 &1284890851
 MonoBehaviour:
@@ -884,6 +992,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1449497471 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3227663583596440984, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 1182573990}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1593610205
 GameObject:
   m_ObjectHideFlags: 0
@@ -1161,13 +1274,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b1adb27ee24489a08e1e8b2a095dbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HexGridVisualiser: {fileID: 0}
   griEntity: {fileID: 0}
   GridType: 0
   HexagonsContainer: {fileID: 647497032}
   EntityContainer: {fileID: 1011478121}
-  customGridShape: {fileID: 0}
-  gridRadius: 500
+  gridRadius: 20
   hexSize: 1
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
@@ -1186,6 +1297,7 @@ MonoBehaviour:
   rockSharpness: 2
   terrainSmoothness: 0.8
   neighborHeightLimit: 0.8
+  entityPlacementHeightOffset: 0.05
 --- !u!114 &2045115137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1199,13 +1311,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexagonsContainer: {fileID: 647497032}
-  hexVisualHeight: 30
+  hexVisualHeight: 100
   highDetailMesh: {fileID: -4575734979276873811, guid: 79357c7aeab13d94e9270b6bd1272d05, type: 3}
   lowDetailMesh: {fileID: -4575734979276873811, guid: 79357c7aeab13d94e9270b6bd1272d05, type: 3}
   hexMaterial_HighRes: {fileID: 2100000, guid: 112f3e43f74254ba2b792534a6468e8c, type: 2}
   hexMaterial_LowRes: {fileID: 2100000, guid: c3ec504e06cda4b64926fc381227e09b, type: 2}
   lodDistance: 200
   extremeDistance: 999999
+  CalculatedMeshThickness: 0
+--- !u!1 &2144170096 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 1182573990}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2144170100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144170096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99bb5cc0b24544f19ba67edafa1d0588, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  griEntity: {fileID: 0}
+  GridType: 1
+  HexagonsContainer: {fileID: 1449497471}
+  EntityContainer: {fileID: 409080911}
+  gridRadius: 20
+  hexSize: 1
+  entireGridHeightOffset: 0
+  singleHexHeightAdjustment: 1
+  customGridShape: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

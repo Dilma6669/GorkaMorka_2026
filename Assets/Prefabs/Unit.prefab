@@ -118,6 +118,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2707634043224181038}
   - component: {fileID: 4296798820256556944}
+  - component: {fileID: 5157733575852607172}
   - component: {fileID: 7263269333663405553}
   - component: {fileID: 4811310351087041674}
   - component: {fileID: 6520707023299228574}
@@ -151,7 +152,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3191656106165510946}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2772e63f70bb214daede50c72dc3eeb, type: 3}
   m_Name: 
@@ -159,6 +160,18 @@ MonoBehaviour:
   Entity: {fileID: 1695146958402388932}
   currentlyBlockedTiles: []
   SetUniqueGUID: 
+--- !u!114 &5157733575852607172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3191656106165510946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ca0d3ac577447009a69d1112c7ad70e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!33 &7263269333663405553
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -58,9 +58,9 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         currentNodeIndex = 0;
         
         // Check to Clear unit as driver
-        if (entity.isDriver && entity.CurrentGrid.griEntity != null)
+        if (entity.isDriver && entity.currentGridBase.griEntity != null)
         {
-            string gridGUID = entity.CurrentGrid.griEntity.EntityGUID;
+            string gridGUID = entity.currentGridBase.griEntity.EntityGUID;
                 
             // issue here
             if (EntityManager.TryGetEntity(gridGUID, out Entity vehicleEntity))
@@ -68,7 +68,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
                 entity.isDriver = false;
                 VehicleEntity vehicle = (VehicleEntity)vehicleEntity;
                 vehicle.ClearDriver();
-                Debug.Log($"Unit {entity.name} has stopped being Driver for  grid {entity.CurrentGrid.name}!");
+                Debug.Log($"Unit {entity.name} has stopped being Driver for  grid {entity.currentGridBase.name}!");
             }
         }
         
@@ -77,16 +77,16 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         // Pre-calculate heights once when the path is created
         foreach (var node in currentPath)
         {
-            float h = node.GridReference.GetHexWorldPosition(node.GridCoordinates, 
-                node.GridReference.GetHexData(node.GridCoordinates).Height).y;
+            float h = node.GridBaseReference.GetHexWorldPosition(node.GridCoordinates, 
+                node.GridBaseReference.GetHexData(node.GridCoordinates).Height).y;
             pathWorldHeights.Add(h);
         }
 
-        HexData hexData = currentPath[0].GridReference.GetHexData(currentPath[0].GridCoordinates);
+        HexData hexData = currentPath[0].GridBaseReference.GetHexData(currentPath[0].GridCoordinates);
         
         // Immediately snap to the start of the path
         // Ensure the mover's Y position is respected, just updating XZ for the snap point
-        Vector3 startHexWorldPos = currentPath[0].GridReference.GetHexWorldPosition(currentPath[0].GridCoordinates, hexData.Height);
+        Vector3 startHexWorldPos = currentPath[0].GridBaseReference.GetHexWorldPosition(currentPath[0].GridCoordinates, hexData.Height);
         transform.position = new Vector3(startHexWorldPos.x, transform.position.y, startHexWorldPos.z);
 
         targetReached = true;
@@ -122,8 +122,8 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
 
         // Final destination check
         PathNode finalNode = currentPath.Last();
-        HexData finalHexData = finalNode.GridReference.GetHexData(finalNode.GridCoordinates);
-        Vector3 finalPos = finalNode.GridReference.GetHexWorldPosition(finalNode.GridCoordinates, finalHexData.Height);
+        HexData finalHexData = finalNode.GridBaseReference.GetHexData(finalNode.GridCoordinates);
+        Vector3 finalPos = finalNode.GridBaseReference.GetHexWorldPosition(finalNode.GridCoordinates, finalHexData.Height);
     
         // Check if we are close enough to the final destination to declare "Done"
         float distToFinal = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), 
@@ -179,9 +179,9 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         // --------------------------------------
         
         PathNode targetNode = currentPath[targetIndex];
-        HexData hexData = targetNode.GridReference.GetHexData(targetNode.GridCoordinates);
+        HexData hexData = targetNode.GridBaseReference.GetHexData(targetNode.GridCoordinates);
         Vector3 targetHexWorldPos =
-            targetNode.GridReference.GetHexWorldPosition(targetNode.GridCoordinates, hexData.Height);
+            targetNode.GridBaseReference.GetHexWorldPosition(targetNode.GridCoordinates, hexData.Height);
         Vector3 targetPosWithCurrentY = new Vector3(targetHexWorldPos.x, transform.position.y, targetHexWorldPos.z);
 
         // 2. Movement
@@ -220,21 +220,21 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
 
     private void NodeArrival(PathNode targetNode)
     {
-        entity.SnapToHex(targetNode.GridReference, targetNode.GridCoordinates);
+        entity.SnapToHex(targetNode.GridBaseReference, targetNode.GridCoordinates);
         
         // Boarding
-        CheckForBoardingVehicle(targetNode.GridReference);
+        CheckForBoardingVehicle(targetNode.GridBaseReference);
         
         //Driving
         CheckForDrivingVehicle(targetNode);
     }
 
-    private void CheckForBoardingVehicle(SimpleHexGrid grid)
+    private void CheckForBoardingVehicle(SimpleHexGridBase gridBase)
     {
-        if (entity.CurrentGrid != grid)
+        if (entity.currentGridBase != gridBase)
         {
-            Debug.Log($"Unit {entity.name} has boarded new grid {grid.name}!");
-            entity.SetEntityToNewGrid(grid);
+            Debug.Log($"Unit {entity.name} has boarded new grid {gridBase.name}!");
+            entity.SetEntityToNewGrid(gridBase);
         }
     }
 
@@ -245,12 +245,12 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
             return;
         }
         
-        HexData hexData = targetNode.GridReference.GetHexData(targetNode.GridCoordinates);
+        HexData hexData = targetNode.GridBaseReference.GetHexData(targetNode.GridCoordinates);
         
         // If the tile is a Command Seat
         if (hexData.IsCommandSeat)
         {
-            string gridGUID = entity.CurrentGrid.griEntity.EntityGUID;
+            string gridGUID = entity.currentGridBase.griEntity.EntityGUID;
             
             if(EntityManager.TryGetEntity(gridGUID, out Entity vehicleEntity))
             {
@@ -258,7 +258,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
                 VehicleEntity vehicle = (VehicleEntity)vehicleEntity;
                 vehicle.SetDriver(entity);
                 EntitySelectionManager.SelectVehicle(vehicle);
-                Debug.Log($"Unit {entity.name} has become Driver for new grid {entity.CurrentGrid.name}!");
+                Debug.Log($"Unit {entity.name} has become Driver for new grid {entity.currentGridBase.name}!");
             }
         }
     }

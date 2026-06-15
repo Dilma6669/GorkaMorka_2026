@@ -8,7 +8,7 @@ public class PathNode : IComparable<PathNode> // Implement IComparable for poten
 {
     // --- Node Identity ---
     public Vector2Int GridCoordinates; // The (x, z) coordinates of the hex within its grid.
-    public SimpleHexGrid GridReference; // Reference to the specific SimpleHexGrid this hex belongs to.
+    public SimpleHexGridBase GridBaseReference; // Reference to the specific SimpleHexGrid this hex belongs to.
 
     // --- A* Specific Costs ---
     public float GCost;   // Cost from the starting node to this node.
@@ -19,10 +19,10 @@ public class PathNode : IComparable<PathNode> // Implement IComparable for poten
     public float FCost => GCost + HCost;
 
     // --- Constructor ---
-    public PathNode(Vector2Int gridCoords, SimpleHexGrid gridRef)
+    public PathNode(Vector2Int gridCoords, SimpleHexGridBase gridBaseRef)
     {
         GridCoordinates = gridCoords;
-        GridReference = gridRef;
+        GridBaseReference = gridBaseRef;
         // Costs and Parent will be set by the A* algorithm
         GCost = float.MaxValue; // Initialize GCost to a very large number
         HCost = 0;              // Heuristic cost will be calculated later
@@ -45,14 +45,14 @@ public class PathNode : IComparable<PathNode> // Implement IComparable for poten
         PathNode other = (PathNode)obj;
         // Two PathNodes are equal if they refer to the same hex coordinates on the same grid.
         return GridCoordinates.Equals(other.GridCoordinates) &&
-               GridReference.Equals(other.GridReference);
+               GridBaseReference.Equals(other.GridBaseReference);
     }
 
     public override int GetHashCode()
     {
         // Combine the hash codes of the identifying properties.
         // This ensures that two equal PathNodes produce the same hash code.
-        return HashCode.Combine(GridCoordinates, GridReference);
+        return HashCode.Combine(GridCoordinates, GridBaseReference);
     }
 
     // --- For Sorting (e.g., in a Priority Queue) ---
@@ -70,6 +70,6 @@ public class PathNode : IComparable<PathNode> // Implement IComparable for poten
 
     public override string ToString()
     {
-        return $"Node: Grid({GridReference.name}), Coords({GridCoordinates.x},{GridCoordinates.y}), F:{FCost:F1}";
+        return $"Node: Grid({GridBaseReference.name}), Coords({GridCoordinates.x},{GridCoordinates.y}), F:{FCost:F1}";
     }
 }

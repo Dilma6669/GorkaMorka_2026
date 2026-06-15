@@ -18,10 +18,10 @@ public class EntitySelectionManager : MonoBehaviour
     public Color PathHexagonHighlightedColour;
 
     private Vector2Int hoveredHexCoords;
-    private SimpleHexGrid hoveredHexGrid;
+    private SimpleHexGridBase _hoveredHexGridBase;
     
     private Vector2Int selectedHexCoords;
-    private SimpleHexGrid selectedHexGrid;
+    private SimpleHexGridBase _selectedHexGridBase;
     
     private MultiGridPathfinder pathfinder;
     private HexOverlayManager hexOverlayManager;
@@ -82,9 +82,9 @@ public class EntitySelectionManager : MonoBehaviour
         if (selectedHexCoords == hex.GridCoordinates) return;
         selectedHexCoords = hex.GridCoordinates;
 
-        SimpleHexGrid closestHexGrid = hex.GridReference;
-        selectedHexGrid = closestHexGrid;
-        EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, selectedHexCoords);
+        SimpleHexGridBase closestHexGridBase = hex.gridBaseReference;
+        _selectedHexGridBase = closestHexGridBase;
+        EntityCommander.SetTargetGridAndCoordinates(closestHexGridBase, selectedHexCoords);
         EntityCommander.CommandUnitToMove();
     }
     
@@ -94,16 +94,16 @@ public class EntitySelectionManager : MonoBehaviour
         if (selectedHexCoords == hex.GridCoordinates) return;
         selectedHexCoords = hex.GridCoordinates;
 
-        SimpleHexGrid closestHexGrid = hex.GridReference;
-        selectedHexGrid = closestHexGrid;
+        SimpleHexGridBase closestHexGridBase = hex.gridBaseReference;
+        _selectedHexGridBase = closestHexGridBase;
         
         VehicleEntity vehicle = EntityCommander.GetEntityInCommand() as VehicleEntity;
         
         // Dont allow vehicles to use their own internal grid as a possible path
-        if (closestHexGrid == vehicle.VehicleInteriorGrid)
+        if (closestHexGridBase == vehicle.vehicleInteriorGridBase)
             return;
 
-        EntityCommander.SetTargetGridAndCoordinates(closestHexGrid, selectedHexCoords);
+        EntityCommander.SetTargetGridAndCoordinates(closestHexGridBase, selectedHexCoords);
         EntityCommander.CommandUnitToMove();
     }
     
@@ -194,11 +194,11 @@ public class EntitySelectionManager : MonoBehaviour
         {
             if (closetHexSelected != null)
             {
-                SimpleHexGrid closestHexGrid = closetHexSelected.GridReference;
+                SimpleHexGridBase closestHexGridBase = closetHexSelected.gridBaseReference;
   
                VehicleEntity vehicle = closetVehicleSelected as VehicleEntity;
       
-               if (vehicle.VehicleInteriorGrid != closestHexGrid)
+               if (vehicle.vehicleInteriorGridBase != closestHexGridBase)
                 {
                     SelectVehicle(closetVehicleSelected);
                     return;
@@ -317,8 +317,8 @@ public class EntitySelectionManager : MonoBehaviour
  
             hoveredHexCoords = closetHexHovered.GridCoordinates;
 
-            SimpleHexGrid hexGrid = closetHexHovered.GridReference;
-            hoveredHexGrid = hexGrid;
+            SimpleHexGridBase hexGridBase = closetHexHovered.gridBaseReference;
+            _hoveredHexGridBase = hexGridBase;
 
             hexOverlayManager.ClearAll();
 
@@ -328,8 +328,8 @@ public class EntitySelectionManager : MonoBehaviour
                 Vector2Int targetCoords = closetHexHovered.GridCoordinates;
             
                 // Re-use your pathfinding/visualization code here using hexHitResult.point
-                PathNode startNode = new PathNode(EntityCommander.GetEntityInCommand().CurrentGridCoordinates, EntityCommander.GetEntityInCommand().CurrentGrid);
-                PathNode endNode = new PathNode(targetCoords, hexGrid);
+                PathNode startNode = new PathNode(EntityCommander.GetEntityInCommand().CurrentGridCoordinates, EntityCommander.GetEntityInCommand().currentGridBase);
+                PathNode endNode = new PathNode(targetCoords, hexGridBase);
                 List<PathNode> rawPath = pathfinder.FindPath(startNode, endNode);
 
                 if (rawPath != null && rawPath.Count > 0)
@@ -366,12 +366,12 @@ public class EntitySelectionManager : MonoBehaviour
 
                     foreach (PathNode pathNode in finalPath)
                     {
-                        hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(pathNode.GridCoordinates, pathNode.GridReference),
+                        hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(pathNode.GridCoordinates, pathNode.GridBaseReference),
                             PathHexagonHighlightedColour, true);
                     }
 
                     // Highlight the target hex
-                    hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(targetCoords, closetHexHovered.GridReference), TargetHexagonHighlightedColour, true);
+                    hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(targetCoords, closetHexHovered.gridBaseReference), TargetHexagonHighlightedColour, true);
 
                 }
             }

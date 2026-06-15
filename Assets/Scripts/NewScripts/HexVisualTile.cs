@@ -1,13 +1,14 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class HexVisualTile : MonoBehaviour
 {
-    [HideInInspector] public SimpleHexGrid GridReference;
+    [FormerlySerializedAs("GridReference")] [HideInInspector] public SimpleHexGridBase gridBaseReference;
     public Vector2Int GridCoordinates;
     
-    public HexData hexData => GridReference.GetHexData(GridCoordinates);
+    public HexData hexData => gridBaseReference.GetHexData(GridCoordinates);
     
-    private Renderer hexRenderer;
+    public Renderer hexRenderer;
     private MaterialPropertyBlock propBlock;
     // Use "_BaseColor" if you are using URP/HDRP shaders, use "_Color" for standard Legacy shaders
     private static readonly int ColorID = Shader.PropertyToID("_BaseColor"); 
@@ -19,9 +20,9 @@ public class HexVisualTile : MonoBehaviour
     public bool ColourLocked;
     public bool IsCommandSeat;
     
-    public void Initialize(SimpleHexGrid grid, Vector2Int coords, float height, bool isWalkable, bool isClimbable, bool isOccupied, bool isCommandSeat)
+    public void Initialize(SimpleHexGridBase gridBase, Vector2Int coords, float height, bool isWalkable, bool isClimbable, bool isOccupied, bool isCommandSeat)
     {
-        GridReference = grid;
+        gridBaseReference = gridBase;
         GridCoordinates = coords;
         Height = height;
         IsWalkable = isWalkable;

@@ -9,15 +9,16 @@ public class EntityCommander : MonoBehaviour
 {
 
     private static Entity entityToCommand;
-    private static SimpleHexGrid targetGrid;
+    private static SimpleHexGridBase _targetGridBase;
     private static Vector2Int targetCoordinates;
 
     [Tooltip("The specific Unit this commander will control.")]
     public Entity EntityInCommand;
     
+    [FormerlySerializedAs("TargetGrid")]
     [Header("Target for Pathfinding (for testing)")]
     [Tooltip("The grid where the target hex is located.")]
-    public SimpleHexGrid TargetGrid;
+    public SimpleHexGridBase targetGridBase;
     
     [Tooltip("The axial coordinates of the target hex on the target grid.")]
     private MultiGridPathfinder pathfinder;
@@ -49,14 +50,14 @@ public class EntityCommander : MonoBehaviour
         return entityToCommand;
     }
 
-    public static void SetTargetGridAndCoordinates(SimpleHexGrid grid, Vector2Int coords)
+    public static void SetTargetGridAndCoordinates(SimpleHexGridBase gridBase, Vector2Int coords)
     {
-        targetGrid = grid;
+        _targetGridBase = gridBase;
         targetCoordinates = coords;
         
         if (Instance != null)
         {
-            Instance.TargetGrid = grid;
+            Instance.targetGridBase = gridBase;
             Instance.TargetCoordinates = coords;
         }
     }
@@ -72,14 +73,14 @@ public class EntityCommander : MonoBehaviour
             return;
         }
         
-        if (targetGrid == null)
+        if (_targetGridBase == null)
         {
             Debug.LogError("UnitCommander: Target Grid for pathfinding is not assigned!");
             return;
         }
-        if (!targetGrid.IsValidCoordinates(targetCoordinates))
+        if (!_targetGridBase.IsValidCoordinates(targetCoordinates))
         {
-            Debug.LogError($"UnitCommander: Target coordinates {targetCoordinates} are invalid on grid '{targetGrid.name}'.");
+            Debug.LogError($"UnitCommander: Target coordinates {targetCoordinates} are invalid on grid '{_targetGridBase.name}'.");
             return;
         }
     
@@ -94,8 +95,8 @@ public class EntityCommander : MonoBehaviour
         }
     
         // 2. Get the path from the pathfinder
-        PathNode startNode = new PathNode(entityToCommand.CurrentGridCoordinates, entityToCommand.CurrentGrid);
-        PathNode endNode = new PathNode(targetCoordinates, targetGrid);
+        PathNode startNode = new PathNode(entityToCommand.CurrentGridCoordinates, entityToCommand.currentGridBase);
+        PathNode endNode = new PathNode(targetCoordinates, _targetGridBase);
         List<PathNode> path = MultiGridPathfinder.Instance.FindPath(startNode, endNode);
     
         // 3. If a path is found, command the mover component to start
@@ -107,7 +108,7 @@ public class EntityCommander : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"EntityCommander: No path found for '{entityToCommand.name}' to {targetCoordinates} on '{targetGrid.name}'.");
+            Debug.LogWarning($"EntityCommander: No path found for '{entityToCommand.name}' to {targetCoordinates} on '{_targetGridBase.name}'.");
         }
     }
     
@@ -119,14 +120,14 @@ public class EntityCommander : MonoBehaviour
         for (int i = 0; i < path.Count - 2; i++)
         {
             // Get world positions for three consecutive nodes
-            HexData data1 = path[i].GridReference.GetHexData(path[i].GridCoordinates);
-            Vector3 pos1 = path[i].GridReference.GetHexWorldPosition(path[i].GridCoordinates, data1.Height);
+            HexData data1 = path[i].GridBaseReference.GetHexData(path[i].GridCoordinates);
+            Vector3 pos1 = path[i].GridBaseReference.GetHexWorldPosition(path[i].GridCoordinates, data1.Height);
 
-            HexData data2 = path[i + 1].GridReference.GetHexData(path[i + 1].GridCoordinates);
-            Vector3 pos2 = path[i + 1].GridReference.GetHexWorldPosition(path[i + 1].GridCoordinates, data2.Height);
+            HexData data2 = path[i + 1].GridBaseReference.GetHexData(path[i + 1].GridCoordinates);
+            Vector3 pos2 = path[i + 1].GridBaseReference.GetHexWorldPosition(path[i + 1].GridCoordinates, data2.Height);
 
-            HexData data3 = path[i + 2].GridReference.GetHexData(path[i + 2].GridCoordinates);
-            Vector3 pos3 = path[i + 2].GridReference.GetHexWorldPosition(path[i + 2].GridCoordinates, data3.Height);
+            HexData data3 = path[i + 2].GridBaseReference.GetHexData(path[i + 2].GridCoordinates);
+            Vector3 pos3 = path[i + 2].GridBaseReference.GetHexWorldPosition(path[i + 2].GridCoordinates, data3.Height);
 
             // Calculate directions between the nodes
             Vector3 dirToNext = (pos2 - pos1).normalized;

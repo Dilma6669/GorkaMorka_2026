@@ -1,17 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class HexGridVisualizerGround : MonoBehaviour
+public class HexGridVisualizerGround : HexGridVisualizerBase
 {
-    [Header("Overlay Settings (The few GameObjects we still need)")]
-    public GameObject HexagonsContainer;
-
     private List<Matrix4x4> matrices = new List<Matrix4x4>();
     private const int BATCH_SIZE = 128; 
-    
-    public float hexVisualHeight = 1.0f; 
-
-    private SimpleHexGrid targetGrid;
 
     private Matrix4x4[] fullMatrixArray; // Store all matrices here
     private Bounds[] batchBounds; // Stores the box for each batch
@@ -25,29 +18,40 @@ public class HexGridVisualizerGround : MonoBehaviour
     public float extremeDistance = 600.0f;
     
     private Matrix4x4[][] batchCache;
-    
-    private UnityEngine.MaterialPropertyBlock _propBlock;
 
+    public float CalculatedMeshThickness;
+
+    
 // 2. Initialize it in Awake
-    void Awake()
+    protected new void Awake()
     {
-        _propBlock = new UnityEngine.MaterialPropertyBlock();
-        targetGrid = GetComponent<SimpleHexGrid>();
-        targetGrid.OnGridReady += GenerateVisualGrid;
+        base.Awake();
+
+        _targetGridBase = GetComponent<SimpleHexGridGround>();
     }
     
-    public void GenerateVisualGrid(SimpleHexGrid grid)
+    void Start()
+    {
+        // This grabs the actual height of the mesh geometry assigned to the visualizer
+        if (highDetailMesh != null)
+        {
+            CalculatedMeshThickness = highDetailMesh.bounds.extents.y * 2f; 
+        }
+    }
+    
+    
+    public override void GenerateVisualGrid(SimpleHexGridBase gridBase)
     {
         // 1. Safety check
-        if (grid.HexagonsInGrid == null || grid.HexagonsInGrid.Count == 0) return;
-
+        if (gridBase.HexagonsInGrid == null || gridBase.HexagonsInGrid.Count == 0) return;
+        
         matrices.Clear();
-        float scaleFactor = grid.hexSize * 2f;
+        float scaleFactor = gridBase.hexSize * 2f;
         Vector3 scale = new Vector3(scaleFactor, hexVisualHeight, scaleFactor);
 
-        foreach (var hex in grid.HexagonsInGrid.Values)
+        foreach (var hex in gridBase.HexagonsInGrid.Values)
         {
-            Vector3 pos = grid.GetHexWorldPosition(hex.GridCoordinates, hex.Height);
+            Vector3 pos = gridBase.GetHexWorldPosition(hex.GridCoordinates, hex.Height);
             matrices.Add(Matrix4x4.TRS(pos, Quaternion.identity, scale));
         }
     
@@ -112,10 +116,5 @@ public class HexGridVisualizerGround : MonoBehaviour
                     Graphics.DrawMeshInstanced(lowDetailMesh, 0, hexMaterial_LowRes, batchCache[b], count);
             }
         }
-    }
-    
-    void OnDestroy()
-    {
-        targetGrid.OnGridReady -= GenerateVisualGrid;
     }
 }

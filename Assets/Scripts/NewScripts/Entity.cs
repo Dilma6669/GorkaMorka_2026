@@ -16,9 +16,10 @@ public class Entity : MonoBehaviour
     public EntitySpawner.EntityType EntityType;
     public string EntityGUID;
     
+    [FormerlySerializedAs("CurrentGrid")]
     [Header("Grid State")]
     [Tooltip("The SimpleHexGrid this unit is currently occupying.")]
-    public SimpleHexGrid CurrentGrid;
+    public SimpleHexGridBase currentGridBase;
     [Tooltip("The axial coordinates of the hex this unit is currently occupying.")]
     public Vector2Int CurrentGridCoordinates;
     
@@ -45,8 +46,8 @@ public class Entity : MonoBehaviour
     }
     
     void Update() {
-        if (CurrentGrid != null) {
-            float surfaceY = CurrentGrid.GetHexTopSurfaceY(CurrentGridCoordinates);
+        if (currentGridBase != null) {
+            float surfaceY = currentGridBase.GetHexTopSurfaceY(CurrentGridCoordinates);
             Debug.DrawLine(transform.position, new Vector3(transform.position.x, surfaceY, transform.position.z), Color.green);
         }
     }
@@ -59,14 +60,14 @@ public class Entity : MonoBehaviour
     /// <param name="coords">The axial coordinates on the grid.</param>
     public virtual void Initialize(EntitySpawner.EntityType entityType, EntityData entityData)
     {
-        if (entityData.spawnGrid == null)
+        if (entityData.spawnGridBase == null)
         {
             Debug.LogError($"Unit '{name}': Attempted to initialize with a null grid.", this);
             return;
         }
-        if (!entityData.spawnGrid.IsValidCoordinates(entityData.spawnCoordinates))
+        if (!entityData.spawnGridBase.IsValidCoordinates(entityData.spawnCoordinates))
         {
-            Debug.LogWarning($"Unit '{name}': Attempted to initialize on invalid coordinates {entityData.spawnCoordinates} on grid '{entityData.spawnGrid.name}'.", this);
+            Debug.LogWarning($"Unit '{name}': Attempted to initialize on invalid coordinates {entityData.spawnCoordinates} on grid '{entityData.spawnGridBase.name}'.", this);
             return;
         }
 
@@ -76,7 +77,7 @@ public class Entity : MonoBehaviour
         CurrentHealth = entityData.maxHealth;
         BaseMoveSpeed = entityData.baseMoveSpeed;
         
-        SnapToHex(entityData.spawnGrid, entityData.spawnCoordinates); // Snap to the initial position
+        SnapToHex(entityData.spawnGridBase, entityData.spawnCoordinates); // Snap to the initial position
         
         // Ensure we specifically look for the component
         EntityPathMover = GetComponent<IEntityPathMover>();
@@ -86,19 +87,21 @@ public class Entity : MonoBehaviour
             Debug.LogError($"Unit '{name}': PathMover component not found on this object!", this);
         }
             
-        Debug.Log($"Unit '{name}' initialized on grid '{CurrentGrid.name}' at {CurrentGridCoordinates}.");
+        Debug.Log($"Unit '{name}' initialized on grid '{currentGridBase.name}' at {CurrentGridCoordinates}.");
     }
 
-    public void SnapToHex(SimpleHexGrid grid, Vector2Int coords)
+    public void SnapToHex(SimpleHexGridBase gridBase, Vector2Int coords)
     {
-        CurrentGrid = grid;
+        currentGridBase = gridBase;
         CurrentGridCoordinates = coords;
-        transform.SetParent(grid.EntityContainer.transform);
+        transform.SetParent(gridBase.EntityContainer.transform);
 
-        HexData hexData = grid.GetHexData(CurrentGridCoordinates);
+        HexData hexData = gridBase.GetHexData(CurrentGridCoordinates);
         
         // Get the Y level of the top surface of the hex
-        Vector3 hexSurfacePosition = grid.GetHexTopSurfacePosition(coords, hexData.Height);
+        Vector3 hexSurfacePosition = gridBase.GetHexTopSurfacePosition(coords, hexData.Height);
+
+        Debug.Log($"fuck snapping entity to = {hexSurfacePosition}");
     
         // Apply the surface Y + the unit's "standing height" 
         // (Use a small offset for the unit's feet relative to the top of the hex)
@@ -127,9 +130,9 @@ public class Entity : MonoBehaviour
     }
     
     
-    public void SetEntityToNewGrid(SimpleHexGrid grid)
+    public void SetEntityToNewGrid(SimpleHexGridBase gridBase)
     {
-        CurrentGrid = grid;
+        currentGridBase = gridBase;
     }
     
     public virtual void EntitySelected(bool isSelected)

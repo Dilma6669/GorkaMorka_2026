@@ -33,8 +33,8 @@ public class HexOverlayManager : MonoBehaviour
             else
             {
                 // Spawn a new one
-                HexData hexData = gridAndCoords.Grid.GetHexData(gridAndCoords.Coords);
-                Vector3 pos = gridAndCoords.Grid.GetHexTopSurfacePosition(gridAndCoords.Coords, hexData.Height); 
+                HexData hexData = gridAndCoords.GridBase.GetHexData(gridAndCoords.Coords);
+                Vector3 pos = gridAndCoords.GridBase.GetHexTopSurfacePosition(gridAndCoords.Coords, hexData.Height); 
                 GameObject newOverlay = Instantiate(overlayPrefab, pos, Quaternion.identity, container);
                 newOverlay.GetComponent<Renderer>().material.color = color;
                 activeOverlays[gridAndCoords] = newOverlay;

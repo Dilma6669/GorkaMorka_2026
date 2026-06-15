@@ -428,7 +428,7 @@ public class HexagonController : MonoBehaviour
     {
         foreach (GameObject colliderObj in hexColliders)
         {
-            if (colliderObj != null) DestroyImmediate(colliderObj); // Use DestroyImmediate for editor-time cleanup
+            if (colliderObj != null) Destroy(colliderObj); // Use DestroyImmediate for editor-time cleanup
         }
         hexColliders.Clear();
     }
@@ -707,7 +707,7 @@ public class HexagonController : MonoBehaviour
     {
         foreach (GameObject chunk in meshChunks) 
         {
-            if (chunk != null) DestroyImmediate(chunk); // Use DestroyImmediate for editor-time cleanup
+            if (chunk != null) Destroy(chunk); // Use DestroyImmediate for editor-time cleanup
         }
         meshChunks.Clear();
     }

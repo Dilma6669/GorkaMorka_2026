@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 // Phase 8.2: UnitSpawner Class
 // Purpose: Manages the instantiation and initial placement of Unit GameObjects onto SimpleHexGrids.
@@ -16,8 +17,8 @@ public class EntitySpawner : MonoBehaviour
     public GameObject GroundedGridsContainer;
     public GameObject FloatingGridsContainer;
     
-    [Tooltip("The SimpleHexGrid where units will be spawned by default.")]
-    public SimpleHexGrid defaultSpawnGrid;
+    [FormerlySerializedAs("defaultSpawnGrid")] [Tooltip("The SimpleHexGrid where units will be spawned by default.")]
+    public SimpleHexGridBase defaultSpawnGridBase;
 
     [Tooltip("The axial coordinates on the defaultSpawnGrid where units will be spawned.")]
     public Vector2Int defaultSpawnCoordinates = Vector2Int.zero; // Default to grid center
@@ -26,7 +27,7 @@ public class EntitySpawner : MonoBehaviour
 
     private void Awake()
     {
-        defaultSpawnGrid.OnGridReady += SpawnInitialModels;
+        defaultSpawnGridBase.OnGridReady += SpawnInitialModels;
     }
     
     
@@ -58,15 +59,15 @@ public class EntitySpawner : MonoBehaviour
             return null;
         }
 
-        if (unitData.spawnGrid == null)
+        if (unitData.spawnGridBase == null)
         {
             Debug.LogError("UnitSpawner: Cannot spawn unit, target grid is null!");
             return null;
         }
 
-        if (!unitData.spawnGrid.IsValidCoordinates(unitData.spawnCoordinates))
+        if (!unitData.spawnGridBase.IsValidCoordinates(unitData.spawnCoordinates))
         {
-            Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {unitData.spawnCoordinates} are invalid on grid '{unitData.spawnGrid.name}'.");
+            Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {unitData.spawnCoordinates} are invalid on grid '{unitData.spawnGridBase.name}'.");
             return null;
         }
         
@@ -75,18 +76,18 @@ public class EntitySpawner : MonoBehaviour
         
         
         float targetHeight = 0f;
-        if (unitData.spawnGrid is GroundHexGrid groundGrid)
+        if (unitData.spawnGridBase is SimpleHexGridGround groundGrid)
         {
             targetHeight = groundGrid.GetHexHeight(unitData.spawnCoordinates);
         }
         else 
         {
             // Fallback for non-ground grids
-            targetHeight = unitData.spawnGrid.HexagonsInGrid[unitData.spawnCoordinates].Height;
+            targetHeight = unitData.spawnGridBase.HexagonsInGrid[unitData.spawnCoordinates].Height;
         }
 
         // Now calculate position with the REAL height
-        Vector3 spawnPos = unitData.spawnGrid.GetHexWorldPosition(unitData.spawnCoordinates, targetHeight);
+        Vector3 spawnPos = unitData.spawnGridBase.GetHexWorldPosition(unitData.spawnCoordinates, targetHeight);
         
         
         Debug.Log($"Spawning unit at: {unitData.spawnCoordinates} | Height: {targetHeight} | WorldPos: {spawnPos}");
@@ -94,7 +95,7 @@ public class EntitySpawner : MonoBehaviour
         GameObject spawnedGameObject = Instantiate(unitPrefab, spawnPos, rotationToMatchGridCreation);
         
         // This might fuck things up
-        spawnedGameObject.transform.SetParent(unitData.spawnGrid.EntityContainer.transform);
+        spawnedGameObject.transform.SetParent(unitData.spawnGridBase.EntityContainer.transform);
         
         Entity newEntity = spawnedGameObject.GetComponent<Entity>();
         if (newEntity == null)
@@ -127,14 +128,14 @@ public class EntitySpawner : MonoBehaviour
             Debug.LogError("EntitySpawner: Unit Prefab is not assigned!");
             return null;
         }
-        if (vehicleData.spawnGrid == null)
+        if (vehicleData.spawnGridBase == null)
         {
             Debug.LogError("EntitySpawner: Cannot spawn unit, target grid is null!");
             return null;
         }
-        if (!vehicleData.spawnGrid.IsValidCoordinates(vehicleData.spawnCoordinates))
+        if (!vehicleData.spawnGridBase.IsValidCoordinates(vehicleData.spawnCoordinates))
         {
-            Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {vehicleData.spawnCoordinates} are invalid on grid '{vehicleData.spawnGrid.name}'.");
+            Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {vehicleData.spawnCoordinates} are invalid on grid '{vehicleData.spawnGridBase.name}'.");
             return null;
         }
         
@@ -142,18 +143,18 @@ public class EntitySpawner : MonoBehaviour
         Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
         
         float targetHeight = 0f;
-        if (vehicleData.spawnGrid is GroundHexGrid groundGrid)
+        if (vehicleData.spawnGridBase is SimpleHexGridGround groundGrid)
         {
             targetHeight = groundGrid.GetHexHeight(vehicleData.spawnCoordinates);
         }
         else 
         {
             // Fallback for non-ground grids
-            targetHeight = vehicleData.spawnGrid.HexagonsInGrid[vehicleData.spawnCoordinates].Height;
+            targetHeight = vehicleData.spawnGridBase.HexagonsInGrid[vehicleData.spawnCoordinates].Height;
         }
 
         // Now calculate position with the REAL height
-        Vector3 spawnPos = vehicleData.spawnGrid.GetHexWorldPosition(vehicleData.spawnCoordinates, targetHeight);
+        Vector3 spawnPos = vehicleData.spawnGridBase.GetHexWorldPosition(vehicleData.spawnCoordinates, targetHeight);
         
         
         Debug.Log($"Spawning unit at: {vehicleData.spawnCoordinates} | Height: {targetHeight} | WorldPos: {spawnPos}");
@@ -161,7 +162,7 @@ public class EntitySpawner : MonoBehaviour
         GameObject spawnedGameObject = Instantiate(vehiclePrefab, spawnPos, rotationToMatchGridCreation);
        
         // Vehicles are anchored to the grid that they are spawning on
-        spawnedGameObject.transform.SetParent(vehicleData.spawnGrid.EntityContainer.transform);
+        spawnedGameObject.transform.SetParent(vehicleData.spawnGridBase.EntityContainer.transform);
 
         Entity newEntity = spawnedGameObject.GetComponent<Entity>();
         if (newEntity == null)
@@ -242,7 +243,7 @@ public class EntitySpawner : MonoBehaviour
     [ContextMenu("Spawn Default Unit")]
     void TestSpawnDefaultUnit()
     {
-        if (defaultSpawnGrid == null)
+        if (defaultSpawnGridBase == null)
         {
             Debug.LogError("EntitySpawner: Default Spawn Grid is not set for TestSpawnDefaultUnit!");
             return;
@@ -254,8 +255,8 @@ public class EntitySpawner : MonoBehaviour
         entityData.maxHealth = 100;
         entityData.currentHealth = 100;
         entityData.baseMoveSpeed = 5;
-        entityData.spawnGrid = defaultSpawnGrid;
-        entityData.spawnCoordinates = new Vector2Int(3,3);
+        entityData.spawnGridBase = defaultSpawnGridBase;
+        entityData.spawnCoordinates = new Vector2Int(-4,7);
         
         SpawnUnit(entityData);
     }
@@ -263,7 +264,7 @@ public class EntitySpawner : MonoBehaviour
     [ContextMenu("Spawn Default Vehicle")]
     void TestSpawnDefaultVehicle()
     {
-        if (defaultSpawnGrid == null)
+        if (defaultSpawnGridBase == null)
         {
             Debug.LogError("EntitySpawner: Default Spawn Grid is not set for TestSpawnDefaultUnit!");
             return;
@@ -275,7 +276,7 @@ public class EntitySpawner : MonoBehaviour
         entityData.maxHealth = 100;
         entityData.currentHealth = 100;
         entityData.baseMoveSpeed = 5;
-        entityData.spawnGrid = defaultSpawnGrid;
+        entityData.spawnGridBase = defaultSpawnGridBase;
         entityData.spawnCoordinates = new Vector2Int(-7,5);
         
         // This will now simply create a new unit each time the button is clicked.
@@ -285,14 +286,14 @@ public class EntitySpawner : MonoBehaviour
     private void OnDestroy()
     {
         // Always unsubscribe when the spawner is destroyed
-        defaultSpawnGrid.OnGridReady -= SpawnInitialModels;
+        defaultSpawnGridBase.OnGridReady -= SpawnInitialModels;
     }
     
-    private void SpawnInitialModels(SimpleHexGrid hexGrid)
+    private void SpawnInitialModels(SimpleHexGridBase hexGridBase)
     {
         Debug.Log("Spawner: Grid is ready, spawning units now!");
         TestSpawnDefaultUnit();
-        TestSpawnDefaultVehicle();
+       // TestSpawnDefaultVehicle();
     }
 
     

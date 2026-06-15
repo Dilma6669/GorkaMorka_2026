@@ -1,5 +1,6 @@
 ﻿
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class EntityData : ScriptableObject
 {
@@ -10,7 +11,7 @@ public class EntityData : ScriptableObject
     public int currentHealth;
     public float baseMoveSpeed;
     
-    [Header("Spawn Settings")]
-    public SimpleHexGrid spawnGrid;
+    [FormerlySerializedAs("spawnGrid")] [Header("Spawn Settings")]
+    public SimpleHexGridBase spawnGridBase;
     public Vector2Int spawnCoordinates;
 }

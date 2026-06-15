@@ -6,21 +6,14 @@ using System.Collections.Generic; // Required for List and Dictionary
 // Phase 2.1 (Revised for GameObject Hexes and Visual Control): HexGridVisualizer Class
 // Purpose: Instantiates visual hexagon GameObjects for a SimpleHexGrid.
 // Now also manages references to individual HexVisualTiles for color manipulation.
-public class HexGridVisualizerFloating : MonoBehaviour
+public class HexGridVisualizerFloating : HexGridVisualizerBase
 {
     [Header("Visuals Settings")]
     [Tooltip("The prefab GameObject to use for each hexagon (must have a HexVisualTile component and a Renderer).")]
     public GameObject hexPrefab;
 
-    public GameObject HexagonsContainer;
-
-    [Tooltip("The SimpleHexGrid data source this visualizer will represent.")]
-    private SimpleHexGrid targetGrid;
-
-    [Tooltip("The desired vertical scale (thickness) of the visual hexagon meshes.")]
-    public float hexVisualHeight = 0.1f; // New parameter for controlling thickness
-
-    [Header("Tile Colors")] public Color unwalkableColor = Color.red;
+    [Header("Tile Colors")] 
+    public Color unwalkableColor = Color.red;
     public Color climbableColor = Color.blue;
     public Color occupiedColour = Color.red;
     public Color commandSeatColour = Color.green;
@@ -30,29 +23,19 @@ public class HexGridVisualizerFloating : MonoBehaviour
 
     private bool edgeHexagonsVisible;
 
-    void Awake()
+    protected override void Awake()
     {
-        targetGrid = GetComponent<SimpleHexGrid>();
-        targetGrid.OnGridReady += GenerateVisualGrid;
+        base.Awake();
+        Debug.Log($"fuck Awke Floating");
 
-        if (targetGrid == null)
-        {
-            Debug.LogError($"HexGridVisualizer on '{name}': Target Grid is not assigned!", this);
-        }
+        _targetGridBase = GetComponent<SimpleHexGridFloating>();
     }
-
-    [ContextMenu("Generate Visual Grid")] // Allows manual triggering from Inspector
-    public void GenerateVisual()
-    {
-        targetGrid.GenerateDataGrid();
-        GenerateVisualGrid(targetGrid);
-    }
-
+    
     /// <summary>
     /// Instantiates visual hex GameObjects for the target SimpleHexGrid.
     /// Now initializes and stores HexVisualTile components.
     /// </summary>
-    public void GenerateVisualGrid(SimpleHexGrid hexGrid)
+    public override void GenerateVisualGrid(SimpleHexGridBase hexGridBase)
     {
         // Clear any existing visual hexes before generating new ones
         ClearVisualGrid();
@@ -63,13 +46,13 @@ public class HexGridVisualizerFloating : MonoBehaviour
             return;
         }
 
-        if (targetGrid == null)
+        if (_targetGridBase == null)
         {
             Debug.LogError("HexGridVisualizer: Target Grid is not assigned!");
             return;
         }
 
-        if (targetGrid.HexagonsInGrid.Count == 0)
+        if (_targetGridBase.HexagonsInGrid.Count == 0)
         {
             Debug.LogError("Visualizer cannot generate: Grid data has not been initialized yet!");
             return;
@@ -81,10 +64,10 @@ public class HexGridVisualizerFloating : MonoBehaviour
         // Debug.Log("fuck targetGrid.HexagonsInGrid.Count = " + targetGrid.HexagonsInGrid.Count);
 
         // Iterate through all hexes in the data grid and create their visual counterparts
-        foreach (KeyValuePair<Vector2Int, HexData> hexDataPair in targetGrid.HexagonsInGrid)
+        foreach (KeyValuePair<Vector2Int, HexData> hexDataPair in _targetGridBase.HexagonsInGrid)
         {
             Vector2Int coords = hexDataPair.Key;
-            Vector3 worldPos = targetGrid.GetHexWorldPosition(coords, hexDataPair.Value.Height);
+            Vector3 worldPos = _targetGridBase.GetHexWorldPosition(coords, hexDataPair.Value.Height);
 
             GameObject hexInstance = Instantiate(hexPrefab, worldPos, Quaternion.identity);
 
@@ -95,7 +78,7 @@ public class HexGridVisualizerFloating : MonoBehaviour
             // Unity's default Cylinder primitive (at scale 1,1,1) has a radius of 0.5.
             // Our hexSize is the desired outer radius (e.g., 1.0).
             // So, we need to scale the prefab by (hexSize / 0.5) in X and Z, which simplifies to hexSize * 2.
-            float scaleFactorXZ = targetGrid.hexSize * 2f;
+            float scaleFactorXZ = _targetGridBase.hexSize * 2f;
             hexInstance.transform.localScale = new Vector3(scaleFactorXZ, hexVisualHeight, scaleFactorXZ);
 
             // --- NEW: Get and Initialize HexVisualTile ---
@@ -105,7 +88,8 @@ public class HexGridVisualizerFloating : MonoBehaviour
 
             if (visualTile != null)
             {
-                visualTile.Initialize(targetGrid, coords, hexDataPair.Value.Height, hexDataPair.Value.GetIsWalkable(),
+                visualTile.Initialize(_targetGridBase, coords, hexDataPair.Value.Height,
+                    hexDataPair.Value.GetIsWalkable(),
                     hexDataPair.Value.GetIsClimbable(), hexDataPair.Value.GetIsOccupied(),
                     hexDataPair.Value.GetIsCommandSeat());
                 visualTiles.Add(coords, visualTile); // Store the reference
@@ -165,7 +149,7 @@ public class HexGridVisualizerFloating : MonoBehaviour
             {
                 if (tile != null && tile.gameObject != null)
                 {
-                    DestroyImmediate(tile.gameObject); // Use DestroyImmediate for editor context menu
+                    Destroy(tile.gameObject); // Use DestroyImmediate for editor context menu
                 }
             }
 
@@ -175,27 +159,26 @@ public class HexGridVisualizerFloating : MonoBehaviour
     }
 
     [ContextMenu("Refresh Grid Data")]
-    public void RefreshGridData()
+    public virtual void RefreshGridData()
     {
-        if (targetGrid == null) return;
+        if (_targetGridBase == null) return;
 
         // 1. Force the data to update
-        targetGrid.GenerateCustomGrid();
+        _targetGridBase.GenerateGrid();
 
         // 2. Clear then Rebuild
         ClearVisualGrid();
-        GenerateVisualGrid(targetGrid);
+        GenerateVisualGrid(_targetGridBase);
 
         //   Debug.Log("HexGridVisualizer: Grid data and visuals refreshed.");
     }
-    
 
     public void VisualizeEdgeHexes()
     {
         bool showEdges = !edgeHexagonsVisible;
 
         // Get the hex grid data
-        var hexGridData = targetGrid.HexagonsInGrid;
+        var hexGridData = _targetGridBase.HexagonsInGrid;
 
         // A distinct color for the edges, for example, yellow
         Color edgeColor = Color.yellow;
@@ -204,7 +187,7 @@ public class HexGridVisualizerFloating : MonoBehaviour
         {
             Vector2Int coords = entry.Key;
             // Check if this hex is an edge hex using the method we added
-            if (targetGrid.IsEdgeHex(coords))
+            if (_targetGridBase.IsEdgeHex(coords))
             {
                 if (visualTiles.ContainsKey(coords))
                 {
@@ -263,12 +246,5 @@ public class HexGridVisualizerFloating : MonoBehaviour
                 }
             }
         }
-    }
-
-    void OnDestroy()
-    {
-        ClearVisualGrid(); // Clean up spawned hexes when this component is destroyed
-        targetGrid.OnGridReady -= GenerateVisualGrid;
-
     }
 }

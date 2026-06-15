@@ -10,7 +10,6 @@ public class HexagonCollider : MonoBehaviour
 
     public string SetUniqueGUID;
     
-    
     private void OnTriggerEnter(Collider other)
     {
         // Check if the object we hit is a hex tile
@@ -21,7 +20,7 @@ public class HexagonCollider : MonoBehaviour
             {
                 // IMPORTANT: You need to tell the Pathfinding that this hex is blocked
                 // Update the HexData directly
-                if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
+                if (tile.gridBaseReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
                     if (data.GetIsOccupied())
                     {
@@ -33,7 +32,7 @@ public class HexagonCollider : MonoBehaviour
                     data.SetOccupier(string.IsNullOrEmpty(SetUniqueGUID) ? Entity.EntityGUID : SetUniqueGUID);
                     tile.SetIsOccupied(true);
                     tile.SetBaseColor(Color.red);
-                    tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
+                    tile.gridBaseReference.HexagonsInGrid[tile.GridCoordinates] = data;
                     currentlyBlockedTiles.Add(tile);
                 }
             }
@@ -46,7 +45,7 @@ public class HexagonCollider : MonoBehaviour
         {
             if (currentlyBlockedTiles.Contains(tile))
             {
-                if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
+                if (tile.gridBaseReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
                 {
                     if (data.GetIsOccupied())
                     {
@@ -80,7 +79,7 @@ public class HexagonCollider : MonoBehaviour
         // Optional: Reset any visual highlighting on the hexes before clearing
         foreach (var tile in currentlyBlockedTiles)
         {
-            if (tile.GridReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
+            if (tile.gridBaseReference.HexagonsInGrid.TryGetValue(tile.GridCoordinates, out HexData data))
             {
                 if (data.GetIsOccupied())
                 {
@@ -119,6 +118,6 @@ public class HexagonCollider : MonoBehaviour
         data.SetOccupier(null);
         tile.SetIsOccupied(false);
         tile.ResetBaseColor();
-        tile.GridReference.HexagonsInGrid[tile.GridCoordinates] = data;
+        tile.gridBaseReference.HexagonsInGrid[tile.GridCoordinates] = data;
     }
 }

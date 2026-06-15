@@ -1,20 +1,22 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq; // Required for OrderBy (for simplicity in Open Set for now)
+using System.Linq;
+using UnityEngine.Serialization; // Required for OrderBy (for simplicity in Open Set for now)
 
 // Phase 4.1 & 5.1: MultiGridPathfinder Class
 // Purpose: Implements the core A* pathfinding algorithm across multiple (potentially) SimpleHexGrids.
 // Now includes logic for inter-grid jumps.
 public class MultiGridPathfinder : MonoBehaviour
 {
+    [FormerlySerializedAs("startGrid")]
     [Header("Pathfinding Start/End")]
     [Tooltip("The SimpleHexGrid where the path should start.")]
-    public SimpleHexGrid startGrid;
+    public SimpleHexGridBase startGridBase;
     [Tooltip("The (x,z) coordinates of the starting hexagon within its grid.")]
     public Vector2Int startCoords;
 
-    [Tooltip("The SimpleHexGrid where the path should end.")]
-    public SimpleHexGrid targetGrid;
+    [FormerlySerializedAs("targetGrid")] [Tooltip("The SimpleHexGrid where the path should end.")]
+    public SimpleHexGridBase targetGridBase;
     [Tooltip("The (x,z) coordinates of the target hexagon within its grid.")]
     public Vector2Int targetCoords;
 
@@ -122,13 +124,13 @@ public class MultiGridPathfinder : MonoBehaviour
         int dz = Mathf.Abs(fromNode.GridCoordinates.x + fromNode.GridCoordinates.y - toNode.GridCoordinates.x - toNode.GridCoordinates.y);
         float heuristicDistance = (dx + dy + dz) / 2f;
 
-        HexData fromHexData = fromNode.GridReference.GetHexData(fromNode.GridCoordinates);
-        HexData toHexData = toNode.GridReference.GetHexData(toNode.GridCoordinates);
+        HexData fromHexData = fromNode.GridBaseReference.GetHexData(fromNode.GridCoordinates);
+        HexData toHexData = toNode.GridBaseReference.GetHexData(toNode.GridCoordinates);
         
         // We can also add a penalty for vertical distance to make the pathfinder prefer
         // shallower jumps if there are multiple valid jump points.
-        Vector3 fromPos = fromNode.GridReference.GetHexWorldPosition(fromNode.GridCoordinates, fromHexData.Height);
-        Vector3 toPos = toNode.GridReference.GetHexWorldPosition(toNode.GridCoordinates, toHexData.Height);
+        Vector3 fromPos = fromNode.GridBaseReference.GetHexWorldPosition(fromNode.GridCoordinates, fromHexData.Height);
+        Vector3 toPos = toNode.GridBaseReference.GetHexWorldPosition(toNode.GridCoordinates, toHexData.Height);
         float verticalPenalty = Mathf.Abs(fromPos.y - toPos.y);
 
         // If the hexes are on different grids, add a penalty to the heuristic.
@@ -139,7 +141,7 @@ public class MultiGridPathfinder : MonoBehaviour
             
             // Add a massive penalty if the 'to' node is NOT an edge hex on its grid.
             // This strongly discourages the algorithm from choosing paths that "jump through the floor".
-            if (!toNode.GridReference.IsEdgeHex(toNode.GridCoordinates))
+            if (!toNode.GridBaseReference.IsEdgeHex(toNode.GridCoordinates))
             {
                 heuristicDistance += 9999f; // A very high cost to make this path prohibitively expensive.
             }
@@ -154,15 +156,15 @@ public class MultiGridPathfinder : MonoBehaviour
     /// </summary>
     private float CalculateDistanceCost(PathNode fromNode, PathNode toNode, PathNode goalNode) // Add goalNode
     {
-        HexData fromHexData = fromNode.GridReference.GetHexData(fromNode.GridCoordinates);
-        HexData toHexData = toNode.GridReference.GetHexData(toNode.GridCoordinates);
+        HexData fromHexData = fromNode.GridBaseReference.GetHexData(fromNode.GridCoordinates);
+        HexData toHexData = toNode.GridBaseReference.GetHexData(toNode.GridCoordinates);
     
         float verticalDifference = Mathf.Abs(fromHexData.Height - toHexData.Height);
         float heightCost = verticalDifference * heightDifferencePenalty;
     
         // Use the goalNode reference instead of class-level variables
-        Vector3 toPos = toNode.GridReference.GetHexWorldPosition(toNode.GridCoordinates, toHexData.Height);
-        Vector3 targetWorldPos = goalNode.GridReference.GetHexWorldPosition(goalNode.GridCoordinates, goalNode.GridReference.GetHexData(goalNode.GridCoordinates).Height);
+        Vector3 toPos = toNode.GridBaseReference.GetHexWorldPosition(toNode.GridCoordinates, toHexData.Height);
+        Vector3 targetWorldPos = goalNode.GridBaseReference.GetHexWorldPosition(goalNode.GridCoordinates, goalNode.GridBaseReference.GetHexData(goalNode.GridCoordinates).Height);
     
         float distanceToTarget = Vector3.Distance(toPos, targetWorldPos);
         float directionalBias = distanceToTarget * 10f; 
@@ -178,9 +180,9 @@ public class MultiGridPathfinder : MonoBehaviour
     {
         List<PathNode> neighbors = new List<PathNode>();
         
-        HexData currentHexData = currentNode.GridReference.GetHexData(currentNode.GridCoordinates);
+        HexData currentHexData = currentNode.GridBaseReference.GetHexData(currentNode.GridCoordinates);
         Vector3 currentWorldPos =
-            currentNode.GridReference.GetHexWorldPosition(currentNode.GridCoordinates, currentHexData.Height);
+            currentNode.GridBaseReference.GetHexWorldPosition(currentNode.GridCoordinates, currentHexData.Height);
 
         // Need to check vehicles internal grid here so caching retrieval of vehicle for performance
         VehicleEntity vehicleAlreadySelected = null;
@@ -198,15 +200,15 @@ public class MultiGridPathfinder : MonoBehaviour
         
         //******************************************************************************
         // --- 1. Intra-Grid Neighbors (SAME GRID AS ENTITY) ---
-        List<Vector2Int> localNeighborCoords = currentNode.GridReference.GetHexNeighbors(currentNode.GridCoordinates);
+        List<Vector2Int> localNeighborCoords = currentNode.GridBaseReference.GetHexNeighbors(currentNode.GridCoordinates);
         foreach (Vector2Int coords in localNeighborCoords)
         {
-            HexData neighbourHexData = currentNode.GridReference.GetHexData(coords);
-            Vector3 neighbourWorldPos = currentNode.GridReference.GetHexWorldPosition(coords, neighbourHexData.Height);
+            HexData neighbourHexData = currentNode.GridBaseReference.GetHexData(coords);
+            Vector3 neighbourWorldPos = currentNode.GridBaseReference.GetHexWorldPosition(coords, neighbourHexData.Height);
             
             if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
             {
-                if (currentNode.GridReference == vehicleAlreadySelected.VehicleInteriorGrid)
+                if (currentNode.GridBaseReference == vehicleAlreadySelected.vehicleInteriorGridBase)
                 {
                     continue;
                 }
@@ -227,8 +229,8 @@ public class MultiGridPathfinder : MonoBehaviour
             }
             
             // Get positions using your new helper method
-            Vector3 currentSurfacePos = currentNode.GridReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridReference.GetHexData(currentNode.GridCoordinates).Height);
-            Vector3 neighbourSurfacePos = currentNode.GridReference.GetHexTopSurfacePosition(coords, neighbourHexData.Height);
+            Vector3 currentSurfacePos = currentNode.GridBaseReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridBaseReference.GetHexData(currentNode.GridCoordinates).Height);
+            Vector3 neighbourSurfacePos = currentNode.GridBaseReference.GetHexTopSurfacePosition(coords, neighbourHexData.Height);
 
             // Calculate horizontal distance using X and Z
             float horizontalDist = Vector2.Distance(
@@ -247,12 +249,12 @@ public class MultiGridPathfinder : MonoBehaviour
                 {
                    // if (currentNode.GridReference.IsEdgeHex(currentNode.GridCoordinates))
                     {
-                        neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridReference));
+                        neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridBaseReference));
                     }
                 }
                 else // If jumping UP or staying at the same height
                 {
-                    neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridReference));
+                    neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridBaseReference));
                 }
             }
         }
@@ -261,19 +263,19 @@ public class MultiGridPathfinder : MonoBehaviour
         
         //******************************************************************************
         // --- 2. Inter-Grid Neighbors (JUMPING TO DIFFERENT GRID) ---
-        foreach (SimpleHexGrid otherGrid in HexGridManager.Instance.GetAllGrids())
+        foreach (SimpleHexGridBase otherGrid in HexGridManager.Instance.GetAllGrids())
         {
             // If its a vehicle we want to not allow the vehicle to pathfind over itself 
             if (vehicleAlreadySelected != null)
             {
-                if (vehicleAlreadySelected.VehicleInteriorGrid == otherGrid)
+                if (vehicleAlreadySelected.vehicleInteriorGridBase == otherGrid)
                 {
                     continue;
                 }
             }
             
             // Needs to be here coz This is meant for stop looking for nodes in the IntRA grid section
-            if (otherGrid == currentNode.GridReference)
+            if (otherGrid == currentNode.GridBaseReference)
             {
                 continue;
             }
@@ -285,7 +287,7 @@ public class MultiGridPathfinder : MonoBehaviour
                 if (!otherHexData.GetIsClimbable()) continue;
                 if (otherHexData.GetIsOccupied()) continue;
                 
-                Vector3 currentSurfacePos = currentNode.GridReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridReference.GetHexData(currentNode.GridCoordinates).Height);
+                Vector3 currentSurfacePos = currentNode.GridBaseReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridBaseReference.GetHexData(currentNode.GridCoordinates).Height);
                 Vector3 otherSurfacePos = otherGrid.GetHexTopSurfacePosition(otherHexData.GridCoordinates, otherHexData.Height);
 
                 // Calculate distance

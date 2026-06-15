@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class GroundHexGrid : SimpleHexGrid
+public class SimpleHexGridGround : SimpleHexGridBase
 {
     [Header("Procedural Terrain Settings")]
     public float noiseScale = 0.15f;
@@ -34,18 +34,44 @@ public class GroundHexGrid : SimpleHexGrid
     [Range(0.1f, 2.0f)]
     public float neighborHeightLimit = 0.8f;
     
+    HexGridVisualizerGround visualizer;
+    public float entityPlacementHeightOffset = 0.05f;
+    
+    private new void Awake()
+    {
+        base.Awake();
+        
+        visualizer = GetComponent<HexGridVisualizerGround>();
+    }
+    
     private new void Start()
     {
-        GenerateDataGrid();
+        base.Start();
     }
 
-    public override void GenerateDataGrid()
+    public override void GenerateGrid()
     {
-       GenerateDefaultGrid();
+        // 1. Initialize the dictionary
+        if (HexagonsInGrid == null) HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
+        HexagonsInGrid.Clear();
+
+        // 2. Generate the circular pattern (the same logic used for default grids)
+        for (int q = -gridRadius; q <= gridRadius; q++)
+        {
+            for (int r = -gridRadius; r <= gridRadius; r++)
+            {
+                if (Mathf.Abs(q + r) <= gridRadius)
+                {
+                    Vector2Int coords = new Vector2Int(q, r);
+                
+                    // Start with base data (default height 0)
+                    HexData data = new HexData(coords, 0f, true, false, false);
+                    HexagonsInGrid[coords] = data;
+                }
+            }
+        }
         
-        List<Vector2Int> keys = new List<Vector2Int>(HexagonsInGrid.Keys);
-        
-        foreach (Vector2Int coords in keys)
+        foreach (var coords in new List<Vector2Int>(HexagonsInGrid.Keys))
         {
             // Remove the RoundToInt to keep the smooth float value
             float height = CalculatePerlinHeight(coords); 
@@ -168,5 +194,28 @@ public class GroundHexGrid : SimpleHexGrid
             return data.Height;
         }
         return 0f;
+    }
+    
+    public override Vector3 GetHexTopSurfacePosition(Vector2Int coords, float height)
+    {
+        // 1. Get the X and Z from the standard math
+        Vector3 basePos = GetHexWorldPosition(coords, height);
+    
+        // 2. Get the specific Y surface height from our override
+        float surfaceY = GetHexTopSurfaceY(coords);
+    
+        // 3. Return the corrected vector
+        return new Vector3(basePos.x, surfaceY, basePos.z);
+    }
+    
+    public override float GetHexTopSurfaceY(Vector2Int coords)
+    {
+        float hexThickness = visualizer.hexVisualHeight;
+    
+        // Get the base world position Y
+        float baseHexHeight = GetHexWorldPosition(coords, GetHexData(coords).Height).y;
+    
+        // Return the top of the mesh
+        return baseHexHeight + (hexThickness * entityPlacementHeightOffset);
     }
 }
