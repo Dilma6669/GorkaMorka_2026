@@ -29,6 +29,10 @@ public class EntitySelectionManager : MonoBehaviour
     private HexData _groundHexDataHovered;
     private SimpleHexGridBase _hoveredGroundGrid;
     
+    public static List<PathNode> CachedMovementPath = new List<PathNode>();
+    public Vector2Int _cachedTargetCoords;
+    public SimpleHexGridBase _cachedTargetGrid;
+    
     private void Awake()
     {
         pathfinder = GetComponent<MultiGridPathfinder>();
@@ -152,6 +156,9 @@ public class EntitySelectionManager : MonoBehaviour
         // --- NEW: Ground Data Tracking ---
         HexData groundHexData = default;
         SimpleHexGridBase groundGridSelected = null;
+        
+        Vector2Int targetCoords;
+        SimpleHexGridBase targetGrid;
 
         foreach (var hit in hits)
         {
@@ -212,8 +219,8 @@ public class EntitySelectionManager : MonoBehaviour
         // --- Unified Selection Logic ---
         if (closetHexSelected != null || groundGridSelected != null)
         {
-            Vector2Int targetCoords = (closetHexSelected != null) ? closetHexSelected.GridCoordinates : groundHexData.GridCoordinates;
-            SimpleHexGridBase targetGrid = (closetHexSelected != null) ? closetHexSelected.gridBaseReference : groundGridSelected;
+            targetCoords = (closetHexSelected != null) ? closetHexSelected.GridCoordinates : groundHexData.GridCoordinates;
+            targetGrid = (closetHexSelected != null) ? closetHexSelected.gridBaseReference : groundGridSelected;
 
             if (EntityCommander.GetEntityInCommand() != null)
             {
@@ -236,6 +243,21 @@ public class EntitySelectionManager : MonoBehaviour
             {
                 if (closetHexSelected != null) SelectHex(closetHexSelected.GridCoordinates, closetHexSelected.gridBaseReference);
                 else SelectHex(targetCoords, targetGrid);
+            }
+        }
+        
+        // Catch for batched hexagons
+        if (closestUnitSelected == null && closestVehicleSelected == null && closetHexSelected == null)
+        {
+            // If the hover system has a cached target, treat this click as a selection
+            if (_cachedTargetCoords != Vector2Int.zero && _cachedTargetGrid != null)
+            {
+                // Inject the cached data into our selection logic
+                targetCoords = _cachedTargetCoords;
+                targetGrid = _cachedTargetGrid;
+            
+                // Now proceed as if we clicked a hex
+                ProcessHexSelection(targetCoords, targetGrid);
             }
         }
     }
@@ -383,6 +405,10 @@ public class EntitySelectionManager : MonoBehaviour
                     {
                         finalPath = rawPath;
                     }
+                    
+                    CachedMovementPath = finalPath; 
+                    _cachedTargetCoords = targetCoords;
+                    _cachedTargetGrid = hexGridBase;
 
                     foreach (PathNode pathNode in finalPath)
                     {
@@ -393,6 +419,10 @@ public class EntitySelectionManager : MonoBehaviour
 
                     hexOverlayManager.SetOverlay(new HexGridManager.HexGridAndCoords(targetCoords, hexGridBase),
                         TargetHexagonHighlightedColour, true);
+                }
+                else
+                {
+                    CachedMovementPath = null;
                 }
             }
             else 
@@ -407,6 +437,21 @@ public class EntitySelectionManager : MonoBehaviour
                     HoverHex(targetCoords, hexGridBase);
                 }
             }
+        }
+    }
+    
+    private void ProcessHexSelection(Vector2Int coords, SimpleHexGridBase grid)
+    {
+        if (EntityCommander.GetEntityInCommand() != null)
+        {
+            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
+                SelectHexWithUnitActive(coords, grid);
+            else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
+                SelectHexWithVehicleActive(coords, grid);
+        }
+        else
+        {
+            SelectHex(coords, grid);
         }
     }
 }

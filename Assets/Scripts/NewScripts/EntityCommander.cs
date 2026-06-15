@@ -93,11 +93,8 @@ public class EntityCommander : MonoBehaviour
             Debug.LogError($"EntityCommander: No PathMover or VehiclePathMover found on entity '{entityToCommand.name}'.");
             return;
         }
-    
-        // 2. Get the path from the pathfinder
-        PathNode startNode = new PathNode(entityToCommand.CurrentGridCoordinates, entityToCommand.currentGridBase);
-        PathNode endNode = new PathNode(targetCoordinates, _targetGridBase);
-        List<PathNode> path = MultiGridPathfinder.Instance.FindPath(startNode, endNode);
+        
+        List<PathNode> path = EntitySelectionManager.CachedMovementPath;
     
         // 3. If a path is found, command the mover component to start
         if (path != null && path.Count > 0)
