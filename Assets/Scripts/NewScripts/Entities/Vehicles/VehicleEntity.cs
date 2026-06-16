@@ -13,6 +13,14 @@ public class VehicleEntity : Entity
     [SerializeField] private Entity Driver;
     [SerializeField] private bool showArcs;
 
+    private void Start()
+    {
+        if (InteriorGridBase == null)
+        {
+            Debug.LogError($"WARNING InteriorGridBase has not been assigned in: {name}");
+        }
+    }
+
     public override void EntitySelected(bool isSelected)
     {
         ShowArcs = isSelected;
@@ -65,13 +73,13 @@ public class VehicleEntity : Entity
         if (leftArcHexCollider != null)
         {
             leftArcHexCollider.gameObject.SetActive(active);
-            if (!active) leftArcHexCollider.ClearBlockedHexes();
+           // if (!active) leftArcHexCollider.ClearBlockedHexes();
         }
 
         if (rightArcHexCollider != null)
         {
             rightArcHexCollider.gameObject.SetActive(active);
-            if (!active) rightArcHexCollider.ClearBlockedHexes();
+           // if (!active) rightArcHexCollider.ClearBlockedHexes();
         }
 
         Physics.SyncTransforms();

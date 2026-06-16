@@ -472,6 +472,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: GroundGrid
       objectReference: {fileID: 0}
+    - target: {fileID: 4820952870664179547, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -919,6 +923,8 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 520
+  MaxRaycastPathDistance: 70
+  MaxPathfindingNodeCount: 30
 --- !u!114 &1284890849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -976,6 +982,7 @@ MonoBehaviour:
   PathHexagonHighlightedColour: {r: 1, g: 0.88035375, b: 0.1273585, a: 1}
   _cachedTargetCoords: {x: 0, y: 0}
   _cachedTargetGrid: {fileID: 0}
+  groundGrid: {fileID: 2045115133}
 --- !u!114 &1284890852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1307,7 +1314,7 @@ MonoBehaviour:
   GridType: 0
   HexagonsContainer: {fileID: 647497032}
   EntityContainer: {fileID: 1011478121}
-  gridRadius: 20
+  gridRadius: 100
   hexSize: 1
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
@@ -1327,6 +1334,7 @@ MonoBehaviour:
   terrainSmoothness: 0.8
   neighborHeightLimit: 0.8
   entityPlacementHeightOffset: 0.05
+  chunkSize: 10
 --- !u!114 &2045115137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1347,7 +1355,6 @@ MonoBehaviour:
   hexMaterial_LowRes: {fileID: 2100000, guid: c3ec504e06cda4b64926fc381227e09b, type: 2}
   lodDistance: 200
   extremeDistance: 999999
-  CalculatedMeshThickness: 0
 --- !u!1 &2144170096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}

@@ -42,6 +42,8 @@ public abstract class SimpleHexGridBase : MonoBehaviour
         new Vector2Int(-1, 1), // Down-Left (q-1, r+1)
         new Vector2Int(0, 1) // Down-Right (q, r+1)
     };
+    
+    public Dictionary<Vector2Int, PathNode> AllNodes = new Dictionary<Vector2Int, PathNode>();
 
     public event Action<SimpleHexGridBase> OnGridReady;
 
@@ -350,6 +352,24 @@ public abstract class SimpleHexGridBase : MonoBehaviour
         // and only do it very sparingly (e.g., when the entity first spawns).
         // Do NOT run this in Update() for 750k hexes.
         return TryGetClosestHexagon(worldPosition, out foundHexData);
+    }
+    
+    public List<HexData> GetHexesInRange(Vector3 worldPos, float range)
+    {
+        List<HexData> nearbyHexes = new List<HexData>();
+        foreach (var hex in HexagonsInGrid.Values)
+        {
+            // Use the Top Surface position for accurate 3D distance checks
+            Vector3 surfacePos = GetHexTopSurfacePosition(hex.GridCoordinates, hex.Height);
+        
+            // Use Squared Distance for better performance (avoids expensive Square Root calculation)
+            float sqrRange = range * range;
+            if ((worldPos - surfacePos).sqrMagnitude <= sqrRange)
+            {
+                nearbyHexes.Add(hex);
+            }
+        }
+        return nearbyHexes;
     }
 
     public abstract Vector3 GetHexTopSurfacePosition(Vector2Int coords, float height);

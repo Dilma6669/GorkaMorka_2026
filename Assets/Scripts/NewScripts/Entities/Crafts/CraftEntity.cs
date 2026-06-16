@@ -9,6 +9,44 @@ public class CraftEntity : Entity
 
     [SerializeField] private Entity Driver;
     
+    CraftHeightController craftHeightController;
+
+    private void Awake()
+    {
+        craftHeightController = GetComponent<CraftHeightController>();
+    }
+    
+    public override void SnapToHex(SimpleHexGridBase gridBase, Vector2Int coords)
+    {
+        if (GetComponent<CraftHeightController>().isFlying)
+        {
+            currentGridBase = gridBase;
+            CurrentGridCoordinates = coords;
+            return; 
+        }
+        
+        currentGridBase = gridBase;
+        CurrentGridCoordinates = coords;
+        transform.SetParent(gridBase.EntityContainer.transform);
+
+        HexData hexData = gridBase.GetHexData(CurrentGridCoordinates);
+        Vector3 hexSurfacePosition = gridBase.GetHexTopSurfacePosition(coords, hexData.Height);
+    
+        // Update our ground reference for the HeightController
+        CurrentGroundY = hexSurfacePosition.y; 
+
+        // Determine Y: 
+        // If flying, preserve current transform.position.y (ignore the snap)
+        // If NOT flying, snap to ground (plus offset)
+        float newY = (craftHeightController.isFlying) ? transform.position.y : (hexSurfacePosition.y + entityHeightOffset);
+
+        transform.position = new Vector3(
+            hexSurfacePosition.x, 
+            newY, 
+            hexSurfacePosition.z
+        );
+    }
+    
     public override void EntitySelected(bool isSelected)
     {
         RefreshShadowHexCollider();

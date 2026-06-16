@@ -137,7 +137,8 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         
         // Calculate heights of current and potential target
         int nextIndex = currentNodeIndex + 1;
-        int skipIndex = Mathf.Min(currentNodeIndex + 2, currentPath.Count - 1);
+        int skipCount = 2;
+        int skipIndex = Mathf.Min(currentNodeIndex + skipCount, currentPath.Count - 1);
         
         PathNode currentNode = currentPath[currentNodeIndex];
         float currentHeight = pathWorldHeights[currentNodeIndex];
@@ -163,7 +164,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
             targetIndex = nextIndex;
             
             // If skip node is same height as current
-            if (currentPath.Count > 2)
+            if (currentPath.Count > skipCount)
             {
                 targetIndex = skipIndex;
             }

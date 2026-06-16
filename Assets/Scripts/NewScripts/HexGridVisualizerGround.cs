@@ -18,9 +18,6 @@ public class HexGridVisualizerGround : HexGridVisualizerBase
     public float extremeDistance = 600.0f;
     
     private Matrix4x4[][] batchCache;
-
-    public float CalculatedMeshThickness;
-
     
 // 2. Initialize it in Awake
     protected new void Awake()
@@ -32,11 +29,7 @@ public class HexGridVisualizerGround : HexGridVisualizerBase
     
     void Start()
     {
-        // This grabs the actual height of the mesh geometry assigned to the visualizer
-        if (highDetailMesh != null)
-        {
-            CalculatedMeshThickness = highDetailMesh.bounds.extents.y * 2f; 
-        }
+    
     }
     
     

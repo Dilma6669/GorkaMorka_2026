@@ -35,23 +35,65 @@ public class EntitySelectionManager : MonoBehaviour
     
     private object _lastHoveredObject = null;
     
+    public SimpleHexGridGround groundGrid = null;
+    
+    private string[] layerNames = { "HexagonCollider", "VehicleCollider", "UnitCollider", "CraftCollider" };
+    
+    // Throttle the physics update to every 15 frames for maximum efficiency
+    private Vector3 lastUpdatePosition;
+    private float updateThreshold = 5.0f; // Only update if camera moved 5 meters
+    
+    private Vector3 lastMousePosition;
+
+    private Camera camera;
+    
     private void Awake()
     {
         pathfinder = GetComponent<MultiGridPathfinder>();
         hexOverlayManager = GetComponent<HexOverlayManager>();
+        camera = Camera.main; 
     }
     
     void Update()
     {
-        // Only listen for the left mouse button click for all actions
-        if (Input.GetMouseButtonDown(0)) // 0 is the left mouse button
+        // Only track mouse on screen
+        if (Input.mousePosition.x < 0 || Input.mousePosition.x > Screen.width ||
+            Input.mousePosition.y < 0 || Input.mousePosition.y > Screen.height)
         {
-            HandleLeftClick();
+            // Mouse is off-screen. Stop everything.
+            return; 
         }
-        else
+        
+        // Only register if mouse moves
+        if (Mathf.Abs(Input.GetAxis("Mouse X")) > 0.01f || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0.01f)
         {
-            HandleMouseHover();
+            // Only listen for the left mouse button click for all actions
+            if (Input.GetMouseButtonDown(0)) // 0 is the left mouse button
+            {
+                HandleLeftClick();
+            }
+            else
+            {
+                if (Input.mousePosition != lastMousePosition)
+                {
+                    HandleMouseHover();
+                    lastMousePosition = Input.mousePosition;
+                }
+            }
         }
+        
+
+        // Update ground grid chuck visuals
+        if (groundGrid != null)
+        {
+            // Check if camera moved enough to warrant an update
+            if (Vector3.Distance(camera.transform.position, lastUpdatePosition) > updateThreshold)
+            {
+                groundGrid.UpdateChunkVisibility(camera.transform.position, pathfinder.MaxRaycastPathDistance + 20f);
+                lastUpdatePosition = camera.transform.position;
+            }
+        }
+
     }
 
     public static void SelectVehicle(Entity entity)
@@ -188,7 +230,8 @@ public class EntitySelectionManager : MonoBehaviour
     void HandleLeftClick()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity);
+        int mask = LayerMask.GetMask(layerNames);
+        RaycastHit[] hits = Physics.RaycastAll(ray, pathfinder.MaxRaycastPathDistance, mask);
 
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
@@ -240,8 +283,7 @@ public class EntitySelectionManager : MonoBehaviour
         // --- NEW: Physics-less Fallback for Ground Grids ---
         if (closetHexSelected == null)
         {
-            var groundGrid = FindObjectOfType<SimpleHexGridGround>();
-            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data))
+            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data, pathfinder.MaxRaycastPathDistance))
             {
                 groundHexData = data;
                 groundGridSelected = groundGrid;
@@ -346,7 +388,8 @@ public class EntitySelectionManager : MonoBehaviour
     void HandleMouseHover()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity);
+        int mask = LayerMask.GetMask(layerNames);
+        RaycastHit[] hits = Physics.RaycastAll(ray, pathfinder.MaxRaycastPathDistance, mask);
 
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
@@ -354,9 +397,9 @@ public class EntitySelectionManager : MonoBehaviour
         float minCraftDist = float.MaxValue;
         
         Entity closestUnitHovered = null!;
-        HexVisualTile closetHexHovered = null!;
         Entity closetVehicleHovered = null!;
         Entity closestCraftHovered = null!;
+        HexVisualTile closetHexHovered = null!;
 
         // Reset ground tracking
         _groundHexDataHovered = default;
@@ -419,7 +462,7 @@ public class EntitySelectionManager : MonoBehaviour
         }
 
         // This deosnt work, needs more thought
-        object currentHoveredObject = (object)closestUnitHovered ?? (object)closetVehicleHovered ?? (object)closetHexHovered;
+       // Entity currentHoveredObject = closestUnitHovered ?? closetVehicleHovered ?? closetHexHovered;
         
         // if (currentHoveredObject == _lastHoveredObject && currentHoveredObject != null)
         // {
@@ -430,8 +473,7 @@ public class EntitySelectionManager : MonoBehaviour
         // 2. If NO specific HexTile collider was hit, use the Math fallback
         if (closetHexHovered == null)
         {
-            var groundGrid = FindObjectOfType<SimpleHexGridGround>();
-            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data))
+            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data, pathfinder.MaxRaycastPathDistance))
             {
                 _groundHexDataHovered = data;
                 _hoveredGroundGrid = groundGrid;
@@ -441,7 +483,6 @@ public class EntitySelectionManager : MonoBehaviour
         if (closestUnitHovered != null)
         {
             HoverUnit(closestUnitHovered);
-            _lastHoveredObject = currentHoveredObject;
             return;
         }
 
@@ -485,6 +526,20 @@ public class EntitySelectionManager : MonoBehaviour
 
             if (EntityCommander.GetEntityInCommand())
             {
+                // --- ADD THIS DISTANCE PRE-CHECK ---
+                Entity commander = EntityCommander.GetEntityInCommand();
+                Vector3 startPos = commander.transform.position;
+                Vector3 targetWorldPos = hexGridBase.GetHexWorldPosition(targetCoords, 0);
+
+                // If target is further than your limit, clear path and exit
+                if (Vector3.Distance(startPos, targetWorldPos) > pathfinder.MaxRaycastPathDistance)
+                {
+                    CachedMovementPath = null;
+                    hexOverlayManager.ClearAll(); // Clear visuals if we were too far
+                    return; 
+                }
+                // ------------------------------------
+                
                 PathNode startNode = new PathNode(EntityCommander.GetEntityInCommand().CurrentGridCoordinates,
                     EntityCommander.GetEntityInCommand().currentGridBase);
                 PathNode endNode = new PathNode(targetCoords, hexGridBase);
@@ -508,8 +563,6 @@ public class EntitySelectionManager : MonoBehaviour
                         {
                             HoverHexWithVehicleActive(targetCoords, hexGridBase);
                         }
-                        
-                        _lastHoveredObject = currentHoveredObject;
                 
                         VehiclePathMover mover = EntityCommander.GetEntityInCommand().GetComponent<VehiclePathMover>();
                         finalPath = (mover != null) ? mover.GetSmoothPathForVehicle(rawPath) : rawPath;
@@ -528,8 +581,6 @@ public class EntitySelectionManager : MonoBehaviour
                         {
                             HoverHexWithCraftActive(targetCoords, hexGridBase);
                         }
-                        
-                        _lastHoveredObject = currentHoveredObject;
                 
                         finalPath = rawPath;
                     }
@@ -544,7 +595,7 @@ public class EntitySelectionManager : MonoBehaviour
                         {
                             HoverHexWithUnitActive(targetCoords, hexGridBase);
                         }
-                        _lastHoveredObject = currentHoveredObject;
+              
                         finalPath = rawPath;
                     }
                     else
@@ -582,7 +633,6 @@ public class EntitySelectionManager : MonoBehaviour
                 {
                     HoverHex(targetCoords, hexGridBase);
                 }
-                _lastHoveredObject = currentHoveredObject;
             }
         }
     }
@@ -603,4 +653,6 @@ public class EntitySelectionManager : MonoBehaviour
             SelectHex(coords, grid);
         }
     }
+    
+    
 }

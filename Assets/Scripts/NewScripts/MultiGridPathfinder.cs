@@ -47,6 +47,9 @@ public class MultiGridPathfinder : MonoBehaviour
     [Header("Physics Settings")]
     [Tooltip("The layer used for Vehicle and Unit colliders to block pathfinding.")]
     public LayerMask obstacleLayer;
+
+    public float MaxRaycastPathDistance = 50.0f;
+    public int MaxPathfindingNodeCount = 30;
     
     public static MultiGridPathfinder Instance { get; private set; }
 
@@ -69,53 +72,83 @@ public class MultiGridPathfinder : MonoBehaviour
         startNode.GCost = 0;
         startNode.HCost = CalculateHeuristic(startNode, targetNode);
         
+        if(startNode.HCost <= 0)
+            return null;
+
+        int iterations = 0;
+        int maxIterations = 2000; // Force stop if it takes too many steps
+        
         while (openSet.Count > 0)
         {
-            // Get node with the lowest FCost from openSet
-            // Using OrderBy for simplicity, consider a custom Priority Queue for performance in larger grids.
-            PathNode currentNode = openSet.OrderBy(node => node.FCost).First();
-
+            
+            iterations++;
+            if (iterations > maxIterations) 
+            {
+                Debug.LogWarning("Pathfinding aborted: exceeded iteration limit!");
+                return null;
+            }
+            
+            // 1. Get best node (consider replacing OrderBy with a simple loop for speed)
+            PathNode currentNode = openSet[0];
+            int bestIndex = 0;
+            
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].FCost < currentNode.FCost)
+                {
+                    currentNode = openSet[i];
+                    bestIndex = i;
+                }
+            }
+            
             if (currentNode.Equals(targetNode))
             {
                 // Target found! Reconstruct and return the path.
                 return ReconstructPath(currentNode);
             }
 
-            openSet.Remove(currentNode);
-            closedSet.Add(currentNode);
 
-            // Get all neighbors (both intra-grid and inter-grid jumps)
+            openSet.RemoveAt(bestIndex);
+            closedSet.Add(currentNode);
+        
             foreach (PathNode neighbor in GetNeighbors(currentNode))
             {
-                if (closedSet.Contains(neighbor))
-                {
-                    continue; // Skip already evaluated nodes
-                }
+                if (neighbor == currentNode) continue;
+                
+                if (closedSet.Contains(neighbor)) continue;
 
-                // Calculate tentative GCost from start to neighbor through currentNode
-                float tentativeGCost = currentNode.GCost + CalculateDistanceCost(currentNode, neighbor, targetNode);
-
-                // If this new path to neighbor is shorter, or neighbor not in openSet
-                // The '!openSet.Contains(neighbor)' check is important for correctly re-evaluating nodes
-                // that are already in the openSet but now found a cheaper path.
+                float distCost = CalculateDistanceCost(currentNode, neighbor, targetNode);
+                
+                if(distCost <= 0)
+                    continue;
+                
+                float tentativeGCost = currentNode.GCost + distCost;
                 bool isInOpenSet = openSet.Contains(neighbor);
+           
                 if (tentativeGCost < neighbor.GCost || !isInOpenSet)
                 {
                     neighbor.GCost = tentativeGCost;
-                    neighbor.HCost = CalculateHeuristic(neighbor, targetNode);
-                    neighbor.Parent = currentNode;
 
+                    float heuristic = CalculateHeuristic(neighbor, targetNode);
+                    
+                    neighbor.HCost = heuristic;
+                    
+                    neighbor.Parent = currentNode;
+                    
+                    if (openSet.Count > 500) 
+                    {
+                       // Debug.LogError($"CRITICAL: The OpenSet is bloated! Count is: {openSet.Count}. This is why it is glitching!");
+                    }
                     if (!isInOpenSet)
                     {
                         openSet.Add(neighbor);
                     }
+                
                 }
             }
         }
-
-        return null; // No path found
+        return null;
     }
-
 // MultiGridPathfinder.cs
     /// <summary>
     /// Calculates the estimated cost from the current node to the end node (Heuristic).
@@ -205,6 +238,7 @@ public class MultiGridPathfinder : MonoBehaviour
         //******************************************************************************
         // --- 1. Intra-Grid Neighbors (SAME GRID AS ENTITY) ---
         List<Vector2Int> localNeighborCoords = currentNode.GridBaseReference.GetHexNeighbors(currentNode.GridCoordinates);
+     
         foreach (Vector2Int coords in localNeighborCoords)
         {
             HexData neighbourHexData = currentNode.GridBaseReference.GetHexData(coords);
@@ -300,22 +334,33 @@ public class MultiGridPathfinder : MonoBehaviour
             {
                 if (currentWorldPos.y > neighbourWorldPos.y) // If jumping DOWN
                 {
-                    neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridBaseReference));
-                    
+                    if (currentNode.GridBaseReference.AllNodes.TryGetValue(coords, out PathNode node))
+                    {
+                        neighbors.Add(node);
+                    }
                 }
                 else // If jumping UP or staying at the same height
                 {
-                    neighbors.Add(new PathNode(neighbourHexData.GridCoordinates, currentNode.GridBaseReference));
+                    if (currentNode.GridBaseReference.AllNodes.TryGetValue(coords, out PathNode node))
+                    {
+                        neighbors.Add(node);
+                    } 
                 }
             }
         }
         //******************************************************************************
         
-        
         //******************************************************************************
         // --- 2. Inter-Grid Neighbors (JUMPING TO DIFFERENT GRID) ---
         foreach (SimpleHexGridBase otherGrid in HexGridManager.Instance.GetAllGrids())
         {
+            // Needs to be here coz This is meant for stop looking for nodes in the IntRA grid section
+            if (otherGrid == currentNode.GridBaseReference)
+            {
+                continue;
+            }
+        
+            
             // If its a vehicle we want to not allow the vehicle to pathfind over itself 
             if (vehicleAlreadySelected != null)
             {
@@ -325,14 +370,8 @@ public class MultiGridPathfinder : MonoBehaviour
                 }
             }
             
-            // Needs to be here coz This is meant for stop looking for nodes in the IntRA grid section
-            if (otherGrid == currentNode.GridBaseReference)
-            {
-                continue;
-            }
-            
             // --- Inside your loop ---
-            foreach (HexData otherHexData in otherGrid.HexagonsInGrid.Values)
+            foreach (HexData otherHexData in otherGrid.GetHexesInRange(currentWorldPos, connectionRange + 1f))
             {
                 if (!otherHexData.GetIsWalkable()) continue;
                 if (!otherHexData.GetIsClimbable()) continue;
@@ -393,8 +432,10 @@ public class MultiGridPathfinder : MonoBehaviour
                 }
 
                 if (canJump)
-                {
-                    neighbors.Add(new PathNode(otherHexData.GridCoordinates, otherGrid));
+                {if (otherGrid.AllNodes.TryGetValue(otherHexData.GridCoordinates, out PathNode node))
+                    {
+                        neighbors.Add(node);
+                    }
                 }
                 else 
                 {
@@ -404,8 +445,14 @@ public class MultiGridPathfinder : MonoBehaviour
             }
             //******************************************************************************
         }
-
         return neighbors;
+    }
+    
+    private PathNode GetOrCreateNode(Vector2Int coords, SimpleHexGridBase grid)
+    {
+        // If you have a way to get existing nodes, do it here.
+        // Otherwise, this is the MINIMUM required to be "safe"
+        return new PathNode(coords, grid); 
     }
     
 

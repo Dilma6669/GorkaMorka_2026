@@ -35,6 +35,12 @@ public class SimpleHexGridFloating : SimpleHexGridBase
         }
         
         RegisterGridToSystem(true);
+        
+        AllNodes.Clear();
+        foreach (var kvp in HexagonsInGrid)
+        {
+            AllNodes[kvp.Key] = new PathNode(kvp.Key, this);
+        }
     }
     
     public void GenerateCustomGrid()

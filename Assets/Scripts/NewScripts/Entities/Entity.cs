@@ -32,7 +32,7 @@ public class Entity : MonoBehaviour
     [Tooltip("The vertical offset from the center of the hex to the unit's pivot point. Adjust this so the unit sits correctly on the hex surface.")]
     public float entityHeightOffset = 0.5f; // Default offset, adjust in Inspector per unit type
     
-    public float CurrentGroundY { get; private set; }
+    public float CurrentGroundY { get; set; }
     
     void Awake()
     {

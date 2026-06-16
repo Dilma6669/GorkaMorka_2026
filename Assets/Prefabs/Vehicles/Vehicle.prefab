@@ -2878,7 +2878,7 @@ MonoBehaviour:
   currentGridBase: {fileID: 0}
   CurrentGridCoordinates: {x: 0, y: 0}
   entityHeightOffset: 1
-  vehicleInteriorGridBase: {fileID: 8905344439653224207}
+  InteriorGridBase: {fileID: 8905344439653224207}
   shadowHexCollider: {fileID: 1403446398802841602}
   leftArcHexCollider: {fileID: 2276823894963072473}
   rightArcHexCollider: {fileID: 4332041192618943103}
