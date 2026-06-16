@@ -53,7 +53,7 @@ public class EntitySelectionManager : MonoBehaviour
         hexOverlayManager = GetComponent<HexOverlayManager>();
         camera = Camera.main; 
     }
-    
+
     void Update()
     {
         // Only track mouse on screen
@@ -61,27 +61,22 @@ public class EntitySelectionManager : MonoBehaviour
             Input.mousePosition.y < 0 || Input.mousePosition.y > Screen.height)
         {
             // Mouse is off-screen. Stop everything.
-            return; 
+            return;
         }
-        
-        // Only register if mouse moves
-        if (Mathf.Abs(Input.GetAxis("Mouse X")) > 0.01f || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0.01f)
+
+        // Only listen for the left mouse button click for all actions
+        if (Input.GetMouseButtonDown(0)) // 0 is the left mouse button
         {
-            // Only listen for the left mouse button click for all actions
-            if (Input.GetMouseButtonDown(0)) // 0 is the left mouse button
+            HandleLeftClick();
+        }
+        else
+        {
+            if (Input.mousePosition != lastMousePosition)
             {
-                HandleLeftClick();
-            }
-            else
-            {
-                if (Input.mousePosition != lastMousePosition)
-                {
-                    HandleMouseHover();
-                    lastMousePosition = Input.mousePosition;
-                }
+                HandleMouseHover();
+                lastMousePosition = Input.mousePosition;
             }
         }
-        
 
         // Update ground grid chuck visuals
         if (groundGrid != null)
