@@ -823,7 +823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 8
-  rotationSpeed: 15
+  rotationSpeed: 1.5
   targetAltitude: 2
 --- !u!114 &7421985024316164917
 MonoBehaviour:

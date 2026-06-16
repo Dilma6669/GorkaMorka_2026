@@ -1314,7 +1314,7 @@ MonoBehaviour:
   GridType: 0
   HexagonsContainer: {fileID: 647497032}
   EntityContainer: {fileID: 1011478121}
-  gridRadius: 100
+  gridRadius: 500
   hexSize: 1
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
