@@ -180,64 +180,44 @@ public class EntitySpawner : MonoBehaviour
         return newEntity;
     }
 
-    // public Entity SpawnCraft(SimpleHexGrid grid, Vector2Int coords)
-    // {
-    //     if (unitPrefab == null)
-    //     {
-    //         Debug.LogError("EntitySpawner: Unit Prefab is not assigned!");
-    //         return null;
-    //     }
-    //
-    //     if (grid == null)
-    //     {
-    //         Debug.LogError("EntitySpawner: Cannot spawn unit, target grid is null!");
-    //         return null;
-    //     }
-    //
-    //     if (!grid.IsValidCoordinates(coords))
-    //     {
-    //         Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {coords} are invalid on grid '{grid.name}'.");
-    //         return null;
-    //     }
-    //
-    //     // This rotates the car to face the positive X-axis upon creation.
-    //     Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
-    //     
-    //     GameObject spawnedGameObject = Instantiate(craftPrefab, transform.position, rotationToMatchGridCreation);
-    //    
-    //     // Crafts are not anchored to any grid
-    //     spawnedGameObject.transform.SetParent(FloatingGridsContainer.transform);
-    //
-    //     Entity newEntity = spawnedGameObject.GetComponent<Entity>();
-    //     if (newEntity == null)
-    //     {
-    //         Debug.LogError(
-    //             $"EntitySpawner: The assigned craftPrefab '{craftPrefab.name}' does not have a Craft.cs component!",
-    //             craftPrefab);
-    //         Destroy(spawnedGameObject); // Clean up if no Unit component
-    //         return null;
-    //     }
-    //
-    //     newEntity.Initialize(EntityType.Craft, grid, coords);
-    //
-    //     // --- Important for Multi-Unit Spawning ---
-    //     // For now, the UnitCommander will just command the *last* unit spawned.
-    //     // In a later step, we will implement unit selection (clicking) to pick which unit to command.
-    //     if (entityCommander != null)
-    //     {
-    //         EntityCommander.SetEntityToCommand(newEntity); // Assign the newly spawned unit to the commander
-    //     }
-    //     else
-    //     {
-    //         Debug.LogWarning(
-    //             "EntitySpawner: EntityCommander reference not set in Inspector. Spawned craft will not be assigned to commander automatically.");
-    //     }
-    //     // --- End Multi-Unit Spawning adjustment ---
-    //
-    //     newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
-    //     
-    //     return newEntity;
-    // }
+    public Entity SpawnCraft(CraftData craftData)
+    {
+        if (craftPrefab == null)
+        {
+            Debug.LogError("EntitySpawner: Craft Prefab is not assigned!");
+            return null;
+        }
+
+        // Standard safety checks
+        if (craftData.spawnGridBase == null)
+        {
+            Debug.LogError("EntitySpawner: Cannot spawn craft, target grid is null!");
+            return null;
+        }
+
+        // Calculate spawn position (using the Craft's intended landing coordinates)
+        float targetHeight = craftData.spawnGridBase.HexagonsInGrid[craftData.spawnCoordinates].Height;
+        Vector3 spawnPos = craftData.spawnGridBase.GetHexWorldPosition(craftData.spawnCoordinates, targetHeight);
+    
+        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
+    
+        // Spawn it (Parent it to your FloatingGridsContainer)
+        GameObject spawnedGameObject = Instantiate(craftPrefab, spawnPos, rotationToMatchGridCreation);
+        spawnedGameObject.transform.SetParent(FloatingGridsContainer.transform);
+
+        Entity newEntity = spawnedGameObject.GetComponent<Entity>();
+        if (newEntity == null)
+        {
+            Debug.LogError($"EntitySpawner: Prefab '{craftPrefab.name}' is missing an Entity component!");
+            Destroy(spawnedGameObject);
+            return null;
+        }
+
+        newEntity.Initialize(EntityType.Craft, craftData);
+        newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
+
+        return newEntity;
+    }
 
     // --- Editor Test Button ---
     [ContextMenu("Spawn Default Unit")]
@@ -283,6 +263,21 @@ public class EntitySpawner : MonoBehaviour
         SpawnVehicle(entityData);
     }
     
+    [ContextMenu("Spawn Default Craft")]
+    void TestSpawnDefaultCraft()
+    {
+        // Ensure you have an instance of CraftData, perhaps assigned in the inspector or created here
+        CraftData entityData = ScriptableObject.CreateInstance<CraftData>();
+        entityData.unitName = "Test Craft";
+        entityData.maxHealth = 100;
+        entityData.currentHealth = 100;
+        entityData.baseMoveSpeed = 5;
+        entityData.spawnGridBase = defaultSpawnGridBase;
+        entityData.spawnCoordinates = new Vector2Int(0,0);
+    
+        SpawnCraft(entityData);
+    }
+    
     private void OnDestroy()
     {
         // Always unsubscribe when the spawner is destroyed
@@ -294,6 +289,7 @@ public class EntitySpawner : MonoBehaviour
         Debug.Log("Spawner: Grid is ready, spawning units now!");
         TestSpawnDefaultUnit();
         TestSpawnDefaultVehicle();
+     // TestSpawnDefaultCraft();
     }
 
     

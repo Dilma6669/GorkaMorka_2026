@@ -914,7 +914,7 @@ MonoBehaviour:
   connectionRange: 3
   maxVerticalDifference: 2
   heightDifferencePenalty: 10
-  maxClimbHeight: 1
+  maxClimbHeight: 2
   maxDropHeight: 1
   obstacleLayer:
     serializedVersion: 2
@@ -933,7 +933,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitPrefab: {fileID: 3250799445468387014, guid: 169cff80da5a76d4a8378bcdf3f28db1, type: 3}
   vehiclePrefab: {fileID: 7364709448439807745, guid: d817cf2b60e943847a272d152a84829e, type: 3}
-  craftPrefab: {fileID: 7364709448439807745, guid: d817cf2b60e943847a272d152a84829e, type: 3}
+  craftPrefab: {fileID: 6009607544708439935, guid: 901380c016f3ac74e8d8d6d89fa22522, type: 3}
   GroundedGridsContainer: {fileID: 1030389473}
   FloatingGridsContainer: {fileID: 677585704}
   defaultSpawnGridBase: {fileID: 2045115133}
