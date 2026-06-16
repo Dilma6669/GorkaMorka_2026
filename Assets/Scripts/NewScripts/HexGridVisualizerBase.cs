@@ -30,8 +30,6 @@ public abstract class HexGridVisualizerBase : MonoBehaviour
     /// Now initializes and stores HexVisualTile components.
     /// </summary>
     public abstract void GenerateVisualGrid(SimpleHexGridBase hexGridBase);
-
-    [ContextMenu("Refresh Grid Data")]
     
     
     void OnDestroy()

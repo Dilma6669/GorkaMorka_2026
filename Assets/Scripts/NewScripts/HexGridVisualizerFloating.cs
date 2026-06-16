@@ -133,6 +133,21 @@ public class HexGridVisualizerFloating : HexGridVisualizerBase
     {
         return visualTiles.TryGetValue(coords, out tile);
     }
+    
+    [ContextMenu("Generate Visual Grid")]
+    public void GenerateVisualGridEditor()
+    {
+        // Ensure we have a reference to the grid
+        if (_targetGridBase == null)
+        {
+            _targetGridBase = GetComponent<SimpleHexGridFloating>();
+        }
+
+        _targetGridBase.GenerateGrid();
+
+        // Call the main generation method
+        GenerateVisualGrid(_targetGridBase);
+    }
 
     /// <summary>
     /// Destroys all currently instantiated visual hex GameObjects.
@@ -146,7 +161,7 @@ public class HexGridVisualizerFloating : HexGridVisualizerBase
             {
                 if (tile != null && tile.gameObject != null)
                 {
-                    Destroy(tile.gameObject); // Use DestroyImmediate for editor context menu
+                    DestroyImmediate(tile.gameObject); // Use DestroyImmediate for editor context menu
                 }
             }
 
