@@ -212,7 +212,7 @@ public class MultiGridPathfinder : MonoBehaviour
             
             if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
             {
-                if (currentNode.GridBaseReference == vehicleAlreadySelected.vehicleInteriorGridBase)
+                if (currentNode.GridBaseReference == vehicleAlreadySelected.InteriorGridBase)
                 {
                     continue;
                 }
@@ -319,7 +319,7 @@ public class MultiGridPathfinder : MonoBehaviour
             // If its a vehicle we want to not allow the vehicle to pathfind over itself 
             if (vehicleAlreadySelected != null)
             {
-                if (vehicleAlreadySelected.vehicleInteriorGridBase == otherGrid)
+                if (vehicleAlreadySelected.InteriorGridBase == otherGrid)
                 {
                     continue;
                 }
@@ -399,7 +399,7 @@ public class MultiGridPathfinder : MonoBehaviour
                 else 
                 {
                     // ADD THIS:
-                    Debug.Log($"Pathfinder rejected jump: Grid={otherGrid.name}, Dist={horizontalDist}, HeightDiff={heightDiff}");
+                  //  Debug.Log($"Pathfinder rejected jump: Grid={otherGrid.name}, Dist={horizontalDist}, HeightDiff={heightDiff}");
                 }
             }
             //******************************************************************************

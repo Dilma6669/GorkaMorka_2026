@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 
 public class VehicleEntity : Entity
 {
-    [FormerlySerializedAs("VehicleInteriorGrid")] public SimpleHexGridBase vehicleInteriorGridBase;
+    public SimpleHexGridBase InteriorGridBase;
     
     [SerializeField] private HexagonCollider shadowHexCollider;
     [SerializeField] private HexagonCollider leftArcHexCollider;

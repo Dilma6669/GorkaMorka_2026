@@ -77,7 +77,20 @@ public class HexGridShapeEditor : Editor
                 
                 GUI.backgroundColor = Color.white;
             }
-            if (GUILayout.Button("+", GUILayout.Width(20))) { shape.Rows[i].Tiles.Add(new HexGridShape.HexTileData()); }
+
+            if (GUILayout.Button("+", GUILayout.Width(20)))
+            {
+                shape.Rows[i].Tiles.Add(new HexGridShape.HexTileData());
+            }
+            
+            if (GUILayout.Button("-", GUILayout.Width(20))) 
+            { 
+                if (shape.Rows[i].Tiles.Count > 0)
+                {
+                    shape.Rows[i].Tiles.RemoveAt(shape.Rows[i].Tiles.Count - 1);
+                }
+            }
+            
             EditorGUILayout.EndHorizontal();
         }
 

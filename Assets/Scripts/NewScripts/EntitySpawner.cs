@@ -289,7 +289,7 @@ public class EntitySpawner : MonoBehaviour
         Debug.Log("Spawner: Grid is ready, spawning units now!");
         TestSpawnDefaultUnit();
         TestSpawnDefaultVehicle();
-     // TestSpawnDefaultCraft();
+        TestSpawnDefaultCraft();
     }
 
     

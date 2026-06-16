@@ -251,12 +251,24 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         {
             string gridGUID = entity.currentGridBase.griEntity.EntityGUID;
             
-            if(EntityManager.TryGetEntity(gridGUID, out Entity vehicleEntity))
+            if(EntityManager.TryGetEntity(gridGUID, out Entity entityToDrive))
             {
-                entity.isDriver = true;
-                VehicleEntity vehicle = (VehicleEntity)vehicleEntity;
-                vehicle.SetDriver(entity);
-                EntitySelectionManager.SelectVehicle(vehicle);
+               
+                if (entityToDrive.EntityType == EntitySpawner.EntityType.Vehicle)
+                {
+                    VehicleEntity vehicle = (VehicleEntity)entityToDrive;
+                    entity.isDriver = true;
+                    vehicle.SetDriver(entity);
+                    EntitySelectionManager.SelectVehicle(vehicle);
+                }
+                else if (entityToDrive.EntityType == EntitySpawner.EntityType.Craft)
+                {
+                    CraftEntity craft = (CraftEntity)entityToDrive;
+                    entity.isDriver = true;
+                    craft.SetDriver(entity);
+                    EntitySelectionManager.SelectCraft(craft);
+                }
+                
                 Debug.Log($"Unit {entity.name} has become Driver for new grid {entity.currentGridBase.name}!");
             }
         }

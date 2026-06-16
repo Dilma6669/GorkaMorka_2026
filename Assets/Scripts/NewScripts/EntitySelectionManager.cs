@@ -68,6 +68,21 @@ public class EntitySelectionManager : MonoBehaviour
         vehicle.EntitySelected(true);
     }
     
+    public static void SelectCraft(Entity entity)
+    {
+        if (EntityCommander.GetEntityInCommand() != null && EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Craft)
+        {
+            CraftEntity previousCraft = (CraftEntity)EntityCommander.GetEntityInCommand();
+            previousCraft.EntitySelected(false);
+        }
+        
+        Debug.Log($"EntitySelectionManager: Selected {entity.name}");
+        EntityCommander.SetEntityToCommand(entity);
+        CraftEntity craft = (CraftEntity)entity;
+        craft.EntitySelected(true);
+    }
+
+    
     public static void SelectUnit(Entity entity)
     {
         if (EntityCommander.GetEntityInCommand() != null && EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
@@ -80,7 +95,7 @@ public class EntitySelectionManager : MonoBehaviour
         EntityCommander.SetEntityToCommand(entity);
     }
 
-// Overload for Ground Hexagons
+
     private void SelectHex(Vector2Int coords, SimpleHexGridBase grid)
     {
         Debug.Log($"EntitySelectionManager: Selected Ground {coords}");
@@ -108,7 +123,24 @@ public class EntitySelectionManager : MonoBehaviour
     
         VehicleEntity vehicle = EntityCommander.GetEntityInCommand() as VehicleEntity;
     
-        if (grid == vehicle.vehicleInteriorGridBase)
+        if (grid == vehicle.InteriorGridBase)
+            return;
+
+        EntityCommander.SetTargetGridAndCoordinates(grid, selectedHexCoords);
+        EntityCommander.CommandUnitToMove();
+    }
+    
+    private void SelectHexWithCraftActive(Vector2Int coords, SimpleHexGridBase grid)
+    {
+        Debug.Log($"EntitySelectionManager: Selected Ground {coords} with Craft Active");
+        if (selectedHexCoords == coords && _selectedHexGridBase == grid) return;
+
+        selectedHexCoords = coords;
+        _selectedHexGridBase = grid;
+    
+        CraftEntity craft = EntityCommander.GetEntityInCommand() as CraftEntity;
+    
+        if (grid == craft.InteriorGridBase)
             return;
 
         EntityCommander.SetTargetGridAndCoordinates(grid, selectedHexCoords);
@@ -116,6 +148,11 @@ public class EntitySelectionManager : MonoBehaviour
     }
     
     private void HoverVehicle(Entity entity)
+    {
+        Debug.Log($"EntitySelectionManager: Hovered {entity.name}");
+    }
+    
+    private void HoverCraft(Entity entity)
     {
         Debug.Log($"EntitySelectionManager: Hovered {entity.name}");
     }
@@ -139,6 +176,12 @@ public class EntitySelectionManager : MonoBehaviour
     {
         Debug.Log($"EntitySelectionManager: Hovered Ground {coords} with Vehicle Active");
     }
+    
+    private void HoverHexWithCraftActive(Vector2Int coords, SimpleHexGridBase grid)
+    {
+        Debug.Log($"EntitySelectionManager: Hovered Ground {coords} with Craft Active");
+    }
+
 
     /// <summary>
     /// Processes a left-click, prioritizing unit selection over movement commands.
@@ -150,10 +193,12 @@ public class EntitySelectionManager : MonoBehaviour
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
         float minVehicleDist = float.MaxValue;
+        float minCraftDist = float.MaxValue;
 
         Entity closestUnitSelected = null!;
         HexVisualTile closetHexSelected = null!;
         Entity closestVehicleSelected = null!;
+        Entity closestCraftSelected = null!;
 
         // --- NEW: Ground Data Tracking ---
         HexData groundHexData = default;
@@ -184,6 +229,12 @@ public class EntitySelectionManager : MonoBehaviour
                 minVehicleDist = hit.distance;
                 closestVehicleSelected = hit.collider.GetComponent<Entity>() ?? hit.collider.GetComponentInParent<Entity>() ?? hit.collider.GetComponentInChildren<Entity>();
             }
+            else if (layer == LayerMask.NameToLayer("CraftCollider"))
+            {
+                if (!(hit.distance < minCraftDist)) continue;
+                minCraftDist = hit.distance;
+                closestCraftSelected = hit.collider.GetComponent<Entity>() ?? hit.collider.GetComponentInParent<Entity>() ?? hit.collider.GetComponentInChildren<Entity>();
+            }
         }
         
         // --- NEW: Physics-less Fallback for Ground Grids ---
@@ -210,9 +261,24 @@ public class EntitySelectionManager : MonoBehaviour
             {
                 SimpleHexGridBase closestHexGridBase = closetHexSelected.gridBaseReference;
                 VehicleEntity vehicle = closestVehicleSelected as VehicleEntity;
-                if (vehicle.vehicleInteriorGridBase != closestHexGridBase)
+                if (vehicle.InteriorGridBase != closestHexGridBase)
                 {
                     SelectVehicle(closestVehicleSelected);
+                    return;
+                }
+            }
+        }
+        
+        if (closestCraftSelected != null)
+        {
+            // Keep your existing vehicle/interior logic
+            if (closetHexSelected != null)
+            {
+                SimpleHexGridBase closestHexGridBase = closetHexSelected.gridBaseReference;
+                CraftEntity craft = closestCraftSelected as CraftEntity;
+                if (craft.InteriorGridBase != closestHexGridBase)
+                {
+                    SelectCraft(closestCraftSelected);
                     return;
                 }
             }
@@ -244,6 +310,13 @@ public class EntitySelectionManager : MonoBehaviour
                 {
                     if (closetHexSelected != null) SelectHexWithVehicleActive(closetHexSelected.GridCoordinates, closetHexSelected.gridBaseReference);
                     else SelectHexWithVehicleActive(targetCoords, targetGrid);
+                    return;
+                }
+                
+                if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Craft)
+                {
+                    if (closetHexSelected != null) SelectHexWithCraftActive(closetHexSelected.GridCoordinates, closetHexSelected.gridBaseReference);
+                    else SelectHexWithCraftActive(targetCoords, targetGrid);
                     return;
                 }
             }
@@ -278,10 +351,12 @@ public class EntitySelectionManager : MonoBehaviour
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
         float minVehicleDist = float.MaxValue;
-
+        float minCraftDist = float.MaxValue;
+        
         Entity closestUnitHovered = null!;
         HexVisualTile closetHexHovered = null!;
         Entity closetVehicleHovered = null!;
+        Entity closestCraftHovered = null!;
 
         // Reset ground tracking
         _groundHexDataHovered = default;
@@ -291,10 +366,14 @@ public class EntitySelectionManager : MonoBehaviour
 
         VehicleEntity vehicleAlreadySelected = null;
         UnitEntity unitAlreadySelected = null;
+        CraftEntity craftAlreadySelected = null;
+        
         if (EntityCommander.GetEntityInCommand() != null)
         {
             if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
                 vehicleAlreadySelected = EntityCommander.GetEntityInCommand() as VehicleEntity;
+            if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Craft)
+                craftAlreadySelected = EntityCommander.GetEntityInCommand() as CraftEntity;
             if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                 unitAlreadySelected = EntityCommander.GetEntityInCommand() as UnitEntity;
         }
@@ -328,6 +407,14 @@ public class EntitySelectionManager : MonoBehaviour
                 closetVehicleHovered = hit.collider.GetComponent<Entity>() ??
                                        hit.collider.GetComponentInParent<Entity>() ??
                                        hit.collider.GetComponentInChildren<Entity>();
+            } 
+            else if (layer == LayerMask.NameToLayer("CraftCollider"))
+            {
+                if (!(hit.distance < minCraftDist)) continue;
+                minCraftDist = hit.distance;
+                closestCraftHovered = hit.collider.GetComponent<Entity>() ??
+                                      hit.collider.GetComponentInParent<Entity>() ??
+                                      hit.collider.GetComponentInChildren<Entity>();
             }
         }
 
@@ -362,6 +449,13 @@ public class EntitySelectionManager : MonoBehaviour
         {
             HoverVehicle(closetVehicleHovered);
         }
+        
+        
+        if (closestCraftHovered != null)
+        {
+            HoverCraft(closestCraftHovered);
+        }
+
 
         SimpleHexGridBase hexGridBase = null;
         Vector2Int targetCoords = Vector2Int.zero;
@@ -419,6 +513,25 @@ public class EntitySelectionManager : MonoBehaviour
                 
                         VehiclePathMover mover = EntityCommander.GetEntityInCommand().GetComponent<VehiclePathMover>();
                         finalPath = (mover != null) ? mover.GetSmoothPathForVehicle(rawPath) : rawPath;
+                    }
+                    else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Craft)
+                    {
+                        if (craftAlreadySelected.GetDriver() == null) return;
+                
+                        // Call overload if ground, else original
+                        if (closetHexHovered != null)
+                        {
+                            HoverHexWithCraftActive(closetHexHovered.GridCoordinates,
+                                closetHexHovered.gridBaseReference);
+                        }
+                        else
+                        {
+                            HoverHexWithCraftActive(targetCoords, hexGridBase);
+                        }
+                        
+                        _lastHoveredObject = currentHoveredObject;
+                
+                        finalPath = rawPath;
                     }
                     else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
                     {
@@ -482,6 +595,8 @@ public class EntitySelectionManager : MonoBehaviour
                 SelectHexWithUnitActive(coords, grid);
             else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Vehicle)
                 SelectHexWithVehicleActive(coords, grid);
+            else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Craft)
+                SelectHexWithCraftActive(coords, grid);
         }
         else
         {

@@ -32,6 +32,8 @@ public class Entity : MonoBehaviour
     [Tooltip("The vertical offset from the center of the hex to the unit's pivot point. Adjust this so the unit sits correctly on the hex surface.")]
     public float entityHeightOffset = 0.5f; // Default offset, adjust in Inspector per unit type
     
+    public float CurrentGroundY { get; private set; }
+    
     void Awake()
     {
         // Ensure unitPathMover is assigned, either manually or found automatically
@@ -90,7 +92,7 @@ public class Entity : MonoBehaviour
         Debug.Log($"Unit '{name}' initialized on grid '{currentGridBase.name}' at {CurrentGridCoordinates}.");
     }
 
-    public void SnapToHex(SimpleHexGridBase gridBase, Vector2Int coords)
+    public virtual void SnapToHex(SimpleHexGridBase gridBase, Vector2Int coords)
     {
         currentGridBase = gridBase;
         CurrentGridCoordinates = coords;
@@ -101,13 +103,15 @@ public class Entity : MonoBehaviour
         // Get the Y level of the top surface of the hex
         Vector3 hexSurfacePosition = gridBase.GetHexTopSurfacePosition(coords, hexData.Height);
 
+        CurrentGroundY = hexSurfacePosition.y + entityHeightOffset;
+        
         Debug.Log($"Snapping entity of type: {EntityType} to = {hexSurfacePosition}");
     
         // Apply the surface Y + the unit's "standing height" 
         // (Use a small offset for the unit's feet relative to the top of the hex)
         transform.position = new Vector3(
             hexSurfacePosition.x, 
-            hexSurfacePosition.y + entityHeightOffset, 
+            CurrentGroundY, 
             hexSurfacePosition.z
         );
     }
