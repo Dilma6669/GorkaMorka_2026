@@ -1314,7 +1314,7 @@ MonoBehaviour:
   GridType: 0
   HexagonsContainer: {fileID: 647497032}
   EntityContainer: {fileID: 1011478121}
-  gridRadius: 200
+  gridRadius: 500
   hexSize: 1
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
@@ -1338,8 +1338,8 @@ MonoBehaviour:
   highDetailMesh: {fileID: -4575734979276873811, guid: 79357c7aeab13d94e9270b6bd1272d05, type: 3}
   lowDetailMesh: {fileID: -4575734979276873811, guid: 79357c7aeab13d94e9270b6bd1272d05, type: 3}
   hexMaterial_HighRes: {fileID: 2100000, guid: 112f3e43f74254ba2b792534a6468e8c, type: 2}
-  hexMaterial_LowRes: {fileID: 2100000, guid: c3ec504e06cda4b64926fc381227e09b, type: 2}
-  lodDistance: 500
+  hexMaterial_LowRes: {fileID: 2100000, guid: c4a25105130a31e478a058a8a347ccec, type: 2}
+  lodDistance: 300
   extremeDistance: 999999
 --- !u!114 &2045115138
 MonoBehaviour:
@@ -1353,7 +1353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19610a712b794000bf2841e4b4168a69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainSettings: {fileID: 11400000, guid: cb18a2d1752fbc440bd79ce400f584a4, type: 2}
+  terrainSettings: {fileID: 11400000, guid: 22de51441e80e5245aedb67a67814db0, type: 2}
   seed: 6
   seedOffsetMultiplier: 1000
 --- !u!1 &2144170096 stripped

@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
-using System.Linq; // Added for .Any() in VehiclePathFinder, good to have here too
 
 public class OldTerrainGenerator : MonoBehaviour
 {

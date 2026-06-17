@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HexagonGridMaterial_SAND
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Name: HexagonGridMaterial_SAND_HIGHRES
+  m_Shader: {fileID: -6465566751694194690, guid: 830930a72eea1364eb827e914ba9a7a8, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -17,8 +17,7 @@ Material:
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -104,8 +103,11 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
+    - _NoiseScale: 100
+    - _NoiseStrength: 10
     - _OcclusionStrength: 1
     - _Parallax: 0.005
+    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Shininess: 0
@@ -121,9 +123,11 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 0.8873353, b: 0.3254717, a: 1}
-    - _Color: {r: 1, g: 0.8873353, b: 0.32547167, a: 1}
+    - _BaseColor: {r: 1, g: 0.92156863, b: 0.5372549, a: 1}
+    - _Color: {r: 1, g: 0.92156863, b: 0.5372549, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _RockColour: {r: 0.34591186, g: 0.21116075, b: 0.10986508, a: 1}
+    - _SandColor: {r: 1, g: 0.9425254, b: 0.5062892, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
