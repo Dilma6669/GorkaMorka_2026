@@ -15,6 +15,8 @@ public class WorldPopulator : MonoBehaviour
     
     public void PopulateWorld(int worldSeed)
     {
+        CullingManager.ClearAll();
+        
         Random.InitState(worldSeed);
 
         foreach (var hex in simpleHexGridGround.HexagonsInGrid)
@@ -24,14 +26,25 @@ public class WorldPopulator : MonoBehaviour
         
             // Generate a random rotation around the Y-axis (Up)
             Quaternion randomRotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
-        
+
             if (roll < 0.1f) // Tree
             {
-                Instantiate(treePrefab, surfacePosition, randomRotation, simpleHexGridGround.ObjectsContainer.transform);
+                GameObject terrainObject = Instantiate(treePrefab, surfacePosition, randomRotation,
+                    simpleHexGridGround.ObjectsContainer.transform);
+                CullableObject cullableObject = terrainObject.GetComponent<CullableObject>();
+                if (cullableObject != null)
+                {
+                    CullingManager.RegisterObject(terrainObject.transform.GetComponent<CullableObject>());
+                }
             }
             else if (roll < 0.2f) // Rock
             {
-                Instantiate(rockPrefab, surfacePosition, randomRotation, simpleHexGridGround.ObjectsContainer.transform);
+                GameObject terrainObject = Instantiate(rockPrefab, surfacePosition, randomRotation, simpleHexGridGround.ObjectsContainer.transform);
+                CullableObject cullableObject = terrainObject.GetComponent<CullableObject>();
+                if (cullableObject != null)
+                {
+                    CullingManager.RegisterObject(terrainObject.transform.GetComponent<CullableObject>());
+                }
             }
         }
     }

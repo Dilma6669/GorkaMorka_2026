@@ -873,6 +873,7 @@ GameObject:
   - component: {fileID: 1284890850}
   - component: {fileID: 1284890851}
   - component: {fileID: 1284890852}
+  - component: {fileID: 1284890853}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -1008,6 +1009,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   overlayPrefab: {fileID: 4950791029586208956, guid: 1af8781d502f24a57a767623f8cfa54e, type: 3}
   container: {fileID: 1195995624}
+--- !u!114 &1284890853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284890845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4baba780ca045f599d045c0d9612745, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cullDistance: 300
 --- !u!1 &1344806452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1151,17 +1165,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b766285f535b4d0493a747c3957ba64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxClimbHeight: 2
-  uphillCostMultiplier: 1.5
-  downhillCostMultiplier: 0.8
-  rockTerrainCostMultiplier: 1.3
-  directionChangePenalty: 0.5
-  maxMovementRange: 10
-  movementSpeed: 5
-  rotationSpeed: 180
-  heightOffset: 0.5
-  smoothHeightTransition: 1
-  hexController: {fileID: 0}
 --- !u!114 &1719109233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1174,20 +1177,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6377ed10edfb43ffa68097aba25b8780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxClimbHeight: 10
-  uphillCostMultiplier: 1.5
-  downhillCostMultiplier: 0.8
-  rockTerrainCostMultiplier: 1.3
-  turningCostPenalty: 0.1
-  minStraightMovesBeforeTurn: 2
-  maxMovementRange: 32
-  finalOrientationCostPenalty: 2
-  movementSpeed: 5
-  rotationSpeed: 50
-  heightOffset: 0.75
-  smoothHeightTransition: 1
-  hexController: {fileID: 0}
-  idealFinalFacingDirection: 0
 --- !u!114 &1719109234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1200,20 +1189,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b21bf9770d7489e9caa50315ecd3073, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxClimbHeight: 2
-  uphillCostMultiplier: 1.5
-  downhillCostMultiplier: 0.8
-  rockTerrainCostMultiplier: 1.3
-  turningCostPenalty: 1
-  minStraightMovesBeforeTurn: 2
-  maxMovementRange: 32
-  finalOrientationCostPenalty: 2
-  movementSpeed: 5
-  rotationSpeed: 180
-  heightOffset: 0.5
-  smoothHeightTransition: 1
-  splineAngleTolerance: 17.9
-  hexController: {fileID: 0}
 --- !u!114 &1719109235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1226,21 +1201,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f3f9ccd81cd4975afbdd5052e9ee98c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxClimbHeight: 2
-  uphillCostMultiplier: 1.5
-  downhillCostMultiplier: 0.8
-  rockTerrainCostMultiplier: 1.3
-  directionChangePenalty: 0.5
-  maxMovementRange: 32
-  movementSpeed: 7
-  rotationSpeed: 180
-  heightOffset: 0.5
-  turningRadius: 2
-  headingAdjustmentSpeed: 90
-  smoothTurningMinDistance: 2
-  headingUpdateInterval: 0.1
-  directMovementThreshold: 1
-  hexController: {fileID: 0}
 --- !u!1 &1781875127
 GameObject:
   m_ObjectHideFlags: 0
@@ -1285,22 +1245,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dee21c27e314a73a9133ddc556656f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedMaterial: {fileID: 2100000, guid: f6d0306e0323d42b2a3fba5192445659, type: 2}
-  normalMaterial: {fileID: 2100000, guid: 051be28ca420e40b7bcc37505296d1d4, type: 2}
-  selectionIndicatorPrefab: {fileID: 4950791029586208956, guid: 1af8781d502f24a57a767623f8cfa54e, type: 3}
-  clickableLayers:
-    m_Bits: 9
-  directMoveDecalPrefab: {fileID: 0}
-  loopingMoveDecalPrefab: {fileID: 0}
-  unreachableDecalPrefab: {fileID: 0}
-  currentSelectedUnit: {fileID: 0}
-  currentSelectedVehicle: {fileID: 0}
-  unitPathfinder: {fileID: 0}
-  vehiclePathfinder: {fileID: 0}
-  hexController: {fileID: 0}
-  playerCamera: {fileID: 0}
-  lastHoveredHexGridPos: {x: -1, y: -1}
-  currentHighlightDecalInstance: {fileID: 0}
 --- !u!1 &2045115128 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
@@ -1377,8 +1321,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a1d6dc3749b16148a33766d108a3239, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treePrefab: {fileID: 1521319932559390546, guid: 915ac35a5aca31d4c9575633be0f6b82, type: 3}
-  rockPrefab: {fileID: 2881479668610909691, guid: c67ed6360e72a9848a4bc876f41e5c51, type: 3}
+  treePrefab: {fileID: 2402966154432236852, guid: 5f304b579531a5e48aa93173101d4ed8, type: 3}
+  rockPrefab: {fileID: 3243793905884450027, guid: cbd6452a65e32d04bacdaae17a4437d2, type: 3}
 --- !u!1 &2144170096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
