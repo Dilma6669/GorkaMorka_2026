@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class OldTerrainGenerator : MonoBehaviour
+public class TerrainGenerator : MonoBehaviour
 {
     public TerrainSettings terrainSettings;
 

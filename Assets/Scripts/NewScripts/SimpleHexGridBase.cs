@@ -16,6 +16,7 @@ public abstract class SimpleHexGridBase : MonoBehaviour
 
     public GameObject HexagonsContainer;
     public GameObject EntityContainer;
+    public GameObject ObjectsContainer;
     
     [Tooltip(
         "The radius of the hexagonal grid. A radius of 0 is just the center hex. A radius of 1 includes the 6 direct neighbors.")]

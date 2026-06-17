@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 public class HexGridVisualizerGround : HexGridVisualizerBase
 {
+    WorldPopulator worldPopulator;
+    TerrainGenerator terrainGenerator;
+    
     private List<Matrix4x4> matrices = new List<Matrix4x4>();
     private const int BATCH_SIZE = 128;
 
@@ -24,6 +27,8 @@ public class HexGridVisualizerGround : HexGridVisualizerBase
         base.Awake();
 
         _targetGridBase = GetComponent<SimpleHexGridGround>();
+        worldPopulator = GetComponent<WorldPopulator>();
+        terrainGenerator  = GetComponent<TerrainGenerator>();
     }
 
     void Start()
@@ -109,5 +114,7 @@ public class HexGridVisualizerGround : HexGridVisualizerBase
 
             batchBounds[b] = new Bounds((min + max) * 0.5f, (max - min) + Vector3.one * 5f);
         }
+
+        worldPopulator.PopulateWorld(terrainGenerator.seed);
     }
 }

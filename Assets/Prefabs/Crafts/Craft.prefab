@@ -1191,8 +1191,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
-      insertIndex: 1
+      insertIndex: -1
       addedObject: {fileID: 2163802086256265995}
+    - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6124189608352402260}
   m_SourcePrefab: {fileID: 100100000, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
 --- !u!1 &589171481682059390 stripped
 GameObject:
@@ -1235,3 +1238,22 @@ MonoBehaviour:
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
   customGridShape: {fileID: 11400000, guid: 8bcc8b43c7139fe4faa92079dd0d695c, type: 2}
+--- !u!114 &6124189608352402260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7684881809050942376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df6e6660e874298b7ab961df0896ba9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HexagonsContainer: {fileID: 4824698282141488498}
+  hexVisualHeight: 0.1
+  hexPrefab: {fileID: 6020444878286084468, guid: 117bfac3fa4afc446ac21331a8126d59, type: 3}
+  unwalkableColor: {r: 1, g: 0, b: 0, a: 1}
+  climbableColor: {r: 0, g: 0, b: 1, a: 1}
+  occupiedColour: {r: 1, g: 0, b: 0, a: 1}
+  commandSeatColour: {r: 0, g: 1, b: 0, a: 1}

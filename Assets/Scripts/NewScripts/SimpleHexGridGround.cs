@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class SimpleHexGridGround : SimpleHexGridBase
 {
-    OldTerrainGenerator terrainGenerator;
+    TerrainGenerator terrainGenerator;
     HexGridVisualizerGround visualizer;
 
     public float baseHeight = 0f;
@@ -21,7 +21,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
         base.Awake();
 
         visualizer = GetComponent<HexGridVisualizerGround>();
-        terrainGenerator = GetComponent<OldTerrainGenerator>();
+        terrainGenerator = GetComponent<TerrainGenerator>();
     }
 
 

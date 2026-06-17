@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5061804661394092625}
-  - component: {fileID: 1797733386346825970}
-  - component: {fileID: 5310889350748729316}
   m_Layer: 3
   m_Name: SimpleHexGrid
   m_TagString: GroundGrid
@@ -33,44 +31,9 @@ Transform:
   m_Children:
   - {fileID: 8782629374869294453}
   - {fileID: 4820952870664179547}
+  - {fileID: 4029963971542790271}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1797733386346825970
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331045504372065090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 228f942f3148419ca14134cfe927cc26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HexGridVisualiser: {fileID: 0}
-  GridType: 0
-  HexagonsContainer: {fileID: 3227663583596440984}
-  EntityContainer: {fileID: 7355252563365779604}
-  customGridShape: {fileID: 0}
-  gridRadius: 10
-  hexSize: 1
-  entireGridHeightOffset: 0
-  singleHexHeightAdjustment: 1
---- !u!114 &5310889350748729316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331045504372065090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2df6e6660e874298b7ab961df0896ba9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hexPrefab: {fileID: 6020444878286084468, guid: 117bfac3fa4afc446ac21331a8126d59, type: 3}
-  HexagonsContainer: {fileID: 3227663583596440984}
-  hexVisualHeight: 0.1
 --- !u!1 &3227663583596440984
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,6 +57,37 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3227663583596440984}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5061804661394092625}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6517930670179838624
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4029963971542790271}
+  m_Layer: 3
+  m_Name: ObjectsContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4029963971542790271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6517930670179838624}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
