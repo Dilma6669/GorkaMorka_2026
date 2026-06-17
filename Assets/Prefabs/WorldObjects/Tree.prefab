@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2109994124409623196}
-  - component: {fileID: -2617406121462963115}
+  - component: {fileID: -8011694163326092517}
   m_Layer: 0
   m_Name: Tree
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 757066701318425561}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-2617406121462963115
+--- !u!114 &-8011694163326092517
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e90e28c5c34e44c086dc2285bc3eb486, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parentChunkID: {x: 0, y: 0}
 --- !u!1 &9137524917036036479
 GameObject:
   m_ObjectHideFlags: 0

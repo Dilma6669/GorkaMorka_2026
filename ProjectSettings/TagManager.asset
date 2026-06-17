@@ -22,8 +22,8 @@ TagManager:
   - HexagonCollider
   - PathfindingObstacle
   - CraftCollider
-  - 
-  - 
+  - Hidden
+  - WorldObjects
   - 
   - 
   - 
