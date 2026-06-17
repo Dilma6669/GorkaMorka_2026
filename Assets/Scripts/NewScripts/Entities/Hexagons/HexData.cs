@@ -14,6 +14,9 @@ public struct HexData
     private string hexOccupier;
     private bool isClimbable;
     public bool IsCommandSeat;
+    
+    // visual
+    public bool isRocky;
 
     public HexData(Vector2Int gridCoords, float height, bool walkable, bool climbable, bool isCommandSeat)
     {
@@ -24,6 +27,9 @@ public struct HexData
         hexOccupier = null;
         isClimbable = climbable;
         IsCommandSeat = isCommandSeat;
+
+        // visual
+        isRocky = false;
     }
 
     

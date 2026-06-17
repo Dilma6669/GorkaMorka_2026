@@ -548,6 +548,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2045115133}
+    - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2045115138}
   m_SourcePrefab: {fileID: 100100000, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
 --- !u!4 &727156829 stripped
 Transform:
@@ -1087,7 +1090,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1719109230
 Transform:
   m_ObjectHideFlags: 0
@@ -1119,9 +1122,6 @@ MonoBehaviour:
   gridHeight: 500
   hexSize: 1
   hexMeshHeight: 5
-  seed: 2
-  baseHeight: 0
-  seedOffsetMultiplier: 1000
   duneScale: 0.01
   duneHeight: 11
   duneOctaves: 3
@@ -1131,18 +1131,6 @@ MonoBehaviour:
   rockThreshold: 0.7
   rockSharpness: 0.1
   terrainSmoothness: 0.8
-  neighborHeightLimit: 0.8
-  chunkSize: 20
-  sandMaterial: {fileID: 2100000, guid: 112f3e43f74254ba2b792534a6468e8c, type: 2}
-  rockMaterial: {fileID: 2100000, guid: c3ec504e06cda4b64926fc381227e09b, type: 2}
-  useInstancedRendering: 1
-  useLOD: 1
-  lodDistance1: 50
-  lodDistance2: 100
-  colliderLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  colliderChunkSize: 10
 --- !u!114 &1719109232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1165,6 +1153,7 @@ MonoBehaviour:
   rotationSpeed: 180
   heightOffset: 0.5
   smoothHeightTransition: 1
+  hexController: {fileID: 0}
 --- !u!114 &1719109233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1189,6 +1178,8 @@ MonoBehaviour:
   rotationSpeed: 50
   heightOffset: 0.75
   smoothHeightTransition: 1
+  hexController: {fileID: 0}
+  idealFinalFacingDirection: 0
 --- !u!114 &1719109234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1214,6 +1205,7 @@ MonoBehaviour:
   heightOffset: 0.5
   smoothHeightTransition: 1
   splineAngleTolerance: 17.9
+  hexController: {fileID: 0}
 --- !u!114 &1719109235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1240,6 +1232,7 @@ MonoBehaviour:
   smoothTurningMinDistance: 2
   headingUpdateInterval: 0.1
   directMovementThreshold: 1
+  hexController: {fileID: 0}
 --- !u!1 &1781875127
 GameObject:
   m_ObjectHideFlags: 0
@@ -1288,11 +1281,18 @@ MonoBehaviour:
   normalMaterial: {fileID: 2100000, guid: 051be28ca420e40b7bcc37505296d1d4, type: 2}
   selectionIndicatorPrefab: {fileID: 4950791029586208956, guid: 1af8781d502f24a57a767623f8cfa54e, type: 3}
   clickableLayers:
-    serializedVersion: 2
     m_Bits: 9
   directMoveDecalPrefab: {fileID: 0}
   loopingMoveDecalPrefab: {fileID: 0}
   unreachableDecalPrefab: {fileID: 0}
+  currentSelectedUnit: {fileID: 0}
+  currentSelectedVehicle: {fileID: 0}
+  unitPathfinder: {fileID: 0}
+  vehiclePathfinder: {fileID: 0}
+  hexController: {fileID: 0}
+  playerCamera: {fileID: 0}
+  lastHoveredHexGridPos: {x: -1, y: -1}
+  currentHighlightDecalInstance: {fileID: 0}
 --- !u!1 &2045115128 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
@@ -1314,25 +1314,11 @@ MonoBehaviour:
   GridType: 0
   HexagonsContainer: {fileID: 647497032}
   EntityContainer: {fileID: 1011478121}
-  gridRadius: 500
+  gridRadius: 200
   hexSize: 1
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
-  noiseScale: 0.15
-  heightMultiplier: 2
-  seed: 0
   baseHeight: 0
-  seedOffsetMultiplier: 1000
-  duneScale: 0.05
-  duneHeight: 8
-  duneOctaves: 3
-  dunePersistence: 0.5
-  rockScale: 0.5
-  rockHeight: 15
-  rockThreshold: 0.6
-  rockSharpness: 2
-  terrainSmoothness: 0.8
-  neighborHeightLimit: 0.8
   entityPlacementHeightOffset: 0.05
   chunkSize: 10
 --- !u!114 &2045115137
@@ -1355,6 +1341,21 @@ MonoBehaviour:
   hexMaterial_LowRes: {fileID: 2100000, guid: c3ec504e06cda4b64926fc381227e09b, type: 2}
   lodDistance: 200
   extremeDistance: 999999
+--- !u!114 &2045115138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045115128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19610a712b794000bf2841e4b4168a69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainSettings: {fileID: 0}
+  seed: 6
+  seedOffsetMultiplier: 1000
 --- !u!1 &2144170096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
