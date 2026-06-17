@@ -1377,8 +1377,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a1d6dc3749b16148a33766d108a3239, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treePrefab: {fileID: 2299343636055342304, guid: e8f06f16ad2056848b4bda2f48ffd0bb, type: 3}
-  rockPrefab: {fileID: 2419482625852218563, guid: cbd6452a65e32d04bacdaae17a4437d2, type: 3}
+  treePrefab: {fileID: 1521319932559390546, guid: 915ac35a5aca31d4c9575633be0f6b82, type: 3}
+  rockPrefab: {fileID: 2881479668610909691, guid: c67ed6360e72a9848a4bc876f41e5c51, type: 3}
 --- !u!1 &2144170096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}

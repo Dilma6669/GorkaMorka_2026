@@ -15,23 +15,23 @@ public class WorldPopulator : MonoBehaviour
     
     public void PopulateWorld(int worldSeed)
     {
-        // Set the random seed so the results are always the same for this map
         Random.InitState(worldSeed);
 
         foreach (var hex in simpleHexGridGround.HexagonsInGrid)
         {
-            // Simple logic: 20% chance to spawn something
             float roll = Random.value;
-
             Vector3 surfacePosition = simpleHexGridGround.GetHexTopSurfacePosition(hex.Value.GridCoordinates, hex.Value.Height);
-            
-            if (roll < 0.1f) // 10% chance for a tree
+        
+            // Generate a random rotation around the Y-axis (Up)
+            Quaternion randomRotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
+        
+            if (roll < 0.1f) // Tree
             {
-                Instantiate(treePrefab, surfacePosition + Vector3.up * 0.5f, Quaternion.identity, simpleHexGridGround.ObjectsContainer.transform);
+                Instantiate(treePrefab, surfacePosition, randomRotation, simpleHexGridGround.ObjectsContainer.transform);
             }
-            else if (roll < 0.2f) // Another 10% chance for a rock
+            else if (roll < 0.2f) // Rock
             {
-                Instantiate(rockPrefab, surfacePosition + Vector3.up * 0.5f, Quaternion.identity, simpleHexGridGround.ObjectsContainer.transform);
+                Instantiate(rockPrefab, surfacePosition, randomRotation, simpleHexGridGround.ObjectsContainer.transform);
             }
         }
     }
