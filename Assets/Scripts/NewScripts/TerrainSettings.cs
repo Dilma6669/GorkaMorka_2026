@@ -14,13 +14,13 @@ public class TerrainSettings : ScriptableObject
     public float dunePersistence = 0.01f;
 
     [Header("Rocks (Jagged)")]
-    [Tooltip("Larger scale for bigger rock clusters")]
+    [Tooltip("Larger for smaller/more rock clusters, Less for larger/fewer rock clusters")]
     public float rockScale = 0.02f;
     [Tooltip("Maximum rock height")]
     public float rockHeight = 7f;
     [Tooltip("Only heights above this become rocks")]
     public float rockThreshold = 0.7f;
-    [Tooltip("How sharp the rock transitions are")]
+    [Tooltip("How sharp the rock transitions are, Less more sharp")]
     public float rockSharpness = 0.1f;
     
     [Header("Mixing")]
