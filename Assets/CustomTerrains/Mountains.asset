@@ -21,3 +21,5 @@ MonoBehaviour:
   rockThreshold: 0.3
   rockSharpness: 0.5
   terrainSmoothness: 0.8
+  treePercentage: 0
+  rockPercentage: 0

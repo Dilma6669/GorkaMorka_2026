@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class WorldPopulator : MonoBehaviour
 {
     SimpleHexGridGround simpleHexGridGround;
+    TerrainGenerator terrainGenerator;
     
     public GameObject treePrefab;
     public GameObject rockPrefab;
@@ -14,6 +15,7 @@ public class WorldPopulator : MonoBehaviour
     private void Awake()
     {
         simpleHexGridGround = GetComponent<SimpleHexGridGround>();
+        terrainGenerator = GetComponent<TerrainGenerator>();
     }
      
     public void PopulateWorld(int worldSeed)
@@ -21,17 +23,22 @@ public class WorldPopulator : MonoBehaviour
         ClearAll();
         Random.InitState(worldSeed);
 
+        float totalThreshold = terrainGenerator.terrainSettings.treePercentage + terrainGenerator.terrainSettings.rockPercentage;
+
         foreach (var hex in simpleHexGridGround.HexagonsInGrid)
         {
             float roll = Random.value;
-            if (roll > 0.2f) continue; // Only 20% get objects
+            if (roll > totalThreshold) continue; 
 
+            // Determine which object to spawn based on the relative percentages
+            // If roll < treePercentage, it's a tree. If between tree and tree+rock, it's a rock.
+            GameObject prefab = (roll < terrainGenerator.terrainSettings.treePercentage) ? treePrefab : rockPrefab;
+        
             Vector3 surfacePosition = simpleHexGridGround.GetHexTopSurfacePosition(hex.Value.GridCoordinates, hex.Value.Height);
             Quaternion randomRotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
 
-            GameObject prefab = (roll < 0.1f) ? treePrefab : rockPrefab;
             GameObject terrainObject = Instantiate(prefab, surfacePosition, randomRotation, simpleHexGridGround.ObjectsContainer.transform);
-            
+        
             AssignParentChunkIDToObject(terrainObject, hex.Value);
         }
     }
