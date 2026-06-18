@@ -78,15 +78,31 @@ public class WorldPopulator : MonoBehaviour
             }
         }
     }
-
-    private void UpdateObjectVisibilityByDistance(CullableObject obj, float activeRadius)
+    
+    
+    public void UpdateChunksBasedOnDistance(Vector3 camPos, float activeRadius) 
     {
         float radiusSquared = activeRadius * activeRadius;
 
-        // Calculate distance squared (cheaper than Vector3.Distance)
-        float distSq = (obj.transform.position - Camera.main.transform.position).sqrMagnitude;
-        
-        obj.SetVisibility(distSq < radiusSquared);
+        foreach (var chunk in simpleHexGridGround.physicsChunks)
+        {
+            if (chunk.Value.visible)
+            {
+                //1. Calculate distance once per chunk
+                float distSq = (chunk.Value.worldCenter - camPos).sqrMagnitude;
+                bool shouldBeActive = distSq < radiusSquared;
+                
+                // Toggle all objects in this specific chunk
+                if (allObjects.TryGetValue(chunk.Key, out List<CullableObject> objects))
+                {
+                    foreach (var obj in objects)
+                    {
+                        obj.SetVisibility(shouldBeActive);
+                    }
+                }
+            }
+
+        }
     }
 
     public void ClearAll() 

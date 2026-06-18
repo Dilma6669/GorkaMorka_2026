@@ -11,6 +11,13 @@ public class CullableObject : MonoBehaviour
     {
         defaultLayer = gameObject.layer;
         hiddenLayer = LayerMask.NameToLayer("Hidden");
+        
+        
+    }
+
+    private void Start()
+    {
+        SetVisibility(false);
     }
 
     public void SetVisibility(bool isVisible)

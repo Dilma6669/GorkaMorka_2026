@@ -1265,9 +1265,9 @@ MonoBehaviour:
   baseHeight: 0
   entityPlacementHeightOffset: 0.05
   chunkSize: 10
-  terrainVisualRadius: 1000
+  meshVisualRadius: 1000
   cameraTerrainSpreadRadius: 100
-  meshSpreadRadius: 60
+  colliderSpreadRadius: 100
 --- !u!114 &2045115137
 MonoBehaviour:
   m_ObjectHideFlags: 0
