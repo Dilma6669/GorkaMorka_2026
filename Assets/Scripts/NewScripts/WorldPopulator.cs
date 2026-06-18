@@ -101,7 +101,17 @@ public class WorldPopulator : MonoBehaviour
                     }
                 }
             }
-
+            else
+            {       
+                if (allObjects.TryGetValue(chunk.Key, out List<CullableObject> objects))
+                {
+                    foreach (var obj in objects)
+                    {
+                        obj.SetVisibility(false);
+                    }
+                }
+                
+            }
         }
     }
 

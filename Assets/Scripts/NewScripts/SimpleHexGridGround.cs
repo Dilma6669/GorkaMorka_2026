@@ -23,6 +23,8 @@ public class SimpleHexGridGround : SimpleHexGridBase
     public float cameraMeshSpreadRadius = 100f; 
     [Tooltip("The circular spread around the camera to enable mesh colliders")]
     public float colliderSpreadRadius = 100f;
+    [Tooltip("The circular spread around the camera to enable mesh colliders")]
+    public float worldObjectsSpreadRadius = 500f;
     
     // Stores matrices grouped by the exact same chunkID as the physics system
     public Dictionary<Vector2Int, Matrix4x4[]> chunkVisualData = new Dictionary<Vector2Int, Matrix4x4[]>();
@@ -56,7 +58,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
           UpdateMeshVisibility(camPos);
           UpdateColliderVisibility(camPos);
           
-          worldPopulator.UpdateChunksBasedOnDistance(camPos, 50f);
+          worldPopulator.UpdateChunksBasedOnDistance(camPos, worldObjectsSpreadRadius);
           
           lastUpdatePosition = camera.transform.position;
         }
