@@ -48,7 +48,7 @@ public class MultiGridPathfinder : MonoBehaviour
     [Tooltip("The layer used for Vehicle and Unit colliders to block pathfinding.")]
     public LayerMask obstacleLayer;
 
-    public float MaxRaycastPathDistance = 50.0f;
+    public static float MaxRaycastPathDistance = 50.0f;
     public int MaxPathfindingNodeCount = 30;
     
     public static MultiGridPathfinder Instance { get; private set; }

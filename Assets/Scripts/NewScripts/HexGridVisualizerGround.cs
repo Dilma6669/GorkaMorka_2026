@@ -13,10 +13,13 @@ public class HexGridVisualizerGround : HexGridVisualizerBase
     public Material hexMaterial_LowRes;
     public float lodDistance = 200.0f;
 
+    private Camera camera;
+    
     protected new void Awake()
     {
         base.Awake();
         masterGrid = GetComponent<SimpleHexGridGround>();
+        camera = Camera.main;
     }
 
     public void SetChunkVisibility(Vector2Int chunkID, bool isVisible)
@@ -26,7 +29,7 @@ public class HexGridVisualizerGround : HexGridVisualizerBase
 
     void Update()
     {
-        Vector3 camPos = Camera.main.transform.position;
+        Vector3 camPos = camera.transform.position;
 
         foreach (var kvp in masterGrid.chunkVisualData)
         {

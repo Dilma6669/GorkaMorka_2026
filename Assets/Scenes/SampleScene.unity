@@ -939,7 +939,6 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 520
-  MaxRaycastPathDistance: 70
   MaxPathfindingNodeCount: 30
 --- !u!114 &1284890849
 MonoBehaviour:
@@ -1267,8 +1266,8 @@ MonoBehaviour:
   entityPlacementHeightOffset: 0.05
   chunkSize: 10
   terrainVisualRadius: 1000
-  cameraTerrainSpreadRadius: 20
-  meshSpreadRadius: 50
+  cameraTerrainSpreadRadius: 100
+  meshSpreadRadius: 60
 --- !u!114 &2045115137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1317,7 +1316,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   treePrefab: {fileID: 2402966154432236852, guid: 5f304b579531a5e48aa93173101d4ed8, type: 3}
   rockPrefab: {fileID: 3243793905884450027, guid: cbd6452a65e32d04bacdaae17a4437d2, type: 3}
-  objectCullingDistance: 100
 --- !u!1 &2144170096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}

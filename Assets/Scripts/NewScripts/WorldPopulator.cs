@@ -9,8 +9,6 @@ public class WorldPopulator : MonoBehaviour
     public GameObject treePrefab;
     public GameObject rockPrefab;
     
-    public float objectCullingDistance = 600.0f;
-    
     // Key is the chunkID, Value is a list of all objects in that chunk
     private Dictionary<Vector2Int, List<CullableObject>> allObjects = new();
     

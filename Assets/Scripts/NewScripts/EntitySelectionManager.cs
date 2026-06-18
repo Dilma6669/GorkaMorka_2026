@@ -39,19 +39,15 @@ public class EntitySelectionManager : MonoBehaviour
     
     private string[] layerNames = { "HexagonCollider", "VehicleCollider", "UnitCollider", "CraftCollider" };
     
-    // Throttle the physics update to every 15 frames for maximum efficiency
-    private Vector3 lastUpdatePosition;
-    private float updateThreshold = 5.0f; // Only update if camera moved 5 meters
-    
     private Vector3 lastMousePosition;
 
     private Camera camera;
     
     private void Awake()
     {
-        pathfinder = GetComponent<MultiGridPathfinder>();
         hexOverlayManager = GetComponent<HexOverlayManager>();
-        camera = Camera.main; 
+        pathfinder = GetComponent<MultiGridPathfinder>();
+        camera = Camera.main;
     }
 
     void Update()
@@ -77,18 +73,6 @@ public class EntitySelectionManager : MonoBehaviour
                 lastMousePosition = Input.mousePosition;
             }
         }
-
-        // Update ground grid chuck visuals
-        if (groundGrid != null)
-        {
-            // Check if camera moved enough to warrant an update
-            if (Vector3.Distance(camera.transform.position, lastUpdatePosition) > updateThreshold)
-            {
-                groundGrid.UpdateChunkVisibility(camera.transform.position, pathfinder.MaxRaycastPathDistance + 20f);
-                lastUpdatePosition = camera.transform.position;
-            }
-        }
-
     }
 
     public static void SelectVehicle(Entity entity)
@@ -227,9 +211,9 @@ public class EntitySelectionManager : MonoBehaviour
         if (Cursor.lockState == CursorLockMode.Locked)
             return;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         int mask = LayerMask.GetMask(layerNames);
-        RaycastHit[] hits = Physics.RaycastAll(ray, pathfinder.MaxRaycastPathDistance, mask);
+        RaycastHit[] hits = Physics.RaycastAll(ray, MultiGridPathfinder.MaxRaycastPathDistance, mask);
 
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
@@ -281,7 +265,7 @@ public class EntitySelectionManager : MonoBehaviour
         // --- NEW: Physics-less Fallback for Ground Grids ---
         if (closetHexSelected == null)
         {
-            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data, pathfinder.MaxRaycastPathDistance))
+            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 groundHexData = data;
                 groundGridSelected = groundGrid;
@@ -388,9 +372,9 @@ public class EntitySelectionManager : MonoBehaviour
         if (Cursor.lockState == CursorLockMode.Locked)
             return;
         
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         int mask = LayerMask.GetMask(layerNames);
-        RaycastHit[] hits = Physics.RaycastAll(ray, pathfinder.MaxRaycastPathDistance, mask);
+        RaycastHit[] hits = Physics.RaycastAll(ray, MultiGridPathfinder.MaxRaycastPathDistance, mask);
 
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
@@ -474,7 +458,7 @@ public class EntitySelectionManager : MonoBehaviour
         // 2. If NO specific HexTile collider was hit, use the Math fallback
         if (closetHexHovered == null)
         {
-            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data, pathfinder.MaxRaycastPathDistance))
+            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 _groundHexDataHovered = data;
                 _hoveredGroundGrid = groundGrid;
@@ -533,7 +517,7 @@ public class EntitySelectionManager : MonoBehaviour
                 Vector3 targetWorldPos = hexGridBase.GetHexWorldPosition(targetCoords, 0);
 
                 // If target is further than your limit, clear path and exit
-                if (Vector3.Distance(startPos, targetWorldPos) > pathfinder.MaxRaycastPathDistance)
+                if (Vector3.Distance(startPos, targetWorldPos) > MultiGridPathfinder.MaxRaycastPathDistance)
                 {
                     CachedMovementPath = null;
                     hexOverlayManager.ClearAll(); // Clear visuals if we were too far

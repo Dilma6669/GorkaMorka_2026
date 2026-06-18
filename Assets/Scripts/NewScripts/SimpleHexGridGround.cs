@@ -9,7 +9,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
 {
     TerrainGenerator terrainGenerator;
     public HexGridVisualizerGround visualizer; // Made public for access
-    private WorldPopulator populator;
+    private WorldPopulator worldPopulator;
 
     public float baseHeight = 0f;
     public float entityPlacementHeightOffset = 0.05f;
@@ -25,20 +25,28 @@ public class SimpleHexGridGround : SimpleHexGridBase
     public Dictionary<Vector2Int, Matrix4x4[]> chunkVisualData = new Dictionary<Vector2Int, Matrix4x4[]>();
     public Dictionary<Vector2Int, Bounds> chunkBounds = new Dictionary<Vector2Int, Bounds>();
 
+    // Throttle the physics update to every 15 frames for maximum efficiency
+    private Vector3 lastUpdatePosition;
+    private float updateThreshold = 5.0f; // Only update if camera moved 5 meters
+    
+    private Camera camera;
+    
     private new void Awake()
     {
         base.Awake();
-        populator = GetComponent<WorldPopulator>();
+        worldPopulator = GetComponent<WorldPopulator>();
         visualizer = GetComponent<HexGridVisualizerGround>();
         terrainGenerator = GetComponent<TerrainGenerator>();
+        camera = Camera.main;
     }
     
+
     void Update()
     {
         if (physicsChunks == null) return;
 
-        Vector3 camPos = Camera.main.transform.position;
-        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+        Vector3 camPos = camera.transform.position;
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(camera);
 
         foreach (var kvp in physicsChunks)
         {
@@ -47,27 +55,39 @@ public class SimpleHexGridGround : SimpleHexGridBase
 
             // 1. Logic State: Should objects be active?
             bool isLoaded = dist < terrainVisualRadius;
-        
+
             // 2. Visual State: Should the mesh be rendering?
             // (Must be in logical radius AND within camera view OR very close)
-            bool isVisible = isLoaded && (dist < cameraTerrainSpreadRadius || GeometryUtility.TestPlanesAABB(planes, new Bounds(data.worldCenter, Vector3.one * meshSpreadRadius)));
-
-            // --- UPDATE WORLD OBJECTS ---
-            // if (data.isObjectsActive != isLoaded) 
-            // {
-            //     populator.SetVisibilityOfObjectsInChunk(kvp.Key, isLoaded);
-            //     data.isObjectsActive = isLoaded; 
-            // }
+            bool isVisible = isLoaded && (dist < cameraTerrainSpreadRadius ||
+                                          GeometryUtility.TestPlanesAABB(planes,
+                                              new Bounds(data.worldCenter, Vector3.one * meshSpreadRadius)));
 
             // --- UPDATE MESH/VISUALIZER ---
             if (isVisible != data.visible)
             {
                 data.visible = isVisible;
+    
+                // Update Collider
                 MeshCollider col = kvp.Value.GetComponent<MeshCollider>();
-                if (col != null) col.enabled = isVisible;
+                if (col != null) 
+                {
+                    col.enabled = isVisible;
+        
+                    // SYNC OBJECTS HERE: The moment the collider changes, update the objects
+                    worldPopulator.SetVisibilityOfObjectsInChunk(kvp.Key, isVisible);
+                }
+    
                 visualizer.SetChunkVisibility(kvp.Key, isVisible);
             }
         }
+
+        // Check if camera moved enough to warrant an update
+        if (Vector3.Distance(camera.transform.position, lastUpdatePosition) > updateThreshold)
+        {
+            UpdateChunkVisibility(camera.transform.position, MultiGridPathfinder.MaxRaycastPathDistance + 20f);
+            lastUpdatePosition = camera.transform.position;
+        }
+
     }
 
     public override void GenerateGrid()
@@ -96,11 +116,39 @@ public class SimpleHexGridGround : SimpleHexGridBase
         GeneratePhysicsProxy();
         visualizer.GenerateVisualGrid(this);
         RegisterGridToSystem(true);
-
+        worldPopulator.PopulateWorld(terrainGenerator.seed);
+        
         AllNodes.Clear();
         foreach (var kvp in HexagonsInGrid)
         {
             AllNodes[kvp.Key] = new PathNode(kvp.Key, this);
+        }
+        
+        // Need to set the initial worldObjects to active in the beginning meshes.
+        StartCoroutine(SyncInitialState());
+    }
+    
+    private IEnumerator SyncInitialState()
+    {
+        // Wait for the end of the frame so the camera has initialized
+        yield return new WaitForEndOfFrame();
+
+        foreach (var chunk in physicsChunks)
+        {
+            ChunkDataComponent data = chunk.Value.GetComponent<ChunkDataComponent>();
+            if (data == null) continue;
+    
+            MeshCollider col = chunk.Value.GetComponent<MeshCollider>();
+            if (col != null)
+            {
+                // Now the radius is a perfect vertical cylinder, not a sphere
+                bool shouldBeActive = data.visible;
+    
+                if (shouldBeActive)
+                {
+                    worldPopulator.SetVisibilityOfObjectsInChunk(chunk.Key, shouldBeActive);
+                }
+            }
         }
     }
 
@@ -295,29 +343,26 @@ public class SimpleHexGridGround : SimpleHexGridBase
 
     public void UpdateChunkVisibility(Vector3 cameraPosition, float activeDistance)
     {
-        // Flatten camera position to Y=0
         Vector2 camPos2D = new Vector2(cameraPosition.x, cameraPosition.z);
-    
+
         foreach (var chunk in physicsChunks)
         {
             ChunkDataComponent data = chunk.Value.GetComponent<ChunkDataComponent>();
             if (data == null) continue;
-    
-            // Flatten chunk center position to Y=0
+
             Vector2 chunkPos2D = new Vector2(data.worldCenter.x, data.worldCenter.z);
-    
-            // Measure distance on the 2D plane
             float dist2D = Vector2.Distance(camPos2D, chunkPos2D);
-    
+
+            // A chunk should be active ONLY IF it is close enough AND visible to the camera
+            bool targetVisibility = (dist2D <= activeDistance);
+
             MeshCollider col = chunk.Value.GetComponent<MeshCollider>();
             if (col != null)
             {
-                // Now the radius is a perfect vertical cylinder, not a sphere
-                bool shouldBeActive = (dist2D <= activeDistance && data.visible);
-    
-                if (col.enabled != shouldBeActive)
+                // 1. Update the Mesh
+                if (col.enabled != targetVisibility)
                 {
-                    col.enabled = shouldBeActive;
+                    col.enabled = targetVisibility;
                 }
             }
         }
