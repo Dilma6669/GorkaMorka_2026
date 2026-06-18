@@ -3,24 +3,31 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Serialization;
 
 public class SimpleHexGridGround : SimpleHexGridBase
 {
     TerrainGenerator terrainGenerator;
-    HexGridVisualizerGround visualizer;
+    public HexGridVisualizerGround visualizer; // Made public for access
     private WorldPopulator populator;
 
     public float baseHeight = 0f;
-
     public float entityPlacementHeightOffset = 0.05f;
 
-    [Header("Physics Settings")] public int chunkSize = 10; // Number of hexes per side per chunk
+    [Header("Physics Settings")] public int chunkSize = 10;
     private Dictionary<Vector2Int, GameObject> physicsChunks = new Dictionary<Vector2Int, GameObject>();
+    
+    // Set these to whatever you want
+    public float terrainVisualRadius = 1000f; 
+    public float cameraTerrainSpreadRadius = 150f; 
+    public float meshSpreadRadius = 100f; // Adjust this if chunks look like they are cutting off too early
+    // Stores matrices grouped by the exact same chunkID as the physics system
+    public Dictionary<Vector2Int, Matrix4x4[]> chunkVisualData = new Dictionary<Vector2Int, Matrix4x4[]>();
+    public Dictionary<Vector2Int, Bounds> chunkBounds = new Dictionary<Vector2Int, Bounds>();
 
     private new void Awake()
     {
         base.Awake();
-
         populator = GetComponent<WorldPopulator>();
         visualizer = GetComponent<HexGridVisualizerGround>();
         terrainGenerator = GetComponent<TerrainGenerator>();
@@ -30,35 +37,44 @@ public class SimpleHexGridGround : SimpleHexGridBase
     {
         if (physicsChunks == null) return;
 
+        Vector3 camPos = Camera.main.transform.position;
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
 
         foreach (var kvp in physicsChunks)
         {
             ChunkDataComponent data = kvp.Value.GetComponent<ChunkDataComponent>();
-            Bounds bounds = new Bounds(data.worldCenter, Vector3.one * 50f); 
+            float dist = Vector3.Distance(camPos, data.worldCenter);
 
-            // 1. Calculate current visibility
-            bool isVisible = GeometryUtility.TestPlanesAABB(planes, bounds);
+            // 1. Logic State: Should objects be active?
+            bool isLoaded = dist < terrainVisualRadius;
+        
+            // 2. Visual State: Should the mesh be rendering?
+            // (Must be in logical radius AND within camera view OR very close)
+            bool isVisible = isLoaded && (dist < cameraTerrainSpreadRadius || GeometryUtility.TestPlanesAABB(planes, new Bounds(data.worldCenter, Vector3.one * meshSpreadRadius)));
 
-            // 2. Check if the state has changed
+            // --- UPDATE WORLD OBJECTS ---
+            // if (data.isObjectsActive != isLoaded) 
+            // {
+            //     populator.SetVisibilityOfObjectsInChunk(kvp.Key, isLoaded);
+            //     data.isObjectsActive = isLoaded; 
+            // }
+
+            // --- UPDATE MESH/VISUALIZER ---
             if (isVisible != data.visible)
             {
-                WorldPopulator.SetVisibilityOfObjectsInChunk(kvp.Key, isVisible);
-
-                // 3. Update the state
                 data.visible = isVisible;
+                MeshCollider col = kvp.Value.GetComponent<MeshCollider>();
+                if (col != null) col.enabled = isVisible;
+                visualizer.SetChunkVisibility(kvp.Key, isVisible);
             }
         }
     }
 
     public override void GenerateGrid()
     {
-        Debug.Log($"Generating grid: {gameObject.name} | Radius: {gridRadius}");
-        
         if (HexagonsInGrid == null) HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
         HexagonsInGrid.Clear();
 
-        int count = 0;
         for (int q = -gridRadius; q <= gridRadius; q++)
         {
             for (int r = -gridRadius; r <= gridRadius; r++)
@@ -66,28 +82,19 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 if (Mathf.Abs(q + r) <= gridRadius)
                 {
                     Vector2Int coords = new Vector2Int(q, r);
-
-                    // Calculate the offsets exactly like the old script did
                     float offsetX = (terrainGenerator.seed * terrainGenerator.seedOffsetMultiplier) + 10000f;
                     float offsetY = (terrainGenerator.seed * terrainGenerator.seedOffsetMultiplier) + 20000f;
-
-                    // CALL THE GENERATOR:
-                    // We pass the coords + offsets to the generator, just like the old controller
                     bool isRocky;
                     float finalHeight = terrainGenerator.GenerateDesertHeight(coords.x + offsetX, coords.y + offsetY, out isRocky);
-
-                    // Create the hex data
                     HexData hex = new HexData(coords, finalHeight + baseHeight, true, true, false);
-                    hex.isRocky = isRocky; // Store the rock status returned by the generator
-
+                    hex.isRocky = isRocky;
                     HexagonsInGrid[coords] = hex;
                 }
             }
         }
 
-        Debug.Log($"Grid Generation Complete. Processed {count} hexes.");
-
         GeneratePhysicsProxy();
+        visualizer.GenerateVisualGrid(this);
         RegisterGridToSystem(true);
 
         AllNodes.Clear();
@@ -195,11 +202,11 @@ public class SimpleHexGridGround : SimpleHexGridBase
 
     private void GeneratePhysicsProxy()
     {
-        // Clean up old chunks if regenerating
         foreach (var chunk in physicsChunks.Values) Destroy(chunk);
         physicsChunks.Clear();
+        chunkVisualData.Clear();
+        chunkBounds.Clear();
 
-        // Group all hexes by their chunk ID
         Dictionary<Vector2Int, List<HexData>> chunkData = new Dictionary<Vector2Int, List<HexData>>();
         foreach (var hex in HexagonsInGrid.Values)
         {
@@ -210,10 +217,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
 
         foreach (var kvp in chunkData)
         {
-            // 1. Generate the mesh
-            Mesh mesh = BuildMeshForChunk(kvp.Value); 
-
-            // 2. ONLY add the collider if the mesh is valid
+            Mesh mesh = BuildMeshForChunk(kvp.Value);
             if (mesh.vertexCount >= 3)
             {
                 GameObject chunkObj = new GameObject($"PhysicsChunk_{kvp.Key.x}_{kvp.Key.y}");
@@ -224,23 +228,28 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 MeshCollider col = chunkObj.AddComponent<MeshCollider>();
                 col.sharedMesh = mesh;
     
-                // Calculate and store the centroid for this specific chunk
+                ChunkDataComponent data = chunkObj.AddComponent<ChunkDataComponent>();
+                data.chunkID = kvp.Key;
+                
                 Vector3 sum = Vector3.zero;
+                List<Matrix4x4> matrices = new List<Matrix4x4>();
+                float scaleFactor = hexSize * 2f;
+                Vector3 scale = new Vector3(scaleFactor, visualizer.hexVisualHeight, scaleFactor);
+
                 foreach(var hex in kvp.Value)
                 {
-                    sum += GetHexWorldPosition(hex.GridCoordinates, hex.Height);
+                    Vector3 pos = GetHexWorldPosition(hex.GridCoordinates, hex.Height);
+                    sum += pos;
+                    matrices.Add(Matrix4x4.TRS(pos, Quaternion.identity, scale));
                 }
-                Vector3 chunkWorldCenter = sum / kvp.Value.Count;
-    
-                // Store this position in a way we can access later. 
-                // We can add a simple script to the chunk, or use a Dictionary to map the GameObject to its position.
-                chunkObj.AddComponent<ChunkDataComponent>().worldCenter = chunkWorldCenter;
-            
+                
+                data.worldCenter = sum / kvp.Value.Count;
+                chunkVisualData[kvp.Key] = matrices.ToArray();
+                
+                // Store bounds for frustum testing
+                chunkBounds[kvp.Key] = new Bounds(data.worldCenter, Vector3.one * 50f);
+                
                 physicsChunks[kvp.Key] = chunkObj;
-            }
-            else
-            {
-                Debug.LogWarning($"Skipping chunk {kvp.Key} due to insufficient vertices ({mesh.vertexCount}).");
             }
         }
     }
@@ -254,10 +263,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
 
         foreach (var hex in chunkHexes)
         {
-            // 1. Get the base world position
             Vector3 basePos = GetHexWorldPosition(hex.GridCoordinates, hex.Height);
-
-            // 2. Use the method you already wrote to get the top surface Y
             float surfaceY = GetHexTopSurfaceY(hex.GridCoordinates);
 
             // 3. Create a vertex at the top surface
@@ -267,17 +273,12 @@ public class SimpleHexGridGround : SimpleHexGridBase
             vertices.Add(topPos);
         }
 
-        // 2. Build local triangles
         foreach (var hex in chunkHexes)
         {
             List<Vector2Int> neighbors = GetHexNeighbors(hex.GridCoordinates);
-
             for (int i = 0; i < neighbors.Count; i++)
             {
                 Vector2Int next = neighbors[(i + 1) % neighbors.Count];
-
-                // Only add triangle if the neighbor is ALSO in this chunk
-                // (This prevents seams from showing or gaps between chunks)
                 if (coordToIndex.ContainsKey(neighbors[i]) && coordToIndex.ContainsKey(next))
                 {
                     triangles.Add(coordToIndex[hex.GridCoordinates]);
@@ -286,28 +287,69 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 }
             }
         }
-
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
         return mesh;
     }
+    
+    
+    // public void UpdateChunkVisibility(Vector3 cameraPosition, float activeDistance)
+    // {
+    //     Vector2 camPos2D = new Vector2(cameraPosition.x, cameraPosition.z);
+    //
+    //     // Get all chunks (or iterate through the grid if you haven't created the dict yet)
+    //     // Assuming you have a list of all potential chunkIDs
+    //     foreach (var chunkID in allPossibleChunkIDs) 
+    //     {
+    //         Vector2 chunkCenter = GetChunkCenter(chunkID); // Helper needed
+    //         float dist2D = Vector2.Distance(camPos2D, chunkCenter);
+    //         bool inRange = dist2D <= activeDistance;
+    //
+    //         if (inRange)
+    //         {
+    //             if (!physicsChunks.ContainsKey(chunkID))
+    //             {
+    //                 // MESH CREATION HAPPENS HERE: Only when needed!
+    //                 CreateChunkMesh(chunkID);
+    //             }
+    //             else
+    //             {
+    //                 // Already exists, just make sure it's enabled
+    //                 physicsChunks[chunkID].GetComponent<MeshCollider>().enabled = true;
+    //             }
+    //         }
+    //         else if (physicsChunks.ContainsKey(chunkID))
+    //         {
+    //             // DESTROY MESH: Save memory
+    //             Destroy(physicsChunks[chunkID]);
+    //             physicsChunks.Remove(chunkID);
+    //         }
+    //     }
+    // }
 
     public void UpdateChunkVisibility(Vector3 cameraPosition, float activeDistance)
     {
+        // Flatten camera position to Y=0
+        Vector2 camPos2D = new Vector2(cameraPosition.x, cameraPosition.z);
+    
         foreach (var chunk in physicsChunks)
         {
             ChunkDataComponent data = chunk.Value.GetComponent<ChunkDataComponent>();
             if (data == null) continue;
-
-            // Use the cached worldCenter instead of transform.position
-            float dist = Vector3.Distance(cameraPosition, data.worldCenter);
-
+    
+            // Flatten chunk center position to Y=0
+            Vector2 chunkPos2D = new Vector2(data.worldCenter.x, data.worldCenter.z);
+    
+            // Measure distance on the 2D plane
+            float dist2D = Vector2.Distance(camPos2D, chunkPos2D);
+    
             MeshCollider col = chunk.Value.GetComponent<MeshCollider>();
             if (col != null)
             {
-                bool shouldBeActive = dist <= activeDistance;
-
+                // Now the radius is a perfect vertical cylinder, not a sphere
+                bool shouldBeActive = dist2D <= activeDistance;
+    
                 if (col.enabled != shouldBeActive)
                 {
                     col.enabled = shouldBeActive;

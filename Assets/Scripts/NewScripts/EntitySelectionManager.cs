@@ -224,6 +224,9 @@ public class EntitySelectionManager : MonoBehaviour
     /// Processes a left-click, prioritizing unit selection over movement commands.
     void HandleLeftClick()
     {
+        if (Cursor.lockState == CursorLockMode.Locked)
+            return;
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         int mask = LayerMask.GetMask(layerNames);
         RaycastHit[] hits = Physics.RaycastAll(ray, pathfinder.MaxRaycastPathDistance, mask);
@@ -382,6 +385,9 @@ public class EntitySelectionManager : MonoBehaviour
 
     void HandleMouseHover()
     {
+        if (Cursor.lockState == CursorLockMode.Locked)
+            return;
+        
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         int mask = LayerMask.GetMask(layerNames);
         RaycastHit[] hits = Physics.RaycastAll(ray, pathfinder.MaxRaycastPathDistance, mask);

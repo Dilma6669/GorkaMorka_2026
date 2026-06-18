@@ -9,8 +9,10 @@ public class WorldPopulator : MonoBehaviour
     public GameObject treePrefab;
     public GameObject rockPrefab;
     
+    public float objectCullingDistance = 600.0f;
+    
     // Key is the chunkID, Value is a list of all objects in that chunk
-    private static Dictionary<Vector2Int, List<CullableObject>> allObjects = new();
+    private Dictionary<Vector2Int, List<CullableObject>> allObjects = new();
     
     private void Awake()
     {
@@ -57,7 +59,7 @@ public class WorldPopulator : MonoBehaviour
         }
     }
 
-    private static void RegisterObject(Vector2Int chunkID, CullableObject cullableObject)
+    private void RegisterObject(Vector2Int chunkID, CullableObject cullableObject)
     {
         // If the chunk doesn't exist in our dictionary yet, create the list
         if (!allObjects.ContainsKey(chunkID))
@@ -68,7 +70,7 @@ public class WorldPopulator : MonoBehaviour
         allObjects[chunkID].Add(cullableObject);
     }
 
-    public static void SetVisibilityOfObjectsInChunk(Vector2Int chunkID, bool isVisible)
+    public void SetVisibilityOfObjectsInChunk(Vector2Int chunkID, bool isVisible)
     {
         if (allObjects.TryGetValue(chunkID, out List<CullableObject> objectsInChunk))
         {
@@ -78,8 +80,18 @@ public class WorldPopulator : MonoBehaviour
             }
         }
     }
-    
-    public static void ClearAll() 
+
+    private void UpdateObjectVisibilityByDistance(CullableObject obj, float activeRadius)
+    {
+        float radiusSquared = activeRadius * activeRadius;
+
+        // Calculate distance squared (cheaper than Vector3.Distance)
+        float distSq = (obj.transform.position - Camera.main.transform.position).sqrMagnitude;
+        
+        obj.SetVisibility(distSq < radiusSquared);
+    }
+
+    public void ClearAll() 
     {
         allObjects.Clear();
     }

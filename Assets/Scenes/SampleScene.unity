@@ -273,7 +273,8 @@ MonoBehaviour:
   mouseSensitivityY: 100
   minYRotation: -90
   maxYRotation: 90
-  movementSpeed: 5
+  movementSpeed: 30
+  CameraIsMoving: 0
 --- !u!1 &409080911 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7355252563365779604, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
@@ -1261,9 +1262,13 @@ MonoBehaviour:
   hexSize: 1
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
+  visualizer: {fileID: 2045115137}
   baseHeight: 0
   entityPlacementHeightOffset: 0.05
   chunkSize: 10
+  terrainVisualRadius: 1000
+  cameraTerrainSpreadRadius: 20
+  meshSpreadRadius: 50
 --- !u!114 &2045115137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1283,7 +1288,6 @@ MonoBehaviour:
   hexMaterial_HighRes: {fileID: 2100000, guid: 112f3e43f74254ba2b792534a6468e8c, type: 2}
   hexMaterial_LowRes: {fileID: 2100000, guid: c4a25105130a31e478a058a8a347ccec, type: 2}
   lodDistance: 200
-  extremeDistance: 999999
 --- !u!114 &2045115138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1313,6 +1317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   treePrefab: {fileID: 2402966154432236852, guid: 5f304b579531a5e48aa93173101d4ed8, type: 3}
   rockPrefab: {fileID: 3243793905884450027, guid: cbd6452a65e32d04bacdaae17a4437d2, type: 3}
+  objectCullingDistance: 100
 --- !u!1 &2144170096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}

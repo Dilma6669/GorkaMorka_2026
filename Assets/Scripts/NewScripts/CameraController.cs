@@ -18,6 +18,8 @@ public class CameraController : MonoBehaviour
     private float rotationX = 0f; // Stores the current horizontal rotation (yaw)
     private float rotationY = 0f; // Stores the current vertical rotation (pitch)
 
+    public bool CameraIsMoving = false;
+    
     void Start()
     {
         // Initially, the cursor is visible and unlocked, as movement requires holding Left Shift.
@@ -39,6 +41,8 @@ public class CameraController : MonoBehaviour
         // Check if the Left Shift key is being held down.
         if (Input.GetKey(KeyCode.LeftShift))
         {
+           // CameraIsMoving = true;
+            
             // If Left Shift is held, lock the cursor and hide it for camera control.
             if (Cursor.lockState != CursorLockMode.Locked)
             {
@@ -94,6 +98,7 @@ public class CameraController : MonoBehaviour
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                CameraIsMoving = false;
             }
         }
     }
