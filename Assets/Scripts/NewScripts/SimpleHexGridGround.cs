@@ -292,41 +292,6 @@ public class SimpleHexGridGround : SimpleHexGridBase
         mesh.RecalculateNormals();
         return mesh;
     }
-    
-    
-    // public void UpdateChunkVisibility(Vector3 cameraPosition, float activeDistance)
-    // {
-    //     Vector2 camPos2D = new Vector2(cameraPosition.x, cameraPosition.z);
-    //
-    //     // Get all chunks (or iterate through the grid if you haven't created the dict yet)
-    //     // Assuming you have a list of all potential chunkIDs
-    //     foreach (var chunkID in allPossibleChunkIDs) 
-    //     {
-    //         Vector2 chunkCenter = GetChunkCenter(chunkID); // Helper needed
-    //         float dist2D = Vector2.Distance(camPos2D, chunkCenter);
-    //         bool inRange = dist2D <= activeDistance;
-    //
-    //         if (inRange)
-    //         {
-    //             if (!physicsChunks.ContainsKey(chunkID))
-    //             {
-    //                 // MESH CREATION HAPPENS HERE: Only when needed!
-    //                 CreateChunkMesh(chunkID);
-    //             }
-    //             else
-    //             {
-    //                 // Already exists, just make sure it's enabled
-    //                 physicsChunks[chunkID].GetComponent<MeshCollider>().enabled = true;
-    //             }
-    //         }
-    //         else if (physicsChunks.ContainsKey(chunkID))
-    //         {
-    //             // DESTROY MESH: Save memory
-    //             Destroy(physicsChunks[chunkID]);
-    //             physicsChunks.Remove(chunkID);
-    //         }
-    //     }
-    // }
 
     public void UpdateChunkVisibility(Vector3 cameraPosition, float activeDistance)
     {
@@ -348,7 +313,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
             if (col != null)
             {
                 // Now the radius is a perfect vertical cylinder, not a sphere
-                bool shouldBeActive = dist2D <= activeDistance;
+                bool shouldBeActive = (dist2D <= activeDistance && data.visible);
     
                 if (col.enabled != shouldBeActive)
                 {
