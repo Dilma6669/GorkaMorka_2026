@@ -11,7 +11,7 @@ public class WaterController : MonoBehaviour
     // Store active water planes by their ChunkID
     private Dictionary<Vector2Int, WaterEntity> activeWaterPlanes = new();
 
-    private void Start()
+    private void Awake()
     {
         simpleHexGridGround = GetComponent<SimpleHexGridGround>();
     }
