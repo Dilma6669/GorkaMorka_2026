@@ -186,7 +186,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 6143
+    m_Bits: 14335
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -559,6 +559,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2045115139}
+    - targetCorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2045115140}
   m_SourcePrefab: {fileID: 100100000, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
 --- !u!4 &727156829 stripped
 Transform:
@@ -1268,9 +1271,9 @@ MonoBehaviour:
   meshVisualRadius: 1000
   cameraMeshSpreadRadius: 100
   colliderSpreadRadius: 400
-  worldObjectsSpreadRadius: 500
   moveThreshold: 5
   rotationThreshold: 5
+  waterHeight: 1
 --- !u!114 &2045115137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1319,6 +1322,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   treePrefab: {fileID: 2402966154432236852, guid: 5f304b579531a5e48aa93173101d4ed8, type: 3}
   rockPrefab: {fileID: 3243793905884450027, guid: cbd6452a65e32d04bacdaae17a4437d2, type: 3}
+--- !u!114 &2045115140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045115128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0397af0bed38e42d0bf9825bcc72b070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  simpleHexGridGround: {fileID: 0}
+  waterPrefab: {fileID: 274344662260931343, guid: 8ec33c46f71314c10b5fea4a1e5dc6fc, type: 3}
+  globalWaterLevel: 3
 --- !u!1 &2144170096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 331045504372065090, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}

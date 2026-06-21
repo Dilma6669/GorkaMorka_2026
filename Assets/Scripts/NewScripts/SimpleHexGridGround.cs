@@ -10,6 +10,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
     TerrainGenerator terrainGenerator;
     public HexGridVisualizerGround visualizer; // Made public for access
     private WorldPopulator worldPopulator;
+    private WaterController waterController;
 
     public float baseHeight = 0f;
     public float entityPlacementHeightOffset = 0.05f;
@@ -24,7 +25,6 @@ public class SimpleHexGridGround : SimpleHexGridBase
     [Tooltip("The circular spread around the camera to enable mesh colliders")]
     public float colliderSpreadRadius = 100f;
     [Tooltip("The circular spread around the camera to enable mesh colliders")]
-    public float worldObjectsSpreadRadius = 500f;
     
     // Stores matrices grouped by the exact same chunkID as the physics system
     public Dictionary<Vector2Int, Matrix4x4[]> chunkVisualData = new Dictionary<Vector2Int, Matrix4x4[]>();
@@ -36,6 +36,8 @@ public class SimpleHexGridGround : SimpleHexGridBase
     [SerializeField] private float moveThreshold = 5.0f; // How far to move
     [SerializeField] private float rotationThreshold = 5.0f; // How many degrees to rotate
     
+    public float waterHeight = 1f;
+    
     private Camera camera;
     
     private new void Awake()
@@ -44,6 +46,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
         worldPopulator = GetComponent<WorldPopulator>();
         visualizer = GetComponent<HexGridVisualizerGround>();
         terrainGenerator = GetComponent<TerrainGenerator>();
+        waterController = GetComponent<WaterController>();
         camera = Camera.main;
     }
     
@@ -62,6 +65,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
 
             UpdateMeshVisibility(camPos);
             UpdateColliderVisibility(camPos);
+            UpdateWaterVisibility(camPos);
 
             // Update our "last known" states
             lastUpdatePosition = camera.transform.position;
@@ -252,48 +256,70 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 
                 physicsChunks[kvp.Key] = data;
                 col.enabled = false;
+                
+                waterController.CreateWaterForChunk(kvp.Key, kvp.Value, chunkObj.transform);
+                
             }
         }
     }
 
-    private Mesh BuildMeshForChunk(List<HexData> chunkHexes)
+private Mesh BuildMeshForChunk(List<HexData> chunkHexes)
+{
+    Mesh mesh = new Mesh();
+    List<Vector3> vertices = new List<Vector3>();
+    List<int> triangles = new List<int>();
+    Dictionary<Vector2Int, int> coordToIndex = new Dictionary<Vector2Int, int>();
+
+    // 1. Identify all hexes needed: current chunk + immediate neighbors
+    HashSet<Vector2Int> allRequiredCoords = new HashSet<Vector2Int>();
+    foreach (var hex in chunkHexes)
     {
-        Mesh mesh = new Mesh();
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
-        Dictionary<Vector2Int, int> coordToIndex = new Dictionary<Vector2Int, int>();
+        allRequiredCoords.Add(hex.GridCoordinates);
+        foreach (var neighbor in GetHexNeighbors(hex.GridCoordinates))
+            allRequiredCoords.Add(neighbor);
+    }
 
-        foreach (var hex in chunkHexes)
+    // 2. Add all these to our dictionary FIRST
+    foreach (var coords in allRequiredCoords)
+    {
+        if (HexagonsInGrid.TryGetValue(coords, out HexData hex))
         {
-            Vector3 basePos = GetHexWorldPosition(hex.GridCoordinates, hex.Height);
-            float surfaceY = GetHexTopSurfaceY(hex.GridCoordinates);
-
-            // 3. Create a vertex at the top surface
-            Vector3 topPos = new Vector3(basePos.x, surfaceY, basePos.z);
-
-            coordToIndex[hex.GridCoordinates] = vertices.Count;
-            vertices.Add(topPos);
+            coordToIndex[coords] = vertices.Count;
+            vertices.Add(new Vector3(
+                GetHexWorldPosition(hex.GridCoordinates, hex.Height).x,
+                GetHexTopSurfaceY(hex.GridCoordinates),
+                GetHexWorldPosition(hex.GridCoordinates, hex.Height).z
+            ));
         }
+    }
 
-        foreach (var hex in chunkHexes)
+    // 3. Now build triangles for the current chunk ONLY
+    foreach (var hex in chunkHexes)
+    {
+        List<Vector2Int> neighbors = GetHexNeighbors(hex.GridCoordinates);
+        for (int i = 0; i < neighbors.Count; i++)
         {
-            List<Vector2Int> neighbors = GetHexNeighbors(hex.GridCoordinates);
-            for (int i = 0; i < neighbors.Count; i++)
+            Vector2Int neighborA = neighbors[i];
+            Vector2Int neighborB = neighbors[(i + 1) % neighbors.Count];
+
+            // Because all neighbors are now in the dictionary, 
+            // these triangles will bridge the gap perfectly.
+            if (coordToIndex.ContainsKey(hex.GridCoordinates) && 
+                coordToIndex.ContainsKey(neighborA) && 
+                coordToIndex.ContainsKey(neighborB))
             {
-                Vector2Int next = neighbors[(i + 1) % neighbors.Count];
-                if (coordToIndex.ContainsKey(neighbors[i]) && coordToIndex.ContainsKey(next))
-                {
-                    triangles.Add(coordToIndex[hex.GridCoordinates]);
-                    triangles.Add(coordToIndex[neighbors[i]]);
-                    triangles.Add(coordToIndex[next]);
-                }
+                triangles.Add(coordToIndex[hex.GridCoordinates]);
+                triangles.Add(coordToIndex[neighborA]);
+                triangles.Add(coordToIndex[neighborB]);
             }
         }
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.RecalculateNormals();
-        return mesh;
     }
+
+    mesh.vertices = vertices.ToArray();
+    mesh.triangles = triangles.ToArray();
+    mesh.RecalculateNormals();
+    return mesh;
+}
     
     public void UpdateMeshVisibility(Vector3 cameraPosition)
     {
@@ -345,8 +371,26 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 {
                     col.enabled = targetVisibility;
                     worldPopulator.SetVisibilityOfObjectsInChunk(chunk.Key, targetVisibility);
+                    waterController.SetVisibilityOfWaterInChunk(chunk.Key, targetVisibility);
                 }
             }
+        }
+    }
+    
+    public void UpdateWaterVisibility(Vector3 cameraPosition)
+    {
+        Vector2 camPos2D = new Vector3(cameraPosition.x, cameraPosition.z);
+
+        foreach (var chunk in physicsChunks)
+        {
+            Vector2 chunkPos2D = new Vector2(chunk.Value.worldCenter.x, chunk.Value.worldCenter.z);
+            float dist2D = Vector2.Distance(camPos2D, chunkPos2D);
+
+            // Visibility logic
+            bool targetVisibility = (dist2D <= colliderSpreadRadius && chunk.Value.visible);
+
+            // Toggle the water plane specifically
+            waterController.SetVisibilityOfWaterInChunk(chunk.Key, targetVisibility);
         }
     }
     
