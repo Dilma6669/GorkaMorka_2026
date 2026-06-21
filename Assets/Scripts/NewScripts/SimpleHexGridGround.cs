@@ -32,7 +32,9 @@ public class SimpleHexGridGround : SimpleHexGridBase
 
     // Throttle the physics update to every 15 frames for maximum efficiency
     private Vector3 lastUpdatePosition;
-    private float updateThreshold = 5.0f; // Only update if camera moved 5 meters
+    private Quaternion lastUpdateRotation;
+    [SerializeField] private float moveThreshold = 5.0f; // How far to move
+    [SerializeField] private float rotationThreshold = 5.0f; // How many degrees to rotate
     
     private Camera camera;
     
@@ -50,19 +52,21 @@ public class SimpleHexGridGround : SimpleHexGridBase
     {
         if (physicsChunks == null) return;
 
-        Vector3 camPos = camera.transform.position;
+        // Check if position moved enough OR rotation changed enough
+        float distanceMoved = Vector3.Distance(camera.transform.position, lastUpdatePosition);
+        float degreesRotated = Quaternion.Angle(camera.transform.rotation, lastUpdateRotation);
 
-        // Check if camera moved enough to warrant an update
-        if (Vector3.Distance(camera.transform.position, lastUpdatePosition) > updateThreshold) // Needs to have rotation aswell
+        if (distanceMoved > moveThreshold || degreesRotated > rotationThreshold)
         {
-          UpdateMeshVisibility(camPos);
-          UpdateColliderVisibility(camPos);
-          
-          worldPopulator.UpdateChunksBasedOnDistance(camPos, worldObjectsSpreadRadius);
-          
-          lastUpdatePosition = camera.transform.position;
-        }
+            Vector3 camPos = camera.transform.position;
 
+            UpdateMeshVisibility(camPos);
+            UpdateColliderVisibility(camPos);
+
+            // Update our "last known" states
+            lastUpdatePosition = camera.transform.position;
+            lastUpdateRotation = camera.transform.rotation;
+        }
     }
 
     public override void GenerateGrid()
@@ -340,6 +344,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 if (col.enabled != targetVisibility)
                 {
                     col.enabled = targetVisibility;
+                    worldPopulator.SetVisibilityOfObjectsInChunk(chunk.Key, targetVisibility);
                 }
             }
         }

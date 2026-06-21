@@ -24,22 +24,37 @@ public class WorldPopulator : MonoBehaviour
         Random.InitState(worldSeed);
 
         float totalThreshold = terrainGenerator.terrainSettings.treePercentage + terrainGenerator.terrainSettings.rockPercentage;
+    
+        // 1. Create a list to store the modifications
+        var hexOccupancyUpdates = new List<(Vector2Int key, GameObject obj)>();
 
         foreach (var hex in simpleHexGridGround.HexagonsInGrid)
         {
             float roll = Random.value;
             if (roll > totalThreshold) continue; 
 
-            // Determine which object to spawn based on the relative percentages
-            // If roll < treePercentage, it's a tree. If between tree and tree+rock, it's a rock.
             GameObject prefab = (roll < terrainGenerator.terrainSettings.treePercentage) ? treePrefab : rockPrefab;
-        
+    
             Vector3 surfacePosition = simpleHexGridGround.GetHexTopSurfacePosition(hex.Value.GridCoordinates, hex.Value.Height);
             Quaternion randomRotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
 
             GameObject terrainObject = Instantiate(prefab, surfacePosition, randomRotation, simpleHexGridGround.ObjectsContainer.transform);
-        
+    
             AssignParentChunkIDToObject(terrainObject, hex.Value);
+        
+            // 2. Queue the update instead of applying it immediately
+            hexOccupancyUpdates.Add((hex.Key, terrainObject));
+        }
+
+        // 3. Apply all updates safely after the loop
+        foreach (var update in hexOccupancyUpdates)
+        {
+            if (simpleHexGridGround.HexagonsInGrid.TryGetValue(update.key, out HexData hexData))
+            {
+                hexData.SetIsOccupied(true);
+                hexData.SetOccupier(update.obj.name);
+                simpleHexGridGround.HexagonsInGrid[update.key] = hexData;
+            }
         }
     }
 
@@ -79,41 +94,6 @@ public class WorldPopulator : MonoBehaviour
         }
     }
     
-    
-    public void UpdateChunksBasedOnDistance(Vector3 camPos, float activeRadius) 
-    {
-        float radiusSquared = activeRadius * activeRadius;
-
-        foreach (var chunk in simpleHexGridGround.physicsChunks)
-        {
-            if (chunk.Value.visible)
-            {
-                //1. Calculate distance once per chunk
-                float distSq = (chunk.Value.worldCenter - camPos).sqrMagnitude;
-                bool shouldBeActive = distSq < radiusSquared;
-                
-                // Toggle all objects in this specific chunk
-                if (allObjects.TryGetValue(chunk.Key, out List<CullableObject> objects))
-                {
-                    foreach (var obj in objects)
-                    {
-                        obj.SetVisibility(shouldBeActive);
-                    }
-                }
-            }
-            else
-            {       
-                if (allObjects.TryGetValue(chunk.Key, out List<CullableObject> objects))
-                {
-                    foreach (var obj in objects)
-                    {
-                        obj.SetVisibility(false);
-                    }
-                }
-                
-            }
-        }
-    }
 
     public void ClearAll() 
     {

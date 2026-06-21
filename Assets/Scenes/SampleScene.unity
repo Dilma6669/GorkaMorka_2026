@@ -1264,10 +1264,13 @@ MonoBehaviour:
   visualizer: {fileID: 2045115137}
   baseHeight: 0
   entityPlacementHeightOffset: 0.05
-  chunkSize: 10
+  chunkSize: 70
   meshVisualRadius: 1000
-  cameraTerrainSpreadRadius: 100
-  colliderSpreadRadius: 100
+  cameraMeshSpreadRadius: 100
+  colliderSpreadRadius: 400
+  worldObjectsSpreadRadius: 500
+  moveThreshold: 5
+  rotationThreshold: 5
 --- !u!114 &2045115137
 MonoBehaviour:
   m_ObjectHideFlags: 0

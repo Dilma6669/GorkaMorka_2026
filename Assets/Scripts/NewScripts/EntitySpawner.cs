@@ -257,7 +257,7 @@ public class EntitySpawner : MonoBehaviour
         entityData.currentHealth = 100;
         entityData.baseMoveSpeed = 5;
         entityData.spawnGridBase = defaultSpawnGridBase;
-        entityData.spawnCoordinates = new Vector2Int(-7,5);
+        entityData.spawnCoordinates = new Vector2Int(-17,10);
         
         // This will now simply create a new unit each time the button is clicked.
         SpawnVehicle(entityData);
@@ -288,8 +288,8 @@ public class EntitySpawner : MonoBehaviour
     {
         Debug.Log("Spawner: Grid is ready, spawning units now!");
         TestSpawnDefaultUnit();
-       // TestSpawnDefaultVehicle();
-       // TestSpawnDefaultCraft();
+        TestSpawnDefaultVehicle();
+        TestSpawnDefaultCraft();
     }
 
     
