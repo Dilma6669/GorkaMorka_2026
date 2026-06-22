@@ -23,18 +23,13 @@ public class EntitySpawner : MonoBehaviour
     public Vector2Int defaultSpawnCoordinates = Vector2Int.zero; // Default to grid center
     
     public List<UnitData> unitsToSpawn;
-
-    private void Awake()
-    {
-        gameLevelManager = GetComponent<GameLevelManager>();
-        gameLevelManager.ActiveGrid.OnGridReady += SpawnInitialModels;
-    }
     
     
     private void Start()
     {
-        // Subscribe to the event
-
+        gameLevelManager = GetComponent<GameLevelManager>();
+        // needs to be in start because GameLevelManager needs to assign correct grid first.
+        gameLevelManager.ActiveGrid.OnGridReady += SpawnInitialModels;
     }
     
     public void SpawnAllUnits()

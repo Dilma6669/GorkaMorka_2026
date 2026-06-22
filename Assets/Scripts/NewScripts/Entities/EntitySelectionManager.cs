@@ -460,7 +460,8 @@ public class EntitySelectionManager : MonoBehaviour
         // 2. If NO specific HexTile collider was hit, use the Math fallback
         if (closetHexHovered == null)
         {
-            if (gameLevelManager.ActiveGrid != null && gameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+            if (gameLevelManager.ActiveGrid != null 
+                && gameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 _groundHexDataHovered = data;
                 _hoveredGroundGrid = gameLevelManager.ActiveGrid;

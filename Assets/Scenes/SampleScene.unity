@@ -765,8 +765,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b75779b1166224d5ab2bc49e4a048ece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActiveGrid: {fileID: 2045115133}
+  startingLevel: 2
+  ActiveGrid: {fileID: 0}
   currentLevel: 0
+  levels:
+  - type: 1
+    levelRoot: {fileID: 331045504827902750}
+  - type: 2
+    levelRoot: {fileID: 331045503715197008}
 --- !u!1 &1344806452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1148,7 +1154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &3227663582911882692
 GameObject:
   m_ObjectHideFlags: 0
