@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class HexGridVisualizerGround : HexGridVisualizerBase
+public class HexGridVisualizerTerrain : HexGridVisualizerBase
 {
     private SimpleHexGridTerrain masterGrid;
     private Dictionary<Vector2Int, bool> activeChunks = new Dictionary<Vector2Int, bool>();

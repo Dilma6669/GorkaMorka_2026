@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public class SimpleHexGridTerrain : SimpleHexGridBase
 {
-    private TerrainGenerator terrainGenerator;
-    public HexGridVisualizerGround visualizer; // Made public for access
-    private WorldPopulator worldPopulator;
+    private HexGeneratorTerrain _hexGeneratorTerrain;
+    public HexGridVisualizerTerrain visualizer; // Made public for access
+    private PopulaterTerrain _populaterTerrain;
     private WaterController waterController;
     
     public MapSettingsTerrain TerrainSettings => activeMapSettingsBase as MapSettingsTerrain;
@@ -39,9 +39,9 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
     private new void Awake()
     {
         base.Awake();
-        worldPopulator = GetComponent<WorldPopulator>();
-        visualizer = GetComponent<HexGridVisualizerGround>();
-        terrainGenerator = GetComponent<TerrainGenerator>();
+        _populaterTerrain = GetComponent<PopulaterTerrain>();
+        visualizer = GetComponent<HexGridVisualizerTerrain>();
+        _hexGeneratorTerrain = GetComponent<HexGeneratorTerrain>();
         waterController = GetComponent<WaterController>();
         camera = Camera.main;
 
@@ -83,10 +83,10 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
                 if (Mathf.Abs(q + r) <= activeMapSettingsBase.gridRadius)
                 {
                     Vector2Int coords = new Vector2Int(q, r);
-                    float offsetX = (terrainGenerator.seed * terrainGenerator.seedOffsetMultiplier) + 10000f;
-                    float offsetY = (terrainGenerator.seed * terrainGenerator.seedOffsetMultiplier) + 20000f;
+                    float offsetX = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 10000f;
+                    float offsetY = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 20000f;
                     bool isRocky;
-                    float finalHeight = terrainGenerator.GenerateDesertHeight(coords.x + offsetX, coords.y + offsetY, out isRocky);
+                    float finalHeight = _hexGeneratorTerrain.GenerateDesertHeight(coords.x + offsetX, coords.y + offsetY, out isRocky);
                     HexData hex = new HexData(coords, finalHeight + baseHeight, true, true, false);
                     hex.isRocky = isRocky;
                     HexagonsInGrid[coords] = hex;
@@ -97,7 +97,7 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
         GeneratePhysicsProxy();
         visualizer.GenerateVisualGrid(this);
         RegisterGridToSystem(true);
-        worldPopulator.PopulateWorld(terrainGenerator.seed);
+        _populaterTerrain.PopulateWorld(_hexGeneratorTerrain.seed);
         
         AllNodes.Clear();
         foreach (var kvp in HexagonsInGrid)
@@ -371,7 +371,7 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
                 if (col.enabled != targetVisibility)
                 {
                     col.enabled = targetVisibility;
-                    worldPopulator.SetVisibilityOfObjectsInChunk(chunk.Key, targetVisibility);
+                    _populaterTerrain.SetVisibilityOfObjectsInChunk(chunk.Key, targetVisibility);
                     waterController.SetVisibilityOfWaterInChunk(chunk.Key, targetVisibility);
                 }
             }

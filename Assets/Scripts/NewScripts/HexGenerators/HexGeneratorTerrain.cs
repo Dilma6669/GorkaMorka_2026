@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TerrainGenerator : MonoBehaviour
+public class HexGeneratorTerrain : MonoBehaviour
 {
     private SimpleHexGridTerrain simpleHexGridTerrain;
 

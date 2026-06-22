@@ -10,12 +10,12 @@ public class SimpleHexGridInterior : SimpleHexGridBase
 {
     public HexGridShape customGridShape;
 
-    HexGridVisualizerFloating visualizer;
+    HexGridVisualizerInteroior visualizer;
     
     private new void Awake()
     {
         base.Awake();
-        visualizer = GetComponent<HexGridVisualizerFloating>();
+        visualizer = GetComponent<HexGridVisualizerInteroior>();
     }
 
     private new void Start()

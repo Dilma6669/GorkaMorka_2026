@@ -6,7 +6,7 @@ using System.Collections.Generic; // Required for List and Dictionary
 // Phase 2.1 (Revised for GameObject Hexes and Visual Control): HexGridVisualizer Class
 // Purpose: Instantiates visual hexagon GameObjects for a SimpleHexGrid.
 // Now also manages references to individual HexVisualTiles for color manipulation.
-public class HexGridVisualizerFloating : HexGridVisualizerBase
+public class HexGridVisualizerInteroior : HexGridVisualizerBase
 {
     [Header("Visuals Settings")]
     [Tooltip("The prefab GameObject to use for each hexagon (must have a HexVisualTile component and a Renderer).")]
