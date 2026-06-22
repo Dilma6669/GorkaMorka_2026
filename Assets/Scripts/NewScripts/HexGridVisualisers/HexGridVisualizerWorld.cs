@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class HexGridVisualizerWorld : HexGridVisualizerBase
 {
-    private SimpleHexGridTerrain masterGrid;
+    private SimpleHexGridWorld masterGrid;
     private Dictionary<Vector2Int, bool> activeChunks = new Dictionary<Vector2Int, bool>();
 
     [Header("GPU Landscape Settings")] 
@@ -18,7 +18,7 @@ public class HexGridVisualizerWorld : HexGridVisualizerBase
     protected new void Awake()
     {
         base.Awake();
-        masterGrid = GetComponent<SimpleHexGridTerrain>();
+        masterGrid = GetComponent<SimpleHexGridWorld>();
         camera = Camera.main;
     }
 

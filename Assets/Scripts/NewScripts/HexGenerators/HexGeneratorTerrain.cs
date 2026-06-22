@@ -10,7 +10,7 @@ public class HexGeneratorTerrain : HexGeneratorBase
     }
     
     // The xCoord and zCoord here are already offset by the seed
-    public float GenerateDesertHeight(float xCoord, float zCoord, out bool isRock) 
+    public float GenerateHeight(float xCoord, float zCoord) 
     {
         // Generate smooth sand dunes using multiple octaves of Perlin noise
         float duneNoise = GenerateOctaveNoise(xCoord, zCoord, simpleHexGridTerrain.TerrainSettings.duneScale, 
@@ -23,7 +23,6 @@ public class HexGeneratorTerrain : HexGeneratorBase
 
         // Create sharp rock transitions - only areas above threshold become rocks
         float rockHeight = 0f;
-        isRock = false;
 
         if (rockNoise > simpleHexGridTerrain.TerrainSettings.rockThreshold)
         {
@@ -32,7 +31,6 @@ public class HexGeneratorTerrain : HexGeneratorBase
                    / (1f - simpleHexGridTerrain.TerrainSettings.rockThreshold), 
                 simpleHexGridTerrain.TerrainSettings.rockSharpness);
             rockHeight = rockIntensity * simpleHexGridTerrain.TerrainSettings.rockHeight;
-            isRock = true;
         }
 
         // Create a blending mask to determine where rocks vs dunes appear

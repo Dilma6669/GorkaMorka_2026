@@ -371,4 +371,6 @@ public abstract class SimpleHexGridBase : MonoBehaviour
 
     public abstract Vector2Int GetChunkID(Vector2Int gridCoords);
 
+    public abstract bool TryGetHexFromRay(Ray ray, out HexData foundData, float maxDistance);
+
 }

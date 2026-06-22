@@ -119,20 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &16044769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331045503715197008}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0397af0bed38e42d0bf9825bcc72b070, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waterPrefab: {fileID: 274344662260931343, guid: 8ec33c46f71314c10b5fea4a1e5dc6fc, type: 3}
-  waterMaterial: {fileID: 2100000, guid: 9bdfcc18ed92c479b9148ded243d186a, type: 2}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,7 +740,7 @@ MonoBehaviour:
   PathHexagonHighlightedColour: {r: 1, g: 0.88035375, b: 0.1273585, a: 1}
   _cachedTargetCoords: {x: 0, y: 0}
   _cachedTargetGrid: {fileID: 0}
-  terrainGrid: {fileID: 2045115133}
+  terrainGrid: {fileID: 5061804660729753924}
 --- !u!114 &1284890852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1123,7 +1109,6 @@ GameObject:
   - component: {fileID: 5061804660729753924}
   - component: {fileID: 5061804660729753927}
   - component: {fileID: 5061804660729753926}
-  - component: {fileID: 16044769}
   m_Layer: 8
   m_Name: SimpleHexGridWorld
   m_TagString: GroundGrid

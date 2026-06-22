@@ -36,7 +36,7 @@ public class EntitySelectionManager : MonoBehaviour
     
     private object _lastHoveredObject = null;
     
-    [FormerlySerializedAs("groundGrid")] public SimpleHexGridTerrain terrainGrid = null;
+    public SimpleHexGridBase terrainGrid;
     
     private string[] layerNames = { "HexagonCollider", "VehicleCollider", "UnitCollider", "CraftCollider" };
     

@@ -165,4 +165,9 @@ public class SimpleHexGridInterior : SimpleHexGridBase
     {
         return new Vector2Int(0, 0); // TODO: This might need to be figured out
     }
+
+    public override bool TryGetHexFromRay(Ray ray, out HexData foundData, float maxDistance)
+    {
+        throw new NotImplementedException();
+    }
 }

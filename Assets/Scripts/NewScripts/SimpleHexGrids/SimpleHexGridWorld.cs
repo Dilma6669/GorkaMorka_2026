@@ -7,7 +7,7 @@ public class SimpleHexGridWorld : SimpleHexGridBase
     private HexGridVisualizerWorld visualizer; // Made public for access
     private PopulaterWorld _populaterTerrain;
     
-    public MapSettingsTerrain TerrainSettings => activeMapSettingsBase as MapSettingsTerrain;
+    public MapSettingsWorld TerrainSettings => activeMapSettingsBase as MapSettingsWorld;
 
     public float baseHeight = 0f;
     public float entityPlacementHeightOffset = 0.05f;
@@ -43,7 +43,7 @@ public class SimpleHexGridWorld : SimpleHexGridBase
         _hexGeneratorTerrain = GetComponent<HexGeneratorWorld>();
         camera = Camera.main;
 
-        activeMapSettingsBase = activeMapSettingsBase as MapSettingsTerrain;
+        activeMapSettingsBase = activeMapSettingsBase as MapSettingsWorld;
     }
     
 
@@ -83,9 +83,8 @@ public class SimpleHexGridWorld : SimpleHexGridBase
                     float offsetX = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 10000f;
                     float offsetY = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 20000f;
                     bool isRocky;
-                    float finalHeight = _hexGeneratorTerrain.GenerateDesertHeight(coords.x + offsetX, coords.y + offsetY, out isRocky);
+                    float finalHeight = _hexGeneratorTerrain.GenerateHeight(coords.x + offsetX, coords.y + offsetY);
                     HexData hex = new HexData(coords, finalHeight + baseHeight, true, true, false);
-                    hex.isRocky = isRocky;
                     HexagonsInGrid[coords] = hex;
                 }
             }
@@ -172,7 +171,7 @@ public class SimpleHexGridWorld : SimpleHexGridBase
         return new Vector2Int(rx, rz);
     }
 
-    public bool TryGetHexFromRay(Ray ray, out HexData foundData, float maxDistance) // 1. Add distance limit
+    public override bool TryGetHexFromRay(Ray ray, out HexData foundData, float maxDistance)
     {
         foundData = default;
         float step = 0.5f;
