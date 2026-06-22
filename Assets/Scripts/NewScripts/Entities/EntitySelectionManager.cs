@@ -477,12 +477,26 @@ public class EntitySelectionManager : MonoBehaviour
         if (closetVehicleHovered != null)
         {
             HoverVehicle(closetVehicleHovered);
+            if (closetHexHovered != null)
+            {
+                if (closetHexHovered.gridBaseReference == closetVehicleHovered.currentGridBase)
+                {
+                    return;
+                }
+            }
         }
         
         
         if (closestCraftHovered != null)
         {
             HoverCraft(closestCraftHovered);
+            if (closetHexHovered != null)
+            {
+                if (closetHexHovered.gridBaseReference == closestCraftHovered.currentGridBase)
+                {
+                    return;
+                }
+            }
         }
 
 

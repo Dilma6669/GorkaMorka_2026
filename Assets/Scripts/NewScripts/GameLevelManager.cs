@@ -41,4 +41,11 @@ public class GameLevelManager : MonoBehaviour
         currentLevel = targetLevel;
         Debug.Log($"Switched to: {targetLevel}");
     }
+    
+    // Inside GameLevelManager.cs
+    [ContextMenu("Switch to Terrain")]
+    private void MenuSwitchToTerrain() => SwitchToLevel(HexGridManager.GridType.Terrain);
+
+    [ContextMenu("Switch to World")]
+    private void MenuSwitchToWorld() => SwitchToLevel(HexGridManager.GridType.World);
 }
