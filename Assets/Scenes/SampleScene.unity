@@ -1255,15 +1255,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b1adb27ee24489a08e1e8b2a095dbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainSettings: {fileID: 11400000, guid: cb18a2d1752fbc440bd79ce400f584a4, type: 2}
   griEntity: {fileID: 0}
   GridType: 0
   HexagonsContainer: {fileID: 647497032}
   EntityContainer: {fileID: 1011478121}
   ObjectsContainer: {fileID: 727156830}
-  gridRadius: 500
-  hexSize: 1
-  entireGridHeightOffset: 0
-  singleHexHeightAdjustment: 1
   visualizer: {fileID: 2045115137}
   baseHeight: 0
   entityPlacementHeightOffset: 0.05
@@ -1305,7 +1302,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19610a712b794000bf2841e4b4168a69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainSettings: {fileID: 11400000, guid: 22de51441e80e5245aedb67a67814db0, type: 2}
   seed: 6
   seedOffsetMultiplier: 1000
 --- !u!114 &2045115139
@@ -1334,7 +1330,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0397af0bed38e42d0bf9825bcc72b070, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simpleHexGridGround: {fileID: 0}
   waterPrefab: {fileID: 274344662260931343, guid: 8ec33c46f71314c10b5fea4a1e5dc6fc, type: 3}
   waterMaterial: {fileID: 2100000, guid: 9bdfcc18ed92c479b9148ded243d186a, type: 2}
   globalWaterLevel: 5
@@ -1355,15 +1350,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99bb5cc0b24544f19ba67edafa1d0588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainSettings: {fileID: 11400000, guid: 49b0fe177ccf34f2995b952d1566d28d, type: 2}
   griEntity: {fileID: 0}
   GridType: 1
   HexagonsContainer: {fileID: 1449497471}
   EntityContainer: {fileID: 409080911}
   ObjectsContainer: {fileID: 0}
-  gridRadius: 20
-  hexSize: 1
-  entireGridHeightOffset: 0
-  singleHexHeightAdjustment: 1
   customGridShape: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

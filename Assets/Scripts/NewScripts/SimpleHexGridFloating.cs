@@ -74,7 +74,7 @@ public class SimpleHexGridFloating : SimpleHexGridBase
                 }
                 
                 // Use the new tile properties
-                float hexHeight = tile.Height * singleHexHeightAdjustment;
+                float hexHeight = tile.Height * terrainSettings.singleHexHeightAdjustment;
                 bool isWalkable = tile.IsWalkable;
                 bool isClimbable = tile.IsClimbable;
                 bool isCommandSeat = tile.IsCommandSeat;
@@ -104,10 +104,10 @@ public class SimpleHexGridFloating : SimpleHexGridBase
         }
         HexagonsInGrid.Clear(); // Clears the dictionary instead of creating a new one.
 
-        for (int q = -gridRadius; q <= gridRadius; q++)
+        for (int q = -terrainSettings.gridRadius; q <= terrainSettings.gridRadius; q++)
         {
-            int r1 = Mathf.Max(-gridRadius, -q - gridRadius);
-            int r2 = Mathf.Min(gridRadius, -q + gridRadius);
+            int r1 = Mathf.Max(-terrainSettings.gridRadius, -q - terrainSettings.gridRadius);
+            int r2 = Mathf.Min(terrainSettings.gridRadius, -q + terrainSettings.gridRadius);
 
             for (int r = r1; r <= r2; r++)
             {
@@ -159,5 +159,10 @@ public class SimpleHexGridFloating : SimpleHexGridBase
         float baseHexHeight = GetHexWorldPosition(coords, GetHexData(coords).Height).y;
 
         return baseHexHeight;
+    }
+
+    public override Vector2Int GetChunkID(Vector2Int gridCoords)
+    {
+        return new Vector2Int(0, 0); // TODO: This might need to be figured out
     }
 }

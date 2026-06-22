@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca8ad0e8e3b14e7f9b42df7b3105e936, type: 3}
-  m_Name: Mountains
+  m_Name: InteriorGrid
   m_EditorClassIdentifier: 
-  gridRadius: 500
+  gridRadius: 5
   isFlatWorldMap: 0
   targetLayer: 3
   hexSize: 1
   entireGridHeightOffset: 0
   singleHexHeightAdjustment: 1
-  duneScale: 0.01
-  duneHeight: 11
-  duneOctaves: 3
-  dunePersistence: 0.01
-  rockScale: 0.01
-  rockHeight: 50
-  rockThreshold: 0.3
-  rockSharpness: 0.5
-  terrainSmoothness: 0.8
-  treePercentage: 0.009
-  rockPercentage: 0.073
-  waterLevel: 2
+  duneScale: 0
+  duneHeight: 0
+  duneOctaves: 0
+  dunePersistence: 0
+  rockScale: 0
+  rockHeight: 0
+  rockThreshold: 0
+  rockSharpness: 0
+  terrainSmoothness: 0
+  treePercentage: 0
+  rockPercentage: 0
+  waterLevel: 0

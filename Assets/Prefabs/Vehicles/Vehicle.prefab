@@ -4310,14 +4310,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99bb5cc0b24544f19ba67edafa1d0588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainSettings: {fileID: 11400000, guid: 49b0fe177ccf34f2995b952d1566d28d, type: 2}
   griEntity: {fileID: 0}
-  GridType: 0
+  GridType: 1
   HexagonsContainer: {fileID: 3402628655108859910}
   EntityContainer: {fileID: 7341286765440539914}
-  gridRadius: 5
-  hexSize: 1
-  entireGridHeightOffset: 0
-  singleHexHeightAdjustment: 1
+  ObjectsContainer: {fileID: 6450897664826388286}
   customGridShape: {fileID: 11400000, guid: 99de35ea315d42141b93e6b07312b888, type: 2}
 --- !u!114 &572949974659242552
 MonoBehaviour:
@@ -4346,6 +4344,11 @@ GameObject:
 --- !u!4 &5029749833185982415 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5061804661394092625, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
+  m_PrefabInstance: {fileID: 284402247254590878}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6450897664826388286 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6517930670179838624, guid: 0ee0b829dff92e04283a5747fcc2a074, type: 3}
   m_PrefabInstance: {fileID: 284402247254590878}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &7341286765440539914 stripped

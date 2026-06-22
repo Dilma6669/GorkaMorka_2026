@@ -8,6 +8,8 @@ using UnityEngine.Serialization;
 // Provides access to hex data and intra-grid neighbors. Generates a circular grid pattern.
 public abstract class SimpleHexGridBase : MonoBehaviour
 {
+    public TerrainSettings terrainSettings;
+    
     [HideInInspector]
     public Entity griEntity;
 
@@ -18,16 +20,6 @@ public abstract class SimpleHexGridBase : MonoBehaviour
     public GameObject EntityContainer;
     public GameObject ObjectsContainer;
     
-    [Tooltip(
-        "The radius of the hexagonal grid. A radius of 0 is just the center hex. A radius of 1 includes the 6 direct neighbors.")]
-    public int gridRadius = 5;
-
-    [Tooltip("The size (radius) of each hexagon.")]
-    public float hexSize = 1f;
-
-    [Tooltip("An optional vertical offset for the entire grid relative to its GameObject's Y position.")]
-    public float entireGridHeightOffset = 0f;
-    public float singleHexHeightAdjustment = 1f; // Add this new field
     // Internal storage for all hex data in this grid.
     // HexData no longer stores WorldPosition directly, it's calculated on demand.
     public Dictionary<Vector2Int, HexData> HexagonsInGrid;
@@ -55,7 +47,7 @@ public abstract class SimpleHexGridBase : MonoBehaviour
                  GetComponentInChildren<Entity>();
         
         // This is a more robust way to set the grid's initial position.
-        transform.position = new Vector3(transform.position.x, entireGridHeightOffset, transform.position.z);
+        transform.position = new Vector3(transform.position.x, terrainSettings.entireGridHeightOffset, transform.position.z);
         
         // Initialize the dictionary once in Awake.
         HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
@@ -64,7 +56,7 @@ public abstract class SimpleHexGridBase : MonoBehaviour
 
     protected void Start()
     {
-        transform.position = new Vector3(transform.position.x, entireGridHeightOffset, transform.position.z);
+        transform.position = new Vector3(transform.position.x, terrainSettings.entireGridHeightOffset, transform.position.z);
         GenerateGrid();
     }
     
@@ -129,8 +121,8 @@ public abstract class SimpleHexGridBase : MonoBehaviour
     public Vector3 GetHexWorldPosition(Vector2Int coords, float height)
     {
         // Calculate the hex's position in the grid's local space
-        float localX = hexSize * (3f / 2f) * coords.x;
-        float localZ = hexSize * (Mathf.Sqrt(3f) / 2f * coords.x + Mathf.Sqrt(3f) * coords.y);
+        float localX = terrainSettings.hexSize * (3f / 2f) * coords.x;
+        float localZ = terrainSettings.hexSize * (Mathf.Sqrt(3f) / 2f * coords.x + Mathf.Sqrt(3f) * coords.y);
         Vector3 localPos = new Vector3(localX, height, localZ);
 
         // Convert the local position to a world position using the grid's transform
@@ -270,10 +262,10 @@ public abstract class SimpleHexGridBase : MonoBehaviour
         Vector3 relativePos = transform.InverseTransformPoint(worldPosition);
 
         // Remove the height offset for inverse calculation
-        relativePos.y -= singleHexHeightAdjustment;
+        relativePos.y -= terrainSettings.singleHexHeightAdjustment;
 
-        float q_f = (2f / 3f * relativePos.x) / hexSize;
-        float r_f = (-1f / 3f * relativePos.x + Mathf.Sqrt(3f) / 3f * relativePos.z) / hexSize;
+        float q_f = (2f / 3f * relativePos.x) / terrainSettings.hexSize;
+        float r_f = (-1f / 3f * relativePos.x + Mathf.Sqrt(3f) / 3f * relativePos.z) / terrainSettings.hexSize;
 
         float x = q_f;
         float z = r_f;
@@ -376,4 +368,7 @@ public abstract class SimpleHexGridBase : MonoBehaviour
     public abstract Vector3 GetHexTopSurfacePosition(Vector2Int coords, float height);
 
     public abstract float GetHexTopSurfaceY(Vector2Int coords);
+
+    public abstract Vector2Int GetChunkID(Vector2Int gridCoords);
+
 }

@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 public class SimpleHexGridGround : SimpleHexGridBase
 {
-    TerrainGenerator terrainGenerator;
+    private TerrainGenerator terrainGenerator;
     public HexGridVisualizerGround visualizer; // Made public for access
     private WorldPopulator worldPopulator;
     private WaterController waterController;
@@ -78,11 +78,11 @@ public class SimpleHexGridGround : SimpleHexGridBase
         if (HexagonsInGrid == null) HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
         HexagonsInGrid.Clear();
 
-        for (int q = -gridRadius; q <= gridRadius; q++)
+        for (int q = -terrainSettings.gridRadius; q <= terrainSettings.gridRadius; q++)
         {
-            for (int r = -gridRadius; r <= gridRadius; r++)
+            for (int r = -terrainSettings.gridRadius; r <= terrainSettings.gridRadius; r++)
             {
-                if (Mathf.Abs(q + r) <= gridRadius)
+                if (Mathf.Abs(q + r) <= terrainSettings.gridRadius)
                 {
                     Vector2Int coords = new Vector2Int(q, r);
                     float offsetX = (terrainGenerator.seed * terrainGenerator.seedOffsetMultiplier) + 10000f;
@@ -146,8 +146,8 @@ public class SimpleHexGridGround : SimpleHexGridBase
     {
         // 1. Convert World XZ to Grid Axial Q, R coordinates
         // This is the inverse of your GetHexWorldPosition math
-        float q = (2.0f / 3.0f * worldPos.x) / hexSize;
-        float r = (-1.0f / 3.0f * worldPos.x + Mathf.Sqrt(3.0f) / 3.0f * worldPos.z) / hexSize;
+        float q = (2.0f / 3.0f * worldPos.x) / terrainSettings.hexSize;
+        float r = (-1.0f / 3.0f * worldPos.x + Mathf.Sqrt(3.0f) / 3.0f * worldPos.z) / terrainSettings.hexSize;
 
         // 2. Round axial coordinates to get the nearest valid hex
         coords = RoundAxial(q, r);
@@ -238,7 +238,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 
                 Vector3 sum = Vector3.zero;
                 List<Matrix4x4> matrices = new List<Matrix4x4>();
-                float scaleFactor = hexSize * 2f;
+                float scaleFactor = terrainSettings.hexSize * 2f;
                 Vector3 scale = new Vector3(scaleFactor, visualizer.hexVisualHeight, scaleFactor);
 
                 foreach(var hex in kvp.Value)
@@ -394,7 +394,7 @@ private Mesh BuildMeshForChunk(List<HexData> chunkHexes)
         }
     }
     
-    public Vector2Int GetChunkID(Vector2Int gridCoords)
+    public override Vector2Int GetChunkID(Vector2Int gridCoords)
     {
         return new Vector2Int(
             Mathf.FloorToInt((float)gridCoords.x / chunkSize),
