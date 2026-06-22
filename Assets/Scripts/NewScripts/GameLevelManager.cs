@@ -1,13 +1,19 @@
 using UnityEngine;
 
-public class WorldLayerManager : MonoBehaviour
+public class GameLevelManager : MonoBehaviour
 {
-    public enum GameLevel { WorldMap, Terrain }
-    public GameLevel currentLevel;
+    public SimpleHexGridBase ActiveGrid;
+    
+    public HexGridManager.GridType currentLevel;
 
-    public void ToggleLevel(GameLevel newLevel)
+    private void Awake()
     {
-        if (newLevel == GameLevel.WorldMap)
+        currentLevel = ActiveGrid.GridType;
+    }
+    
+    public void ToggleLevel(HexGridManager.GridType newLevel)
+    {
+        if (newLevel == HexGridManager.GridType.Terrain)
         {
             // 1. Hide High-Res Assets (Trees, shacks, barrels)
             // 2. Generate/Show Level 2 Low-Res Hexes

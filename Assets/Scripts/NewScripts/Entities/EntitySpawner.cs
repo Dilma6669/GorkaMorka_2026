@@ -8,7 +8,8 @@ using UnityEngine.Serialization;
 // Purpose: Manages the instantiation and initial placement of Unit GameObjects onto SimpleHexGrids.
 public class EntitySpawner : MonoBehaviour
 {
-    private HexGridManager hexagonGridManager;
+    private GameLevelManager gameLevelManager;
+    
     [Header("Spawner Settings")]
     [Tooltip("The prefab GameObject that has a Unit.cs component attached to it.")]
     public GameObject unitPrefab;
@@ -25,8 +26,8 @@ public class EntitySpawner : MonoBehaviour
 
     private void Awake()
     {
-        hexagonGridManager = GetComponent<HexGridManager>();
-        hexagonGridManager.ActiveGrid.OnGridReady += SpawnInitialModels;
+        gameLevelManager = GetComponent<GameLevelManager>();
+        gameLevelManager.ActiveGrid.OnGridReady += SpawnInitialModels;
     }
     
     
@@ -222,7 +223,7 @@ public class EntitySpawner : MonoBehaviour
     [ContextMenu("Spawn Default Unit")]
     void TestSpawnDefaultUnit()
     {
-        if (hexagonGridManager == null)
+        if (gameLevelManager == null)
         {
             Debug.LogError("EntitySpawner: Default Spawn Grid is not set for TestSpawnDefaultUnit!");
             return;
@@ -234,7 +235,7 @@ public class EntitySpawner : MonoBehaviour
         entityData.maxHealth = 100;
         entityData.currentHealth = 100;
         entityData.baseMoveSpeed = 5;
-        entityData.spawnGridBase = hexagonGridManager.ActiveGrid;
+        entityData.spawnGridBase = gameLevelManager.ActiveGrid;
         entityData.spawnCoordinates = new Vector2Int(-4,7);
         
         SpawnUnit(entityData);
@@ -243,7 +244,7 @@ public class EntitySpawner : MonoBehaviour
     [ContextMenu("Spawn Default Vehicle")]
     void TestSpawnDefaultVehicle()
     {
-        if (hexagonGridManager == null)
+        if (gameLevelManager == null)
         {
             Debug.LogError("EntitySpawner: Default Spawn Grid is not set for TestSpawnDefaultUnit!");
             return;
@@ -255,7 +256,7 @@ public class EntitySpawner : MonoBehaviour
         entityData.maxHealth = 100;
         entityData.currentHealth = 100;
         entityData.baseMoveSpeed = 5;
-        entityData.spawnGridBase = hexagonGridManager.ActiveGrid;
+        entityData.spawnGridBase = gameLevelManager.ActiveGrid;
         entityData.spawnCoordinates = new Vector2Int(-17,10);
         
         // This will now simply create a new unit each time the button is clicked.
@@ -271,7 +272,7 @@ public class EntitySpawner : MonoBehaviour
         entityData.maxHealth = 100;
         entityData.currentHealth = 100;
         entityData.baseMoveSpeed = 5;
-        entityData.spawnGridBase = hexagonGridManager.ActiveGrid;
+        entityData.spawnGridBase = gameLevelManager.ActiveGrid;
         entityData.spawnCoordinates = new Vector2Int(0,0);
     
         SpawnCraft(entityData);
@@ -280,7 +281,7 @@ public class EntitySpawner : MonoBehaviour
     private void OnDestroy()
     {
         // Always unsubscribe when the spawner is destroyed
-        hexagonGridManager.ActiveGrid.OnGridReady -= SpawnInitialModels;
+        gameLevelManager.ActiveGrid.OnGridReady -= SpawnInitialModels;
     }
     
     private void SpawnInitialModels(SimpleHexGridBase hexGridBase)

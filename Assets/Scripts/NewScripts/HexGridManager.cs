@@ -8,8 +8,6 @@ public class HexGridManager : MonoBehaviour
 {
     private float maxJumpHeight = 2f; // Adjust this value in the Inspector
     
-    public SimpleHexGridBase ActiveGrid;
-    
     // --- Singleton Pattern ---
     private static HexGridManager _instance;
 
