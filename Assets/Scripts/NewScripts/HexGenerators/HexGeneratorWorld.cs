@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-public class HexGeneratorTerrain : HexGeneratorBase
+public class HexGeneratorWorld : HexGeneratorBase
 {
     private SimpleHexGridTerrain simpleHexGridTerrain;
     

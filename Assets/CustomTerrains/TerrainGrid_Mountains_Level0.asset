@@ -29,4 +29,4 @@ MonoBehaviour:
   terrainSmoothness: 0.8
   treePercentage: 0.009
   rockPercentage: 0.073
-  waterLevel: 1
+  waterLevel: 3

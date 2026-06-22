@@ -2869,7 +2869,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f89fd856614762a1c687900a90aa0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnitName: 
+  UnitName: Vehicle
   MaxHealth: 0
   CurrentHealth: 0
   BaseMoveSpeed: 0

@@ -794,7 +794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d9f76a2e0ba7414c86ff5f8ab2302a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnitName: 
+  UnitName: Craft
   MaxHealth: 100
   CurrentHealth: 100
   BaseMoveSpeed: 5

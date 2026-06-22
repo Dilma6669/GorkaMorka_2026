@@ -1,12 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
-public class SimpleHexGridTerrain : SimpleHexGridBase
+public class SimpleHexGridWorld : SimpleHexGridBase
 {
-    private HexGeneratorTerrain _hexGeneratorTerrain;
-    private HexGridVisualizerTerrain visualizer; // Made public for access
-    private PopulaterTerrain _populaterTerrain;
-    private WaterController waterController;
+    private HexGeneratorWorld _hexGeneratorTerrain;
+    private HexGridVisualizerWorld visualizer; // Made public for access
+    private PopulaterWorld _populaterTerrain;
     
     public MapSettingsTerrain TerrainSettings => activeMapSettingsBase as MapSettingsTerrain;
 
@@ -39,10 +38,9 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
     private new void Awake()
     {
         base.Awake();
-        _populaterTerrain = GetComponent<PopulaterTerrain>();
-        visualizer = GetComponent<HexGridVisualizerTerrain>();
-        _hexGeneratorTerrain = GetComponent<HexGeneratorTerrain>();
-        waterController = GetComponent<WaterController>();
+        _populaterTerrain = GetComponent<PopulaterWorld>();
+        visualizer = GetComponent<HexGridVisualizerWorld>();
+        _hexGeneratorTerrain = GetComponent<HexGeneratorWorld>();
         camera = Camera.main;
 
         activeMapSettingsBase = activeMapSettingsBase as MapSettingsTerrain;
@@ -63,7 +61,6 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
 
             UpdateMeshVisibility(camPos);
             UpdateColliderVisibility(camPos);
-            UpdateWaterVisibility(camPos);
 
             // Update our "last known" states
             lastUpdatePosition = camera.transform.position;
@@ -254,12 +251,6 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
                 
                 physicsChunks[kvp.Key] = data;
                 col.enabled = false;
-
-                if (TerrainSettings.waterLevel > 0)
-                {
-                    waterController.CreateWaterForChunk(kvp.Key, kvp.Value, chunkObj.transform);
-                }
-
             }
         }
     }
@@ -372,28 +363,11 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
                 {
                     col.enabled = targetVisibility;
                     _populaterTerrain.SetVisibilityOfObjectsInChunk(chunk.Key, targetVisibility);
-                    waterController.SetVisibilityOfWaterInChunk(chunk.Key, targetVisibility);
                 }
             }
         }
     }
     
-    public void UpdateWaterVisibility(Vector3 cameraPosition)
-    {
-        Vector2 camPos2D = new Vector3(cameraPosition.x, cameraPosition.z);
-
-        foreach (var chunk in physicsChunks)
-        {
-            Vector2 chunkPos2D = new Vector2(chunk.Value.worldCenter.x, chunk.Value.worldCenter.z);
-            float dist2D = Vector2.Distance(camPos2D, chunkPos2D);
-
-            // Visibility logic
-            bool targetVisibility = (dist2D <= colliderSpreadRadius && chunk.Value.visible);
-
-            // Toggle the water plane specifically
-            waterController.SetVisibilityOfWaterInChunk(chunk.Key, targetVisibility);
-        }
-    }
     
     public override Vector2Int GetChunkID(Vector2Int gridCoords)
     {
