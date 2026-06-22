@@ -10,7 +10,7 @@ public class HexGeneratorTerrain : HexGeneratorBase
     }
     
     // The xCoord and zCoord here are already offset by the seed
-    public float GenerateHeight(float xCoord, float zCoord) 
+    public override float GenerateHeight(float xCoord, float zCoord) 
     {
         // Generate smooth sand dunes using multiple octaves of Perlin noise
         float duneNoise = GenerateOctaveNoise(xCoord, zCoord, simpleHexGridTerrain.TerrainSettings.duneScale, 
