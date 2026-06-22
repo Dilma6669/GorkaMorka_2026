@@ -655,7 +655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f3ba0a449c5448b972236d20b2659e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unwalkableRadius: 1.5
+  ActiveGrid: {fileID: 5061804660729753924}
 --- !u!114 &1284890848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -700,7 +700,6 @@ MonoBehaviour:
   craftPrefab: {fileID: 6009607544708439935, guid: 901380c016f3ac74e8d8d6d89fa22522, type: 3}
   GroundedGridsContainer: {fileID: 1030389473}
   FloatingGridsContainer: {fileID: 677585704}
-  defaultSpawnGridBase: {fileID: 2045115133}
   defaultSpawnCoordinates: {x: 0, y: 0}
   unitsToSpawn: []
 --- !u!114 &1284890850
@@ -740,7 +739,6 @@ MonoBehaviour:
   PathHexagonHighlightedColour: {r: 1, g: 0.88035375, b: 0.1273585, a: 1}
   _cachedTargetCoords: {x: 0, y: 0}
   _cachedTargetGrid: {fileID: 0}
-  terrainGrid: {fileID: 5061804660729753924}
 --- !u!114 &1284890852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1115,7 +1113,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &331045504827902750
 GameObject:
   m_ObjectHideFlags: 0
@@ -1136,7 +1134,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &3227663582911882692
 GameObject:
   m_ObjectHideFlags: 0

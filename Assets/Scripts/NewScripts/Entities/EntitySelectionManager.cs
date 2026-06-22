@@ -8,6 +8,8 @@ using UnityEngine.Serialization; // Required for List
 // currently active and where to move it. Adheres to Single Responsibility Principle.
 public class EntitySelectionManager : MonoBehaviour
 {
+    private HexGridManager hexagonGridManager;
+    
     [Header("Raycast Layers")]
     [Tooltip("Layer(s) containing your Unit GameObjects. Crucial for detecting unit clicks.")]
     public LayerMask unitLayer;
@@ -36,8 +38,6 @@ public class EntitySelectionManager : MonoBehaviour
     
     private object _lastHoveredObject = null;
     
-    public SimpleHexGridBase terrainGrid;
-    
     private string[] layerNames = { "HexagonCollider", "VehicleCollider", "UnitCollider", "CraftCollider" };
     
     private Vector3 lastMousePosition;
@@ -46,6 +46,7 @@ public class EntitySelectionManager : MonoBehaviour
     
     private void Awake()
     {
+        hexagonGridManager = GetComponent<HexGridManager>();
         hexOverlayManager = GetComponent<HexOverlayManager>();
         pathfinder = GetComponent<MultiGridPathfinder>();
         camera = Camera.main;
@@ -266,10 +267,10 @@ public class EntitySelectionManager : MonoBehaviour
         // --- NEW: Physics-less Fallback for Ground Grids ---
         if (closetHexSelected == null)
         {
-            if (terrainGrid != null && terrainGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+            if (hexagonGridManager.ActiveGrid != null && hexagonGridManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 groundHexData = data;
-                groundGridSelected = terrainGrid;
+                groundGridSelected = hexagonGridManager.ActiveGrid;
             }
         }
         
@@ -459,10 +460,10 @@ public class EntitySelectionManager : MonoBehaviour
         // 2. If NO specific HexTile collider was hit, use the Math fallback
         if (closetHexHovered == null)
         {
-            if (terrainGrid != null && terrainGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+            if (hexagonGridManager.ActiveGrid != null && hexagonGridManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 _groundHexDataHovered = data;
-                _hoveredGroundGrid = terrainGrid;
+                _hoveredGroundGrid = hexagonGridManager.ActiveGrid;
             }
         }
 

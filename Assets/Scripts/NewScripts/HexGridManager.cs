@@ -6,11 +6,9 @@ using System.Collections.Generic; // Required for List
 // Provides a central point for other systems (like pathfinding) to query all available grids.
 public class HexGridManager : MonoBehaviour
 {
-    
     private float maxJumpHeight = 2f; // Adjust this value in the Inspector
-        
-    // Inside HexGridManager.cs
-    public float unwalkableRadius = 1.5f; // Add this public variable to the class
+    
+    public SimpleHexGridBase ActiveGrid;
     
     // --- Singleton Pattern ---
     private static HexGridManager _instance;
@@ -53,8 +51,6 @@ public class HexGridManager : MonoBehaviour
         
         Debug.Log("HexGridManager Initialized.");
     }
-
-    // --- Public Registration Methods ---
 
     /// <summary>
     /// Registers a SimpleHexGrid with the manager. Called by SimpleHexGrid's Awake.
