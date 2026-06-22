@@ -92,8 +92,11 @@ public class HexGridManager : MonoBehaviour
     
     public enum GridType
     {
+        Interior,
         Terrain,
-        Interior
+        World,
+        System,
+        Galaxy,
     }
     
     public readonly struct HexGridAndCoords : System.IEquatable<HexGridAndCoords>

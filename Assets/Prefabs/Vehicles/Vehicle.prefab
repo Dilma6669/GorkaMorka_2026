@@ -4312,7 +4312,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeMapSettingsBase: {fileID: 11400000, guid: b2aece4487e03447980e3f0ff77748c5, type: 2}
   griEntity: {fileID: 0}
-  GridType: 1
+  GridType: 0
   HexagonsContainer: {fileID: 3402628655108859910}
   EntityContainer: {fileID: 7341286765440539914}
   ObjectsContainer: {fileID: 6450897664826388286}

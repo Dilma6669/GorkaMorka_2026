@@ -13,7 +13,8 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
     public float baseHeight = 0f;
     public float entityPlacementHeightOffset = 0.05f;
 
-    [Header("Physics Settings")] public int chunkSize = 10;
+    [Header("Physics Settings")] 
+    public int chunkSize = 10;
     public Dictionary<Vector2Int, ChunkDataComponent> physicsChunks = new Dictionary<Vector2Int, ChunkDataComponent>();
     
     [Tooltip("The arc spread distance from the camera to show terrain meshes.")]

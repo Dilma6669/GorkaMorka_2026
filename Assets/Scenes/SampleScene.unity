@@ -700,7 +700,7 @@ MonoBehaviour:
   craftPrefab: {fileID: 6009607544708439935, guid: 901380c016f3ac74e8d8d6d89fa22522, type: 3}
   GroundedGridsContainer: {fileID: 1030389473}
   FloatingGridsContainer: {fileID: 677585704}
-  defaultSpawnGridBase: {fileID: 5061804660729753924}
+  defaultSpawnGridBase: {fileID: 2045115133}
   defaultSpawnCoordinates: {x: 0, y: 0}
   unitsToSpawn: []
 --- !u!114 &1284890850
@@ -987,7 +987,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeMapSettingsBase: {fileID: 11400000, guid: 69370273bd09b4019afa06c6d056c4c0, type: 2}
   griEntity: {fileID: 0}
-  GridType: 0
+  GridType: 1
   HexagonsContainer: {fileID: 3227663582911882692}
   EntityContainer: {fileID: 7355252564090507464}
   ObjectsContainer: {fileID: 6517930669495476988}
@@ -1074,7 +1074,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeMapSettingsBase: {fileID: 0}
   griEntity: {fileID: 0}
-  GridType: 1
+  GridType: 0
   HexagonsContainer: {fileID: 3227663584704481342}
   EntityContainer: {fileID: 7355252564541996338}
   ObjectsContainer: {fileID: 0}
@@ -1115,7 +1115,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &331045504827902750
 GameObject:
   m_ObjectHideFlags: 0
@@ -1136,7 +1136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &3227663582911882692
 GameObject:
   m_ObjectHideFlags: 0
@@ -1325,7 +1325,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeMapSettingsBase: {fileID: 11400000, guid: 4fa9dbc116f3e4c9888ddde259996b23, type: 2}
   griEntity: {fileID: 0}
-  GridType: 0
+  GridType: 2
   HexagonsContainer: {fileID: 3227663584008072842}
   EntityContainer: {fileID: 7355252565120637830}
   ObjectsContainer: {fileID: 6517930670592387506}
