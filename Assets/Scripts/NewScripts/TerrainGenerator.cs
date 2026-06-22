@@ -2,7 +2,7 @@
 
 public class TerrainGenerator : MonoBehaviour
 {
-    private SimpleHexGridBase simpleHexGridBase;
+    private SimpleHexGridTerrain simpleHexGridTerrain;
 
     public int seed = 0;
     
@@ -10,31 +10,32 @@ public class TerrainGenerator : MonoBehaviour
     
     private void Awake()
     {
-        simpleHexGridBase = GetComponent<SimpleHexGridBase>();
+        simpleHexGridTerrain = GetComponent<SimpleHexGridTerrain>();
     }
     
     // The xCoord and zCoord here are already offset by the seed
     public float GenerateDesertHeight(float xCoord, float zCoord, out bool isRock) 
     {
         // Generate smooth sand dunes using multiple octaves of Perlin noise
-        float duneNoise = GenerateOctaveNoise(xCoord, zCoord, simpleHexGridBase.terrainSettings.duneScale, 
-            simpleHexGridBase.terrainSettings.duneOctaves, simpleHexGridBase.terrainSettings.dunePersistence);
-        float duneHeight = duneNoise * simpleHexGridBase.terrainSettings.duneHeight;
+        float duneNoise = GenerateOctaveNoise(xCoord, zCoord, simpleHexGridTerrain.TerrainSettings.duneScale, 
+            simpleHexGridTerrain.TerrainSettings.duneOctaves, simpleHexGridTerrain.TerrainSettings.dunePersistence);
+        float duneHeight = duneNoise * simpleHexGridTerrain.TerrainSettings.duneHeight;
 
         // Generate rocky outcropping noise
-        float rockNoise = Mathf.PerlinNoise(xCoord * simpleHexGridBase.terrainSettings.rockScale, zCoord * simpleHexGridBase.terrainSettings.rockScale);
+        float rockNoise = Mathf.PerlinNoise(xCoord * simpleHexGridTerrain.TerrainSettings.rockScale, 
+            zCoord * simpleHexGridTerrain.TerrainSettings.rockScale);
 
         // Create sharp rock transitions - only areas above threshold become rocks
         float rockHeight = 0f;
         isRock = false;
 
-        if (rockNoise > simpleHexGridBase.terrainSettings.rockThreshold)
+        if (rockNoise > simpleHexGridTerrain.TerrainSettings.rockThreshold)
         {
             // Sharpen the transition using power function
-            float rockIntensity = Mathf.Pow((rockNoise - simpleHexGridBase.terrainSettings.rockThreshold) 
-                   / (1f - simpleHexGridBase.terrainSettings.rockThreshold), 
-                simpleHexGridBase.terrainSettings.rockSharpness);
-            rockHeight = rockIntensity * simpleHexGridBase.terrainSettings.rockHeight;
+            float rockIntensity = Mathf.Pow((rockNoise - simpleHexGridTerrain.TerrainSettings.rockThreshold) 
+                   / (1f - simpleHexGridTerrain.TerrainSettings.rockThreshold), 
+                simpleHexGridTerrain.TerrainSettings.rockSharpness);
+            rockHeight = rockIntensity * simpleHexGridTerrain.TerrainSettings.rockHeight;
             isRock = true;
         }
 
@@ -43,7 +44,7 @@ public class TerrainGenerator : MonoBehaviour
         float blendNoise = Mathf.PerlinNoise((xCoord + 50000f) * 0.1f, (zCoord + 60000f) * 0.1f);
 
         // Blend between dunes and rocks based on terrain smoothness and blend noise
-        float blendFactor = Mathf.Lerp(0.3f, 1f, simpleHexGridBase.terrainSettings.terrainSmoothness);
+        float blendFactor = Mathf.Lerp(0.3f, 1f, simpleHexGridTerrain.TerrainSettings.terrainSmoothness);
         float finalBlend = Mathf.Clamp01(blendNoise + blendFactor - 0.5f);
 
         // Final height is a mix of smooth dunes and sharp rocks

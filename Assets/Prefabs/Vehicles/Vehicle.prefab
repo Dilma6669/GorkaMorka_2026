@@ -4310,7 +4310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99bb5cc0b24544f19ba67edafa1d0588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainSettings: {fileID: 11400000, guid: 49b0fe177ccf34f2995b952d1566d28d, type: 2}
+  activeMapSettingsBase: {fileID: 11400000, guid: b2aece4487e03447980e3f0ff77748c5, type: 2}
   griEntity: {fileID: 0}
   GridType: 1
   HexagonsContainer: {fileID: 3402628655108859910}

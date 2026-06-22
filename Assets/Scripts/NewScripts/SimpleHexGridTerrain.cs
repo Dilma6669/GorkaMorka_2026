@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.Serialization;
 
-public class SimpleHexGridGround : SimpleHexGridBase
+public class SimpleHexGridTerrain : SimpleHexGridBase
 {
     private TerrainGenerator terrainGenerator;
     public HexGridVisualizerGround visualizer; // Made public for access
     private WorldPopulator worldPopulator;
     private WaterController waterController;
+    
+    public MapSettingsTerrain TerrainSettings => activeMapSettingsBase as MapSettingsTerrain;
 
     public float baseHeight = 0f;
     public float entityPlacementHeightOffset = 0.05f;
@@ -36,8 +34,6 @@ public class SimpleHexGridGround : SimpleHexGridBase
     [SerializeField] private float moveThreshold = 5.0f; // How far to move
     [SerializeField] private float rotationThreshold = 5.0f; // How many degrees to rotate
     
-    public float waterHeight = 1f;
-    
     private Camera camera;
     
     private new void Awake()
@@ -48,6 +44,8 @@ public class SimpleHexGridGround : SimpleHexGridBase
         terrainGenerator = GetComponent<TerrainGenerator>();
         waterController = GetComponent<WaterController>();
         camera = Camera.main;
+
+        activeMapSettingsBase = activeMapSettingsBase as MapSettingsTerrain;
     }
     
 
@@ -78,11 +76,11 @@ public class SimpleHexGridGround : SimpleHexGridBase
         if (HexagonsInGrid == null) HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
         HexagonsInGrid.Clear();
 
-        for (int q = -terrainSettings.gridRadius; q <= terrainSettings.gridRadius; q++)
+        for (int q = -activeMapSettingsBase.gridRadius; q <= activeMapSettingsBase.gridRadius; q++)
         {
-            for (int r = -terrainSettings.gridRadius; r <= terrainSettings.gridRadius; r++)
+            for (int r = -activeMapSettingsBase.gridRadius; r <= activeMapSettingsBase.gridRadius; r++)
             {
-                if (Mathf.Abs(q + r) <= terrainSettings.gridRadius)
+                if (Mathf.Abs(q + r) <= activeMapSettingsBase.gridRadius)
                 {
                     Vector2Int coords = new Vector2Int(q, r);
                     float offsetX = (terrainGenerator.seed * terrainGenerator.seedOffsetMultiplier) + 10000f;
@@ -146,8 +144,8 @@ public class SimpleHexGridGround : SimpleHexGridBase
     {
         // 1. Convert World XZ to Grid Axial Q, R coordinates
         // This is the inverse of your GetHexWorldPosition math
-        float q = (2.0f / 3.0f * worldPos.x) / terrainSettings.hexSize;
-        float r = (-1.0f / 3.0f * worldPos.x + Mathf.Sqrt(3.0f) / 3.0f * worldPos.z) / terrainSettings.hexSize;
+        float q = (2.0f / 3.0f * worldPos.x) / activeMapSettingsBase.hexSize;
+        float r = (-1.0f / 3.0f * worldPos.x + Mathf.Sqrt(3.0f) / 3.0f * worldPos.z) / activeMapSettingsBase.hexSize;
 
         // 2. Round axial coordinates to get the nearest valid hex
         coords = RoundAxial(q, r);
@@ -222,7 +220,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
 
         foreach (var kvp in chunkData)
         {
-            Mesh mesh = BuildMeshForChunk(kvp.Value);
+            Mesh mesh = BuildMeshForChunk(kvp.Value, activeMapSettingsBase.worldLevel);
             if (mesh.vertexCount >= 3)
             {
                 GameObject chunkObj = new GameObject($"PhysicsChunk_{kvp.Key.x}_{kvp.Key.y}");
@@ -238,7 +236,7 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 
                 Vector3 sum = Vector3.zero;
                 List<Matrix4x4> matrices = new List<Matrix4x4>();
-                float scaleFactor = terrainSettings.hexSize * 2f;
+                float scaleFactor = activeMapSettingsBase.hexSize * 2f;
                 Vector3 scale = new Vector3(scaleFactor, visualizer.hexVisualHeight, scaleFactor);
 
                 foreach(var hex in kvp.Value)
@@ -256,71 +254,74 @@ public class SimpleHexGridGround : SimpleHexGridBase
                 
                 physicsChunks[kvp.Key] = data;
                 col.enabled = false;
-                
-                waterController.CreateWaterForChunk(kvp.Key, kvp.Value, chunkObj.transform);
-                
+
+                if (TerrainSettings.waterLevel > 0)
+                {
+                    waterController.CreateWaterForChunk(kvp.Key, kvp.Value, chunkObj.transform);
+                }
+
             }
         }
     }
 
-private Mesh BuildMeshForChunk(List<HexData> chunkHexes)
-{
-    Mesh mesh = new Mesh();
-    List<Vector3> vertices = new List<Vector3>();
-    List<int> triangles = new List<int>();
-    Dictionary<Vector2Int, int> coordToIndex = new Dictionary<Vector2Int, int>();
-
-    // 1. Identify all hexes needed: current chunk + immediate neighbors
-    HashSet<Vector2Int> allRequiredCoords = new HashSet<Vector2Int>();
-    foreach (var hex in chunkHexes)
+    private Mesh BuildMeshForChunk(List<HexData> chunkHexes, int worldLayer = 0)
     {
-        allRequiredCoords.Add(hex.GridCoordinates);
-        foreach (var neighbor in GetHexNeighbors(hex.GridCoordinates))
-            allRequiredCoords.Add(neighbor);
-    }
+        Mesh mesh = new Mesh();
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        Dictionary<Vector2Int, int> coordToIndex = new Dictionary<Vector2Int, int>();
 
-    // 2. Add all these to our dictionary FIRST
-    foreach (var coords in allRequiredCoords)
-    {
-        if (HexagonsInGrid.TryGetValue(coords, out HexData hex))
+        // 1. Identify all hexes needed: current chunk + immediate neighbors
+        HashSet<Vector2Int> allRequiredCoords = new HashSet<Vector2Int>();
+        foreach (var hex in chunkHexes)
         {
-            coordToIndex[coords] = vertices.Count;
-            vertices.Add(new Vector3(
-                GetHexWorldPosition(hex.GridCoordinates, hex.Height).x,
-                GetHexTopSurfaceY(hex.GridCoordinates),
-                GetHexWorldPosition(hex.GridCoordinates, hex.Height).z
-            ));
+            allRequiredCoords.Add(hex.GridCoordinates);
+            foreach (var neighbor in GetHexNeighbors(hex.GridCoordinates))
+                allRequiredCoords.Add(neighbor);
         }
-    }
 
-    // 3. Now build triangles for the current chunk ONLY
-    foreach (var hex in chunkHexes)
-    {
-        List<Vector2Int> neighbors = GetHexNeighbors(hex.GridCoordinates);
-        for (int i = 0; i < neighbors.Count; i++)
+        // 2. Add all these to our dictionary FIRST
+        foreach (var coords in allRequiredCoords)
         {
-            Vector2Int neighborA = neighbors[i];
-            Vector2Int neighborB = neighbors[(i + 1) % neighbors.Count];
-
-            // Because all neighbors are now in the dictionary, 
-            // these triangles will bridge the gap perfectly.
-            if (coordToIndex.ContainsKey(hex.GridCoordinates) && 
-                coordToIndex.ContainsKey(neighborA) && 
-                coordToIndex.ContainsKey(neighborB))
+            if (HexagonsInGrid.TryGetValue(coords, out HexData hex))
             {
-                triangles.Add(coordToIndex[hex.GridCoordinates]);
-                triangles.Add(coordToIndex[neighborA]);
-                triangles.Add(coordToIndex[neighborB]);
+                coordToIndex[coords] = vertices.Count;
+                vertices.Add(new Vector3(
+                    GetHexWorldPosition(hex.GridCoordinates, hex.Height).x,
+                    GetHexTopSurfaceY(hex.GridCoordinates),
+                    GetHexWorldPosition(hex.GridCoordinates, hex.Height).z
+                ));
             }
         }
-    }
 
-    mesh.vertices = vertices.ToArray();
-    mesh.triangles = triangles.ToArray();
-    mesh.RecalculateNormals();
-    return mesh;
-}
-    
+        // 3. Now build triangles for the current chunk ONLY
+        foreach (var hex in chunkHexes)
+        {
+            List<Vector2Int> neighbors = GetHexNeighbors(hex.GridCoordinates);
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                Vector2Int neighborA = neighbors[i];
+                Vector2Int neighborB = neighbors[(i + 1) % neighbors.Count];
+
+                // Because all neighbors are now in the dictionary, 
+                // these triangles will bridge the gap perfectly.
+                if (coordToIndex.ContainsKey(hex.GridCoordinates) && 
+                    coordToIndex.ContainsKey(neighborA) && 
+                    coordToIndex.ContainsKey(neighborB))
+                {
+                    triangles.Add(coordToIndex[hex.GridCoordinates]);
+                    triangles.Add(coordToIndex[neighborA]);
+                    triangles.Add(coordToIndex[neighborB]);
+                }
+            }
+        }
+
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+        return mesh;
+    }
+        
     public void UpdateMeshVisibility(Vector3 cameraPosition)
     {
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(camera);

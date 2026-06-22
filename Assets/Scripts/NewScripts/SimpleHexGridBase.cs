@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 // Provides access to hex data and intra-grid neighbors. Generates a circular grid pattern.
 public abstract class SimpleHexGridBase : MonoBehaviour
 {
-    public TerrainSettings terrainSettings;
+    public MapSettingsBase activeMapSettingsBase;
     
     [HideInInspector]
     public Entity griEntity;
@@ -47,7 +47,7 @@ public abstract class SimpleHexGridBase : MonoBehaviour
                  GetComponentInChildren<Entity>();
         
         // This is a more robust way to set the grid's initial position.
-        transform.position = new Vector3(transform.position.x, terrainSettings.entireGridHeightOffset, transform.position.z);
+        transform.position = new Vector3(transform.position.x, activeMapSettingsBase.entireGridHeightOffset, transform.position.z);
         
         // Initialize the dictionary once in Awake.
         HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
@@ -56,7 +56,7 @@ public abstract class SimpleHexGridBase : MonoBehaviour
 
     protected void Start()
     {
-        transform.position = new Vector3(transform.position.x, terrainSettings.entireGridHeightOffset, transform.position.z);
+        transform.position = new Vector3(transform.position.x, activeMapSettingsBase.entireGridHeightOffset, transform.position.z);
         GenerateGrid();
     }
     
@@ -121,8 +121,8 @@ public abstract class SimpleHexGridBase : MonoBehaviour
     public Vector3 GetHexWorldPosition(Vector2Int coords, float height)
     {
         // Calculate the hex's position in the grid's local space
-        float localX = terrainSettings.hexSize * (3f / 2f) * coords.x;
-        float localZ = terrainSettings.hexSize * (Mathf.Sqrt(3f) / 2f * coords.x + Mathf.Sqrt(3f) * coords.y);
+        float localX = activeMapSettingsBase.hexSize * (3f / 2f) * coords.x;
+        float localZ = activeMapSettingsBase.hexSize * (Mathf.Sqrt(3f) / 2f * coords.x + Mathf.Sqrt(3f) * coords.y);
         Vector3 localPos = new Vector3(localX, height, localZ);
 
         // Convert the local position to a world position using the grid's transform
@@ -262,10 +262,10 @@ public abstract class SimpleHexGridBase : MonoBehaviour
         Vector3 relativePos = transform.InverseTransformPoint(worldPosition);
 
         // Remove the height offset for inverse calculation
-        relativePos.y -= terrainSettings.singleHexHeightAdjustment;
+        relativePos.y -= activeMapSettingsBase.singleHexHeightAdjustment;
 
-        float q_f = (2f / 3f * relativePos.x) / terrainSettings.hexSize;
-        float r_f = (-1f / 3f * relativePos.x + Mathf.Sqrt(3f) / 3f * relativePos.z) / terrainSettings.hexSize;
+        float q_f = (2f / 3f * relativePos.x) / activeMapSettingsBase.hexSize;
+        float r_f = (-1f / 3f * relativePos.x + Mathf.Sqrt(3f) / 3f * relativePos.z) / activeMapSettingsBase.hexSize;
 
         float x = q_f;
         float z = r_f;

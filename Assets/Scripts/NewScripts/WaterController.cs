@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class WaterController : MonoBehaviour
 {
-    private SimpleHexGridBase simpleHexGridBase;
+    private SimpleHexGridTerrain _simpleHexGridTerrain;
     public GameObject waterPrefab; // Changed to GameObject for simplicity
     public Material waterMaterial; // Changed to GameObject for simplicity
     
@@ -12,14 +12,14 @@ public class WaterController : MonoBehaviour
 
     private void Awake()
     {
-        simpleHexGridBase = GetComponent<SimpleHexGridBase>();
+        _simpleHexGridTerrain = GetComponent<SimpleHexGridTerrain>();
     }
     
     public void CreateWaterForChunk(Vector2Int chunkID, List<HexData> chunkHexes, Transform parent)
     {
         GameObject waterObj = new GameObject("WaterMesh_" + chunkID);
         waterObj.transform.SetParent(parent);
-        waterObj.transform.localPosition = new Vector3(0, simpleHexGridBase.terrainSettings.waterLevel, 0); 
+        waterObj.transform.localPosition = new Vector3(0, _simpleHexGridTerrain.TerrainSettings.waterLevel, 0); 
     
         // Add this line
         waterObj.AddComponent<WaterEntity>(); 
@@ -49,7 +49,7 @@ public class WaterController : MonoBehaviour
         foreach (var hex in chunkHexes)
         {
             allRequiredCoords.Add(hex.GridCoordinates);
-            foreach (var neighbor in simpleHexGridBase.GetHexNeighbors(hex.GridCoordinates))
+            foreach (var neighbor in _simpleHexGridTerrain.GetHexNeighbors(hex.GridCoordinates))
                 allRequiredCoords.Add(neighbor);
         }
 
@@ -57,8 +57,8 @@ public class WaterController : MonoBehaviour
         foreach (var coords in allRequiredCoords)
         {
             // We use your grid's math to find the XZ, but force Y to flat level
-            Vector3 worldPos = simpleHexGridBase.GetHexWorldPosition(coords, 0); 
-            Vector3 flatPos = new Vector3(worldPos.x, simpleHexGridBase.terrainSettings.waterLevel, worldPos.z);
+            Vector3 worldPos = _simpleHexGridTerrain.GetHexWorldPosition(coords, 0); 
+            Vector3 flatPos = new Vector3(worldPos.x, _simpleHexGridTerrain.TerrainSettings.waterLevel, worldPos.z);
 
             coordToIndex[coords] = vertices.Count;
             vertices.Add(flatPos);
@@ -67,7 +67,7 @@ public class WaterController : MonoBehaviour
         // 3. Build triangles for current chunk hexes ONLY
         foreach (var hex in chunkHexes)
         {
-            List<Vector2Int> neighbors = simpleHexGridBase.GetHexNeighbors(hex.GridCoordinates);
+            List<Vector2Int> neighbors = _simpleHexGridTerrain.GetHexNeighbors(hex.GridCoordinates);
             for (int i = 0; i < neighbors.Count; i++)
             {
                 Vector2Int next = neighbors[(i + 1) % neighbors.Count];

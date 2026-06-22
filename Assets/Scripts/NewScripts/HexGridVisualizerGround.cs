@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class HexGridVisualizerGround : HexGridVisualizerBase
 {
-    private SimpleHexGridGround masterGrid;
+    private SimpleHexGridTerrain masterGrid;
     private Dictionary<Vector2Int, bool> activeChunks = new Dictionary<Vector2Int, bool>();
 
     [Header("GPU Landscape Settings")] 
@@ -18,7 +18,7 @@ public class HexGridVisualizerGround : HexGridVisualizerBase
     protected new void Awake()
     {
         base.Awake();
-        masterGrid = GetComponent<SimpleHexGridGround>();
+        masterGrid = GetComponent<SimpleHexGridTerrain>();
         camera = Camera.main;
     }
 

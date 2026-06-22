@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 // Phase 1.2 (Revised for Dynamic World Positions): SimpleHexGrid Class
 // Purpose: Manages a single, simple hexagonal grid. Calculates hex world positions dynamically.
 // Provides access to hex data and intra-grid neighbors. Generates a circular grid pattern.
-public class SimpleHexGridFloating : SimpleHexGridBase
+public class SimpleHexGridInterior : SimpleHexGridBase
 {
     public HexGridShape customGridShape;
 
@@ -74,7 +74,7 @@ public class SimpleHexGridFloating : SimpleHexGridBase
                 }
                 
                 // Use the new tile properties
-                float hexHeight = tile.Height * terrainSettings.singleHexHeightAdjustment;
+                float hexHeight = tile.Height * activeMapSettingsBase.singleHexHeightAdjustment;
                 bool isWalkable = tile.IsWalkable;
                 bool isClimbable = tile.IsClimbable;
                 bool isCommandSeat = tile.IsCommandSeat;
@@ -104,10 +104,10 @@ public class SimpleHexGridFloating : SimpleHexGridBase
         }
         HexagonsInGrid.Clear(); // Clears the dictionary instead of creating a new one.
 
-        for (int q = -terrainSettings.gridRadius; q <= terrainSettings.gridRadius; q++)
+        for (int q = -activeMapSettingsBase.gridRadius; q <= activeMapSettingsBase.gridRadius; q++)
         {
-            int r1 = Mathf.Max(-terrainSettings.gridRadius, -q - terrainSettings.gridRadius);
-            int r2 = Mathf.Min(terrainSettings.gridRadius, -q + terrainSettings.gridRadius);
+            int r1 = Mathf.Max(-activeMapSettingsBase.gridRadius, -q - activeMapSettingsBase.gridRadius);
+            int r2 = Mathf.Min(activeMapSettingsBase.gridRadius, -q + activeMapSettingsBase.gridRadius);
 
             for (int r = r1; r <= r2; r++)
             {

@@ -73,7 +73,7 @@ public class HexGridVisualizerFloating : HexGridVisualizerBase
             // Unity's default Cylinder primitive (at scale 1,1,1) has a radius of 0.5.
             // Our hexSize is the desired outer radius (e.g., 1.0).
             // So, we need to scale the prefab by (hexSize / 0.5) in X and Z, which simplifies to hexSize * 2.
-            float scaleFactorXZ = _targetGridBase.terrainSettings.hexSize * 2f;
+            float scaleFactorXZ = _targetGridBase.activeMapSettingsBase.hexSize * 2f;
             hexInstance.transform.localScale = new Vector3(scaleFactorXZ, hexVisualHeight, scaleFactorXZ);
 
             // --- NEW: Get and Initialize HexVisualTile ---
@@ -138,7 +138,7 @@ public class HexGridVisualizerFloating : HexGridVisualizerBase
         // Ensure we have a reference to the grid
         if (_targetGridBase == null)
         {
-            _targetGridBase = GetComponent<SimpleHexGridFloating>();
+            _targetGridBase = GetComponent<SimpleHexGridInterior>();
         }
 
         _targetGridBase.GenerateGrid();

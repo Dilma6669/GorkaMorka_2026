@@ -76,7 +76,7 @@ public class EntitySpawner : MonoBehaviour
         
         
         float targetHeight = 0f;
-        if (unitData.spawnGridBase is SimpleHexGridGround groundGrid)
+        if (unitData.spawnGridBase is SimpleHexGridTerrain groundGrid)
         {
             targetHeight = groundGrid.GetHexHeight(unitData.spawnCoordinates);
         }
@@ -143,7 +143,7 @@ public class EntitySpawner : MonoBehaviour
         Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
         
         float targetHeight = 0f;
-        if (vehicleData.spawnGridBase is SimpleHexGridGround groundGrid)
+        if (vehicleData.spawnGridBase is SimpleHexGridTerrain groundGrid)
         {
             targetHeight = groundGrid.GetHexHeight(vehicleData.spawnCoordinates);
         }

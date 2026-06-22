@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 077492e6a27649319981956954e3b6a0, type: 3}
-  m_Name: InteriorGrid
+  m_Script: {fileID: 11500000, guid: 07f8cdb710e845be96e05bc0d1a57337, type: 3}
+  m_Name: SpaceGrid_Level2
   m_EditorClassIdentifier: 
-  gridRadius: 5
+  gridRadius: 500
   isFlatWorldMap: 0
   worldLevel: 3
   hexSize: 1

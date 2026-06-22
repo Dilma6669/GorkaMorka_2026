@@ -12,8 +12,6 @@ public class HexGridManager : MonoBehaviour
     // Inside HexGridManager.cs
     public float unwalkableRadius = 1.5f; // Add this public variable to the class
     
-    private HexOverlayManager hexOverlayManager;
-    
     // --- Singleton Pattern ---
     private static HexGridManager _instance;
 
@@ -53,8 +51,6 @@ public class HexGridManager : MonoBehaviour
         }
         _instance = this;
         
-        hexOverlayManager = GetComponent<HexOverlayManager>();
-        
         Debug.Log("HexGridManager Initialized.");
     }
 
@@ -93,63 +89,11 @@ public class HexGridManager : MonoBehaviour
     {
         return new List<SimpleHexGridBase>(registeredGrids); // Return a copy to prevent external modification of the list
     }
-
-
-    // public void UpdateUnwalkableHexagons(SimpleHexGridBase higherGridBase, SimpleHexGridBase lowerGridBase)
-    // {
-    //     if (higherGridBase == null || lowerGridBase == null)
-    //     {
-    //         Debug.LogError("UpdateUnwalkableHexagons: One or both grids are null.");
-    //         return;
-    //     }
-    //
-    //     // Step 1: Reset all hexagons on the lower grid to be walkable.
-    //     var lowerHexKeys = new List<Vector2Int>(lowerGridBase.HexagonsInGrid.Keys);
-    //     foreach (var hexCoords in lowerHexKeys)
-    //     {
-    //         HexData hexData = lowerGridBase.HexagonsInGrid[hexCoords];
-    //         hexData.SetIsWalkable(true);
-    //         lowerGridBase.HexagonsInGrid[hexCoords] = hexData;
-    //     }
-    //
-    //     // Step 2: Iterate through every hex on the floating grid.
-    //     foreach (var higherHexData in higherGridBase.HexagonsInGrid.Values)
-    //     {
-    //         Vector3 higherHexWorldPos =
-    //             higherGridBase.GetHexWorldPosition(higherHexData.GridCoordinates, higherHexData.Height);
-    //
-    //         // Inside the main loop that iterates over higherGrid hexes...
-    //         // Get a snapshot of the lower grid's hex values to safely iterate.
-    //         var lowerHexValues = new List<HexData>(lowerGridBase.HexagonsInGrid.Values);
-    //
-    //         foreach (var lowerHexData in lowerHexValues)
-    //         {
-    //             Vector3 lowerHexWorldPos =
-    //                 lowerGridBase.GetHexWorldPosition(lowerHexData.GridCoordinates, lowerHexData.Height);
-    //
-    //             // Step 4: Check if the two hexes are close in both horizontal and vertical distance.
-    //             float horizontalDistance = Vector2.Distance(
-    //                 new Vector2(higherHexWorldPos.x, higherHexWorldPos.z),
-    //                 new Vector2(lowerHexWorldPos.x, lowerHexWorldPos.z)
-    //             );
-    //             float verticalDistance = Mathf.Abs(higherHexWorldPos.y - lowerHexWorldPos.y);
-    //
-    //             if (horizontalDistance < unwalkableRadius && verticalDistance < maxJumpHeight)
-    //             {
-    //                 // Set the ground hex as unwalkable.
-    //                 HexData hexToModify = lowerGridBase.HexagonsInGrid[lowerHexData.GridCoordinates];
-    //                 hexToModify.SetIsWalkable(false);
-    //                 lowerGridBase.HexagonsInGrid[lowerHexData.GridCoordinates] = hexToModify;
-    //             }
-    //         }
-    //     }
-    // }
-    
     
     public enum GridType
     {
-        Ground,
-        Floating
+        Terrain,
+        Interior
     }
     
     public readonly struct HexGridAndCoords : System.IEquatable<HexGridAndCoords>

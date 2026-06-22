@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections.Generic; // Required for List
+using System.Collections.Generic;
+using UnityEngine.Serialization; // Required for List
 
 // Phase 11.1 (Revised): UnitSelectionManager Class
 // Purpose: Handles player input for unit selection and commanding selected units
@@ -35,7 +36,7 @@ public class EntitySelectionManager : MonoBehaviour
     
     private object _lastHoveredObject = null;
     
-    public SimpleHexGridGround groundGrid = null;
+    [FormerlySerializedAs("groundGrid")] public SimpleHexGridTerrain terrainGrid = null;
     
     private string[] layerNames = { "HexagonCollider", "VehicleCollider", "UnitCollider", "CraftCollider" };
     
@@ -265,10 +266,10 @@ public class EntitySelectionManager : MonoBehaviour
         // --- NEW: Physics-less Fallback for Ground Grids ---
         if (closetHexSelected == null)
         {
-            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+            if (terrainGrid != null && terrainGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 groundHexData = data;
-                groundGridSelected = groundGrid;
+                groundGridSelected = terrainGrid;
             }
         }
         
@@ -458,10 +459,10 @@ public class EntitySelectionManager : MonoBehaviour
         // 2. If NO specific HexTile collider was hit, use the Math fallback
         if (closetHexHovered == null)
         {
-            if (groundGrid != null && groundGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+            if (terrainGrid != null && terrainGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 _groundHexDataHovered = data;
-                _hoveredGroundGrid = groundGrid;
+                _hoveredGroundGrid = terrainGrid;
             }
         }
 
