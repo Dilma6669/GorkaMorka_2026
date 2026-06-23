@@ -11,6 +11,17 @@ public class CraftEntity : Entity
     
     CraftHeightController craftHeightController;
 
+    public override EntityData ExportData()
+    {
+        CraftData data = ScriptableObject.CreateInstance<CraftData>();
+        PopulateBaseData(data); // Fill name, health, etc.
+    
+        // Explicitly copy the unit-specific field
+        //data.isDriver = this.isDriver; 
+    
+        return data;
+    }
+    
     private void Awake()
     {
         craftHeightController = GetComponent<CraftHeightController>();

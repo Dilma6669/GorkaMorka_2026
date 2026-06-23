@@ -72,7 +72,7 @@ public class SimpleHexGridWorld : SimpleHexGridBase
     {
         if (HexagonsInGrid == null) HexagonsInGrid = new Dictionary<Vector2Int, HexData>();
         HexagonsInGrid.Clear();
-
+        
         for (int q = -activeMapSettingsBase.gridRadius; q <= activeMapSettingsBase.gridRadius; q++)
         {
             for (int r = -activeMapSettingsBase.gridRadius; r <= activeMapSettingsBase.gridRadius; r++)
@@ -108,6 +108,16 @@ public class SimpleHexGridWorld : SimpleHexGridBase
         foreach (var kvp in HexagonsInGrid)
         {
             AllNodes[kvp.Key] = new PathNode(kvp.Key, this);
+        }
+        
+        foreach (var hex in HexagonsInGrid.Values)
+        {
+            if (hex.IsPortal) 
+            {
+                // If the portal doesn't have a seed yet, assign one and register it
+                int portalSeed = Random.Range(0, 999999); 
+                LevelPortalManager.Instance.RegisterPortal(this, hex.GridCoordinates, portalSeed);
+            }
         }
     }
     
@@ -383,5 +393,27 @@ public class SimpleHexGridWorld : SimpleHexGridBase
             Mathf.FloorToInt((float)gridCoords.x / chunkSize),
             Mathf.FloorToInt((float)gridCoords.y / chunkSize)
         );
+    }
+    
+    public override void SetSeed(int newSeed)
+    {
+        // Ensure your generator updates its internal seed value
+        _hexGeneratorTerrain.seed = newSeed;
+    }
+    
+    public override void ResetGrid()
+    {
+        // 1. Clear logic
+        HexagonsInGrid.Clear();
+
+        // 2. Clear Visual Data (THIS IS THE IMPORTANT PART)
+        chunkVisualData.Clear(); 
+        chunkBounds.Clear();
+        physicsChunks.Clear(); // If you have physics
+    
+        visualizer.Clear();
+        
+        // 3. Clear existing objects
+        _populaterTerrain.ClearAll();
     }
 }

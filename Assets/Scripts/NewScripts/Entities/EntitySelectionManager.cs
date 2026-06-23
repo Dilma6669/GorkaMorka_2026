@@ -671,8 +671,6 @@ public class EntitySelectionManager : MonoBehaviour
     {
         Entity entity = EntityCommander.GetEntityInCommand();
         if (entity == null) return;
-
-        Debug.Log($"fuck entity = {entity}");
         
         // Use the entity's current location to jump
         LevelPortalManager.Instance.EnterPortal(entity.currentGridBase, entity.CurrentGridCoordinates);

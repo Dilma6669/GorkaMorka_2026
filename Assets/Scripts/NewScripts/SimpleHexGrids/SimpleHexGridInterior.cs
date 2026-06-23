@@ -169,4 +169,14 @@ public class SimpleHexGridInterior : SimpleHexGridBase
     {
         throw new NotImplementedException();
     }
+    
+    public override void SetSeed(int newSeed)
+    {
+
+    }
+    
+    public override void ResetGrid()
+    {
+        
+    }
 }

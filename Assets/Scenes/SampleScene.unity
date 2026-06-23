@@ -623,6 +623,7 @@ GameObject:
   - component: {fileID: 1284890850}
   - component: {fileID: 1284890851}
   - component: {fileID: 1284890852}
+  - component: {fileID: 1284890855}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -702,7 +703,8 @@ MonoBehaviour:
   GroundedGridsContainer: {fileID: 1030389473}
   FloatingGridsContainer: {fileID: 677585704}
   defaultSpawnCoordinates: {x: 0, y: 0}
-  unitsToSpawn: []
+  unitsToSpawn:
+  - {fileID: 11400000, guid: 08de41d997fe44125b124b1f97d28160, type: 2}
 --- !u!114 &1284890850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -786,6 +788,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9393a991f40d46a08c144a9d64023806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1284890855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284890845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc7cb93083f46c1877791f2b8305267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storedUnitData: {fileID: 0}
 --- !u!1 &1344806452
 GameObject:
   m_ObjectHideFlags: 0

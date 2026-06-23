@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 // Purpose: Represents a single movable unit in the game,
 // holding its current grid position, managing its visual snap to hexes,
 // and orchestrating its movement via an attached PathMover.
-public class Entity : MonoBehaviour
+public abstract class Entity : MonoBehaviour
 {
     [Header("Entity Data")]
     public string UnitName;
@@ -33,6 +33,17 @@ public class Entity : MonoBehaviour
     public float entityHeightOffset = 0.5f; // Default offset, adjust in Inspector per unit type
     
     public float CurrentGroundY { get; set; }
+    
+    protected virtual void PopulateBaseData(EntityData data)
+    {
+        data.unitName = this.UnitName;
+        data.maxHealth = this.MaxHealth;
+        data.currentHealth = this.CurrentHealth;
+        data.baseMoveSpeed = this.BaseMoveSpeed;
+        data.entityType = this.EntityType;
+    }
+
+    public abstract EntityData ExportData();
     
     void Awake()
     {
@@ -76,7 +87,7 @@ public class Entity : MonoBehaviour
         EntityType = entityType;
         UnitName = entityData.unitName;
         MaxHealth = entityData.maxHealth;
-        CurrentHealth = entityData.maxHealth;
+        CurrentHealth = entityData.currentHealth;
         BaseMoveSpeed = entityData.baseMoveSpeed;
         
         SnapToHex(entityData.spawnGridBase, entityData.spawnCoordinates); // Snap to the initial position

@@ -76,7 +76,7 @@ public class MultiGridPathfinder : MonoBehaviour
             return null;
 
         int iterations = 0;
-        int maxIterations = 2000; // Force stop if it takes too many steps
+        int maxIterations = 1000; // Force stop if it takes too many steps
         
         while (openSet.Count > 0)
         {

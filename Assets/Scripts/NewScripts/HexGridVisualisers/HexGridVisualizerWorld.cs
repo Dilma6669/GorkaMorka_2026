@@ -48,4 +48,9 @@ public class HexGridVisualizerWorld : HexGridVisualizerBase
     {
         // Data is now populated by the Master Grid during GeneratePhysicsProxy
     }
+    
+    public void Clear()
+    {
+        activeChunks.Clear();
+    }
 }

@@ -108,6 +108,17 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
         {
             AllNodes[kvp.Key] = new PathNode(kvp.Key, this);
         }
+        
+        // 2. ADD THE REGISTRATION LOOP HERE
+        foreach (var hex in HexagonsInGrid.Values)
+        {
+            if (hex.IsPortal) 
+            {
+                // If the portal doesn't have a seed yet, assign one and register it
+                int portalSeed = Random.Range(0, 999999); 
+                LevelPortalManager.Instance.RegisterPortal(this, hex.GridCoordinates, portalSeed);
+            }
+        }
     }
     
 
@@ -411,18 +422,17 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
         );
     }
     
-    public void SetSeed(int newSeed)
+    public override void SetSeed(int newSeed)
     {
         // Ensure your generator updates its internal seed value
         _hexGeneratorTerrain.seed = newSeed;
     }
     
-    public void ResetGrid()
+    public override void ResetGrid()
     {
         // 1. Clear logic
         HexagonsInGrid.Clear();
-
-        // 2. Clear Visual Data (THIS IS THE IMPORTANT PART)
+        
         chunkVisualData.Clear(); 
         chunkBounds.Clear();
         physicsChunks.Clear(); // If you have physics

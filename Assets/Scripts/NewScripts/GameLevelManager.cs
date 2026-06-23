@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
 public class GameLevelManager : MonoBehaviour
 {
+    private EntitySpawner entitySpawner;
     public HexGridManager.GridType startingLevel;
     
     public SimpleHexGridBase ActiveGrid;
@@ -18,9 +20,16 @@ public class GameLevelManager : MonoBehaviour
 
     public List<LevelData> levels;
 
+    private void Awake()
+    {
+        entitySpawner = GetComponent<EntitySpawner>();
+    }
+
     private void Start()
     {
         SwitchToLevel(startingLevel);
+
+        LevelPortalManager.Instance.GenerateNewGrid(99);
     }
     
     public void SwitchToLevel(HexGridManager.GridType targetLevel)
@@ -49,4 +58,5 @@ public class GameLevelManager : MonoBehaviour
 
     [ContextMenu("Switch to World")]
     private void MenuSwitchToWorld() => SwitchToLevel(HexGridManager.GridType.World);
+    
 }

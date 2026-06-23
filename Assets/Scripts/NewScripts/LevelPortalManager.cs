@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 public class LevelPortalManager : MonoBehaviour
 {
     private GameLevelManager gameLevelManager;
+    private EntitySpawner _entitySpawner;
     
     // 1. The static instance
     public static LevelPortalManager Instance { get; private set; }
@@ -24,46 +25,58 @@ public class LevelPortalManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // Optional: keeps it alive when changing scenes
 
         gameLevelManager = GetComponent<GameLevelManager>();
+        _entitySpawner = GetComponent<EntitySpawner>();
     }
 
     public void RegisterPortal(SimpleHexGridBase grid, Vector2Int coords, int seed)
     {
-        string key = $"{grid.name}_{coords.x}_{coords.y}";
+        string key = $"{grid.GridType}_{coords.x}_{coords.y}";
         portalSeeds[key] = seed;
     }
 
     public int GetSeedForPortal(SimpleHexGridBase grid, Vector2Int coords)
     {
-        string key = $"{grid.name}_{coords.x}_{coords.y}";
-        return portalSeeds.ContainsKey(key) ? portalSeeds[key] : Random.Range(0, 999999);
+        string key = $"{grid.GridType}_{coords.x}_{coords.y}";
+        bool exists = portalSeeds.ContainsKey(key);
+        Debug.Log($"Looking for key: {key}. Found? {exists}");
+        return exists ? portalSeeds[key] : Random.Range(0, 999999);
     }
     
-    // Inside LevelPortalManager.cs
-// Inside LevelPortalManager.cs
     public void EnterPortal(SimpleHexGridBase grid, Vector2Int coords)
     {
-        EntityCommander.SetEntityToCommand(null);
-        
+        Debug.Log($"ENTERING PORTAL: Grid Reference = {grid.GetInstanceID()}, Grid Type = {grid.GridType}");
+        // 1. CAPTURE the destination info using the CURRENT grid (before switching)
         HexData portalHex = grid.HexagonsInGrid[coords];
-        if (!portalHex.IsPortal) return;
-
-        // 1. Get the seed for the destination
+    
+        // 2. GET the seed using the CURRENT grid reference
         int newSeed = GetSeedForPortal(grid, coords);
-
-        // 2. Perform the switch
-        gameLevelManager.SwitchToLevel(portalHex.DestinationLevelType);
-
-        // 3. Reset and Rebuild
-        if (gameLevelManager.ActiveGrid is SimpleHexGridTerrain terrainGrid)
+    
+        // 3. STASH unit data
+        Entity entity = EntityCommander.GetEntityInCommand();
+        if (entity != null)
         {
-            // Set the seed on the generator so GenerateGrid uses the right one
-            terrainGrid.SetSeed(newSeed); 
-        
-            // Wipe everything clean
-            terrainGrid.ResetGrid();
-        
-            // Rebuild the geometry and the population
-            terrainGrid.GenerateGrid(); 
+            PendingEntityTransfer.Instance.storedUnitData = entity.ExportData();
         }
+        EntityCommander.SetEntityToCommand(null);
+
+        // 4. NOW switch levels (this changes gameLevelManager.ActiveGrid)
+        gameLevelManager.SwitchToLevel(portalHex.DestinationLevelType);
+    
+        // 5. Use the seed we already captured
+        GenerateNewGrid(newSeed);
+    }
+
+    public void GenerateNewGrid(int newSeed)
+    {
+        // Set the seed on the generator so GenerateGrid uses the right one
+        gameLevelManager.ActiveGrid.SetSeed(newSeed);
+
+        // Wipe everything clean
+        gameLevelManager.ActiveGrid.ResetGrid();
+
+        // Rebuild the geometry and the population
+        gameLevelManager.ActiveGrid.GenerateGrid();
+        
+        _entitySpawner.SpawnModels(gameLevelManager.ActiveGrid);
     }
 }

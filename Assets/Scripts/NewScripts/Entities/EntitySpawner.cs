@@ -25,11 +25,9 @@ public class EntitySpawner : MonoBehaviour
     public List<UnitData> unitsToSpawn;
     
     
-    private void Start()
+    private void Awake()
     {
         gameLevelManager = GetComponent<GameLevelManager>();
-        // needs to be in start because GameLevelManager needs to assign correct grid first.
-        gameLevelManager.ActiveGrid.OnGridReady += SpawnInitialModels;
     }
     
     public void SpawnAllUnits()
@@ -56,8 +54,7 @@ public class EntitySpawner : MonoBehaviour
 
         if (unitData.spawnGridBase == null)
         {
-            Debug.LogError("UnitSpawner: Cannot spawn unit, target grid is null!");
-            return null;
+            unitData.spawnGridBase = gameLevelManager.ActiveGrid;
         }
 
         if (!unitData.spawnGridBase.IsValidCoordinates(unitData.spawnCoordinates))
@@ -275,18 +272,30 @@ public class EntitySpawner : MonoBehaviour
     
     private void OnDestroy()
     {
-        // Always unsubscribe when the spawner is destroyed
-        gameLevelManager.ActiveGrid.OnGridReady -= SpawnInitialModels;
+     
     }
     
-    private void SpawnInitialModels(SimpleHexGridBase hexGridBase)
+    public void SpawnModels(SimpleHexGridBase hexGridBase)
     {
-        Debug.Log("Spawner: Grid is ready, spawning units now!");
-        TestSpawnDefaultUnit();
-       // TestSpawnDefaultVehicle();
-       // TestSpawnDefaultCraft();
+        // 1. Check if we have a unit coming through a portal
+        if (PendingEntityTransfer.Instance != null && PendingEntityTransfer.Instance.storedUnitData != null)
+        {
+            EntityData updatedData = PendingEntityTransfer.Instance.storedUnitData;
+            updatedData.spawnGridBase = hexGridBase;
+            updatedData.spawnCoordinates = Vector2Int.zero;
+            PendingEntityTransfer.Instance.storedUnitData = updatedData;
+            SpawnUnit(PendingEntityTransfer.Instance.storedUnitData as UnitData);
+        
+            // IMPORTANT: Clear the transfer data so it doesn't spawn again!
+            PendingEntityTransfer.Instance.storedUnitData = null;
+        }
+        else
+        {
+            // 2. Otherwise, spawn initial defaults
+            Debug.Log("Spawner: No transfer found, spawning initial units.");
+            SpawnAllUnits(); 
+        }
     }
-
     
     public enum EntityType
     {

@@ -1,9 +1,10 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 public class EntityData : ScriptableObject
 {
+    public EntitySpawner.EntityType entityType;
+    
     public GameObject unitPrefab; // The visual template
     
     public string unitName;
@@ -11,7 +12,7 @@ public class EntityData : ScriptableObject
     public int currentHealth;
     public float baseMoveSpeed;
     
-    [FormerlySerializedAs("spawnGrid")] [Header("Spawn Settings")]
+    [Header("Spawn Settings")]
     public SimpleHexGridBase spawnGridBase;
     public Vector2Int spawnCoordinates;
 }

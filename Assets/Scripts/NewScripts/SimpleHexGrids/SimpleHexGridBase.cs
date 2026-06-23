@@ -57,7 +57,6 @@ public abstract class SimpleHexGridBase : MonoBehaviour
     protected void Start()
     {
         transform.position = new Vector3(transform.position.x, activeMapSettingsBase.entireGridHeightOffset, transform.position.z);
-        GenerateGrid();
     }
     
     
@@ -68,13 +67,13 @@ public abstract class SimpleHexGridBase : MonoBehaviour
 
     public virtual void GenerateGrid()
     {
-        Debug.Log($"fuck simple hex generate");
-        
         RegisterGridToSystem(true);
     }
 
     protected void RegisterGridToSystem(bool register)
     {
+        Debug.Log($"RegisterGridToSystem = {register} for grid = {gameObject.name}");
+        
         if (register)
         {
             if (HexGridManager.Instance != null)
@@ -372,5 +371,9 @@ public abstract class SimpleHexGridBase : MonoBehaviour
     public abstract Vector2Int GetChunkID(Vector2Int gridCoords);
 
     public abstract bool TryGetHexFromRay(Ray ray, out HexData foundData, float maxDistance);
+
+    public abstract void SetSeed(int newSeed);
+
+    public abstract void ResetGrid();
 
 }
