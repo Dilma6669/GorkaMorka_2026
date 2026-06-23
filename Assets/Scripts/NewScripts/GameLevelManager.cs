@@ -27,6 +27,8 @@ public class GameLevelManager : MonoBehaviour
     {
         foreach (var data in levels)
         {
+            data.levelRoot.SetActive(false);
+            
             // Set active only if it matches, disable everything else
             bool isMatch = (data.type == targetLevel);
             if (isMatch)
@@ -34,7 +36,6 @@ public class GameLevelManager : MonoBehaviour
                 data.levelRoot.SetActive(true);
                 ActiveGrid = data.levelRoot.GetComponent<SimpleHexGridBase>();
                 currentLevel = targetLevel;
-                return;
             }
         }
 

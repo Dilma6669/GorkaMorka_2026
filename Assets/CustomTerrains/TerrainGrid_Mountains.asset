@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca8ad0e8e3b14e7f9b42df7b3105e936, type: 3}
-  m_Name: TerrainGrid_Mountains_Level0
+  m_Name: TerrainGrid_Mountains
   m_EditorClassIdentifier: 
   gridRadius: 500
   isFlatWorldMap: 0

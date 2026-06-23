@@ -269,8 +269,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8169c29d7d154a738b8f7d7cb3ec9627, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivityX: 100
-  mouseSensitivityY: 100
+  mouseSensitivityX: 500
+  mouseSensitivityY: 500
   minYRotation: -90
   maxYRotation: 90
   movementSpeed: 30
@@ -765,7 +765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b75779b1166224d5ab2bc49e4a048ece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingLevel: 2
+  startingLevel: 1
   ActiveGrid: {fileID: 0}
   currentLevel: 0
   levels:
@@ -1003,7 +1003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b1adb27ee24489a08e1e8b2a095dbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeMapSettingsBase: {fileID: 11400000, guid: 69370273bd09b4019afa06c6d056c4c0, type: 2}
+  activeMapSettingsBase: {fileID: 11400000, guid: 9da5b45011be54ef2b3261407e7ee978, type: 2}
   griEntity: {fileID: 0}
   GridType: 1
   HexagonsContainer: {fileID: 3227663582911882692}
@@ -1062,8 +1062,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a1d6dc3749b16148a33766d108a3239, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treePrefab: {fileID: 2402966154432236852, guid: 5f304b579531a5e48aa93173101d4ed8, type: 3}
-  rockPrefab: {fileID: 3243793905884450027, guid: cbd6452a65e32d04bacdaae17a4437d2, type: 3}
+  spawnDensity: 0.1
+  spawnableObjects:
+  - prefab: {fileID: 6791717390955216362, guid: c04794bce9d79814b98d598aa5269b64, type: 3}
+    spawnWeight: 0.5
+  - prefab: {fileID: 4868929504715483026, guid: 661772e08dd28f04098b3402501a8901, type: 3}
+    spawnWeight: 0.5
+  - prefab: {fileID: 8918684442425528394, guid: 22036d00393bb6746ac5e41d671e6289, type: 3}
+    spawnWeight: 0.5
+  - prefab: {fileID: 4793119948349038809, guid: f23eb5d5e8ed26040af442ae0970e8b6, type: 3}
+    spawnWeight: 0.5
+  - prefab: {fileID: 4793119948349038809, guid: f23eb5d5e8ed26040af442ae0970e8b6, type: 3}
+    spawnWeight: 0.5
+  - prefab: {fileID: 1471158863065593529, guid: 7628db9a16bdf3b4d8aedab590c9f226, type: 3}
+    spawnWeight: 0.5
+  - prefab: {fileID: 8294394904559025366, guid: 259516b1bf743f84aba64a77847b9d06, type: 3}
+    spawnWeight: 0.3
+  - prefab: {fileID: 6873938577213127126, guid: a9a82dc7a09f37741916c33cc3483e7c, type: 3}
+    spawnWeight: 0.3
+  - prefab: {fileID: 906591600361499829, guid: 5216f6d56a7c6e041869f68471d4aaae, type: 3}
+    spawnWeight: 0.3
+  - prefab: {fileID: 6023436046305576043, guid: 04cbf97186e53974080d2abf877ed606, type: 3}
+    spawnWeight: 0.3
+  - prefab: {fileID: 315675889818940899, guid: 256212dab9cb9d040bdae30d4f256a44, type: 3}
+    spawnWeight: 0.3
+  - prefab: {fileID: 5329577460968038239, guid: 38d257c588f863747bd31ff57651e099, type: 3}
+    spawnWeight: 0.01
+  - prefab: {fileID: 5965284952787518018, guid: 57568ffb4135a5d4bbe66802d0c9519b, type: 3}
+    spawnWeight: 0.01
+  - prefab: {fileID: 5162523033389567373, guid: f7efb658b10cbe14c9fbd0e5ae4b8a1a, type: 3}
+    spawnWeight: 0.01
+  - prefab: {fileID: 6443395740361465152, guid: 7b82e04a27c74dc41b25b85279da1a13, type: 3}
+    spawnWeight: 0.01
 --- !u!114 &2045115140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1154,7 +1184,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &3227663582911882692
 GameObject:
   m_ObjectHideFlags: 0
