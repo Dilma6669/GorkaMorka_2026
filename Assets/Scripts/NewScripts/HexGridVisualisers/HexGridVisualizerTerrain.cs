@@ -43,6 +43,11 @@ public class HexGridVisualizerTerrain : HexGridVisualizerBase
             }
         }
     }
+    
+    public void Clear()
+    {
+        activeChunks.Clear();
+    }
 
     public override void GenerateVisualGrid(SimpleHexGridBase gridBase)
     {

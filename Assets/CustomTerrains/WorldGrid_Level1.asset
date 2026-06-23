@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a2ac7fbc3cbe4b599ed1b360e776708, type: 3}
   m_Name: WorldGrid_Level1
   m_EditorClassIdentifier: 
-  gridRadius: 500
+  gridRadius: 50
   isFlatWorldMap: 0
   worldLevel: 3
   hexSize: 1

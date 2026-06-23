@@ -105,6 +105,10 @@ public class Entity : MonoBehaviour
 
         CurrentGroundY = hexSurfacePosition.y + entityHeightOffset;
         
+        if (hexData.IsPortal) {
+            Debug.Log("Unit is now standing on a portal!");
+        }
+        
         Debug.Log($"Snapping entity of type: {EntityType} to = {hexSurfacePosition}");
     
         // Apply the surface Y + the unit's "standing height" 

@@ -57,9 +57,9 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         currentNodeIndex = 0;
         
         // Check to Clear unit as driver
-        if (entity.isDriver && entity.currentGridBase.griEntity != null)
+        if (entity.isDriver && entity.currentGridBase.gridEntity != null)
         {
-            string gridGUID = entity.currentGridBase.griEntity.EntityGUID;
+            string gridGUID = entity.currentGridBase.gridEntity.EntityGUID;
                 
             // issue here
             if (EntityManager.TryGetEntity(gridGUID, out Entity vehicleEntity))
@@ -250,7 +250,7 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         // If the tile is a Command Seat
         if (hexData.IsCommandSeat)
         {
-            string gridGUID = entity.currentGridBase.griEntity.EntityGUID;
+            string gridGUID = entity.currentGridBase.gridEntity.EntityGUID;
             
             if(EntityManager.TryGetEntity(gridGUID, out Entity entityToDrive))
             {

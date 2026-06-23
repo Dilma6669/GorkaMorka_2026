@@ -11,7 +11,7 @@ public abstract class SimpleHexGridBase : MonoBehaviour
     public MapSettingsBase activeMapSettingsBase;
     
     [HideInInspector]
-    public Entity griEntity;
+    public Entity gridEntity;
 
     [Header("Grid Settings")] 
     public HexGridManager.GridType GridType;
@@ -42,7 +42,7 @@ public abstract class SimpleHexGridBase : MonoBehaviour
 
     protected void Awake()
     {
-        griEntity = GetComponent<Entity>() ??
+        gridEntity = GetComponent<Entity>() ??
                  GetComponentInParent<Entity>() ??
                  GetComponentInChildren<Entity>();
         

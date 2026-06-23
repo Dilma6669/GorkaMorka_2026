@@ -12,14 +12,20 @@ public class HexGeneratorTerrain : HexGeneratorBase
     // The xCoord and zCoord here are already offset by the seed
     public override float GenerateHeight(float xCoord, float zCoord) 
     {
+        float safeSeed = seed % 1000f; 
+    
+        // Use this safe offset to shift the coordinates for the noise function
+        float sampleX = xCoord + (safeSeed * 5.23f);
+        float sampleZ = zCoord + (safeSeed * 5.23f);
+        
         // Generate smooth sand dunes using multiple octaves of Perlin noise
-        float duneNoise = GenerateOctaveNoise(xCoord, zCoord, simpleHexGridTerrain.TerrainSettings.duneScale, 
+        float duneNoise = GenerateOctaveNoise(sampleX, sampleZ, simpleHexGridTerrain.TerrainSettings.duneScale, 
             simpleHexGridTerrain.TerrainSettings.duneOctaves, simpleHexGridTerrain.TerrainSettings.dunePersistence);
         float duneHeight = duneNoise * simpleHexGridTerrain.TerrainSettings.duneHeight;
 
         // Generate rocky outcropping noise
-        float rockNoise = Mathf.PerlinNoise(xCoord * simpleHexGridTerrain.TerrainSettings.rockScale, 
-            zCoord * simpleHexGridTerrain.TerrainSettings.rockScale);
+        float rockNoise = Mathf.PerlinNoise(sampleX * simpleHexGridTerrain.TerrainSettings.rockScale, 
+            sampleZ * simpleHexGridTerrain.TerrainSettings.rockScale);
 
         // Create sharp rock transitions - only areas above threshold become rocks
         float rockHeight = 0f;
@@ -35,7 +41,7 @@ public class HexGeneratorTerrain : HexGeneratorBase
 
         // Create a blending mask to determine where rocks vs dunes appear
         // Add another large arbitrary offset to this noise for a different pattern
-        float blendNoise = Mathf.PerlinNoise((xCoord + 50000f) * 0.1f, (zCoord + 60000f) * 0.1f);
+        float blendNoise = Mathf.PerlinNoise((sampleX + 50000f) * 0.1f, (sampleZ + 60000f) * 0.1f);
 
         // Blend between dunes and rocks based on terrain smoothness and blend noise
         float blendFactor = Mathf.Lerp(0.3f, 1f, simpleHexGridTerrain.TerrainSettings.terrainSmoothness);

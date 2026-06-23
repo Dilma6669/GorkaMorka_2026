@@ -84,15 +84,15 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
                 if (Mathf.Abs(q + r) <= activeMapSettingsBase.gridRadius)
                 {
                     Vector2Int coords = new Vector2Int(q, r);
-                    float offsetX = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 10000f;
-                    float offsetY = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 20000f;
-                    bool isRocky;
-                    float finalHeight = _hexGeneratorTerrain.GenerateHeight(coords.x + offsetX, coords.y + offsetY);
+            
+                    // PASS RAW COORDINATES. Do not add 10000f here.
+                    float finalHeight = _hexGeneratorTerrain.GenerateHeight(coords.x, coords.y);
+            
                     HexData hex = new HexData(coords, finalHeight + baseHeight)
                     {
                         IsClimbable = true
                     };
-                    
+            
                     HexagonsInGrid[coords] = hex;
                 }
             }
@@ -248,7 +248,11 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
                     Vector3 pos = GetHexWorldPosition(hex.GridCoordinates, hex.Height);
                     sum += pos;
                     matrices.Add(Matrix4x4.TRS(pos, Quaternion.identity, scale));
+                    
+                    //Debug.Log($"Hex Height: {hex.Height}");
                 }
+                
+                
                 
                 data.worldCenter = sum / kvp.Value.Count;
                 chunkVisualData[kvp.Key] = matrices.ToArray();
@@ -405,5 +409,27 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
             Mathf.FloorToInt((float)gridCoords.x / chunkSize),
             Mathf.FloorToInt((float)gridCoords.y / chunkSize)
         );
+    }
+    
+    public void SetSeed(int newSeed)
+    {
+        // Ensure your generator updates its internal seed value
+        _hexGeneratorTerrain.seed = newSeed;
+    }
+    
+    public void ResetGrid()
+    {
+        // 1. Clear logic
+        HexagonsInGrid.Clear();
+
+        // 2. Clear Visual Data (THIS IS THE IMPORTANT PART)
+        chunkVisualData.Clear(); 
+        chunkBounds.Clear();
+        physicsChunks.Clear(); // If you have physics
+    
+        visualizer.Clear();
+        
+        // 3. Clear existing objects
+        _populaterTerrain.ClearAll();
     }
 }

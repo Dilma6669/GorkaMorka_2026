@@ -54,6 +54,16 @@ public class EntitySelectionManager : MonoBehaviour
 
     void Update()
     {
+        Entity commanded = EntityCommander.GetEntityInCommand();
+    
+        // If we have a commanded entity, but its grid is no longer active
+        // OR the entity is null, we must wipe the selection.
+        if (commanded != null && commanded.currentGridBase != gameLevelManager.ActiveGrid)
+        {
+            EntityCommander.SetEntityToCommand(null);
+            return; 
+        }
+        
         // Only track mouse on screen
         if (Input.mousePosition.x < 0 || Input.mousePosition.x > Screen.width ||
             Input.mousePosition.y < 0 || Input.mousePosition.y > Screen.height)
@@ -654,6 +664,18 @@ public class EntitySelectionManager : MonoBehaviour
         {
             SelectHex(coords, grid);
         }
+    }
+    
+    [ContextMenu("Try Jump Through Portal")]
+    public void TryJumpThroughPortal()
+    {
+        Entity entity = EntityCommander.GetEntityInCommand();
+        if (entity == null) return;
+
+        Debug.Log($"fuck entity = {entity}");
+        
+        // Use the entity's current location to jump
+        LevelPortalManager.Instance.EnterPortal(entity.currentGridBase, entity.CurrentGridCoordinates);
     }
     
     

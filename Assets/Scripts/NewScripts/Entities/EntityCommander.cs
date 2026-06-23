@@ -36,13 +36,19 @@ public class EntityCommander : MonoBehaviour
 
     public static void SetEntityToCommand(Entity entity)
     {
-        Debug.Log($"EntityCommander: Assigned '{entity.name}' to EntityCommander.");
         entityToCommand = entity;
         
         if (Instance != null)
         {
             Instance.EntityInCommand = entity;
         }
+
+        if (entity != null)
+        {
+            Debug.Log($"EntityCommander: Assigned '{entity.name}' to EntityCommander.");
+        }
+        
+        EntitySelectionManager.CachedMovementPath = null;
     }
     
     public static Entity GetEntityInCommand()

@@ -87,6 +87,12 @@ public class SimpleHexGridWorld : SimpleHexGridBase
                     {
                         IsClimbable = true
                     };
+                    
+                    hex.DestinationLevelType = HexGridManager.GridType.Terrain;
+                    hex.SeedForChildLevel = Random.Range(0, 999999);
+        
+                    // Register it immediately so the LevelPortalManager knows it exists
+                    LevelPortalManager.Instance.RegisterPortal(this, coords, hex.SeedForChildLevel);
 
                     HexagonsInGrid[coords] = hex;
                 }
