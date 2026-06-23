@@ -6,88 +6,35 @@ using UnityEngine; // Required for Vector2Int
 // WorldPosition is now retrieved dynamically from the SimpleHexGrid.
 public struct HexData
 {
-    public Vector2Int GridCoordinates; // The (x, z) coordinates of the hex within its grid.
-
-    public float Height;
-    private bool isWalkable;        
-    private bool isOccupied;
-    private string hexOccupier;
-    private bool isClimbable;
-    public bool IsCommandSeat;
+    public Vector2Int GridCoordinates { get; set; }
+    public float Height { get; set; }
     
-    // visual
-    public bool isRocky;
+    public bool IsWalkable { get; set; }
+    public bool IsOccupied { get; set; }
+    public string HexOccupier { get; set; }
+    public bool IsClimbable { get; set; }
+    public bool IsCommandSeat { get; set; }
+    
+    public int SeedForChildLevel { get; set; }
+    public HexGridManager.GridType DestinationLevelType { get; set; }
+    public bool IsPortal => DestinationLevelType != HexGridManager.GridType.None;
 
-    public HexData(Vector2Int gridCoords, float height, bool walkable, bool climbable, bool isCommandSeat)
+    // This constructor handles the basic coordinate/height data
+    public HexData(Vector2Int gridCoords, float height)
     {
+        // 1. Set the mandatory fields
         GridCoordinates = gridCoords;
         Height = height;
-        isWalkable = walkable;
-        isOccupied = false;
-        hexOccupier = null;
-        isClimbable = climbable;
-        IsCommandSeat = isCommandSeat;
 
-        // visual
-        isRocky = false;
+        // 2. Set the defaults for everything else
+        IsWalkable = true; // Default
+        IsOccupied = false;
+        HexOccupier = null;
+        IsClimbable = false;
+        IsCommandSeat = false;
+        SeedForChildLevel = 0;
+        DestinationLevelType = HexGridManager.GridType.None;
     }
-
-    
-    /*public void SetWorldPosition(Vector3 worldPosition)
-    {
-        WorldPosition = worldPosition;
-    }*/
-    
-    public bool GetIsClimbable()
-    {
-        return isClimbable;
-    }
-    
-    public void SetIsClimbable(bool climbable)
-    {
-        isClimbable = climbable;
-    }
-    
-    public bool GetIsWalkable()
-    {
-        return isWalkable;
-    }
-    
-    public void SetIsWalkable(bool walkable)
-    {
-        isWalkable = walkable;
-    }
-    
-    public bool GetIsOccupied()
-    {
-        return isOccupied;
-    }
-    
-    public void SetIsOccupied(bool occupied)
-    {
-        isOccupied = occupied;
-    }
-    
-    public string GetOccupier()
-    {
-        return hexOccupier;
-    }
-    
-    public void SetOccupier(string occupier)
-    {
-        hexOccupier = occupier;
-    }
-    
-    public bool GetIsCommandSeat()
-    {
-        return IsCommandSeat;
-    }
-    
-    public void SetIsCommandSeat(bool commandSeat)
-    {
-        IsCommandSeat = commandSeat;
-    }
-    
 
     // Overriding Equals and GetHashCode is crucial for using HexData correctly
     // in collections like HashSets or Dictionaries later.
@@ -110,6 +57,6 @@ public struct HexData
 
     public override string ToString()
     {
-        return $"Hex({GridCoordinates.x}, {GridCoordinates.y}) - Walkable: {isWalkable}";
+        return $"Hex({GridCoordinates.x}, {GridCoordinates.y}) - Walkable: {IsWalkable}";
     }
 }

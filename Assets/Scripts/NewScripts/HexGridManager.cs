@@ -86,6 +86,7 @@ public class HexGridManager : MonoBehaviour
     
     public enum GridType
     {
+        None,
         Interior,
         Terrain,
         World,

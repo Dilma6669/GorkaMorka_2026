@@ -24,16 +24,16 @@ public class EntityOccupancyTracker : MonoBehaviour
         // 1. Unclaim old hex
         if (_lastGridBase != null && _lastGridBase.HexagonsInGrid.TryGetValue(lastCoords, out HexData oldData))
         {
-            oldData.SetIsOccupied(false);
-            oldData.SetOccupier(null);
+            oldData.IsOccupied = false;
+            oldData.HexOccupier = null;
             _lastGridBase.HexagonsInGrid[lastCoords] = oldData;
         }
 
         // 2. Claim new hex
         if (gridBase != null && gridBase.HexagonsInGrid.TryGetValue(newCoords, out HexData newData))
         {
-            newData.SetIsOccupied(true);
-            newData.SetOccupier(entity.EntityGUID);
+            newData.IsOccupied = true;
+            newData.HexOccupier = entity.EntityGUID;
             gridBase.HexagonsInGrid[newCoords] = newData;
         }
 

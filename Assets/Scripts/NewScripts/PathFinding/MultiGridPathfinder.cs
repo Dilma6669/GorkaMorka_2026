@@ -250,9 +250,9 @@ public class MultiGridPathfinder : MonoBehaviour
                 {
                     continue;
                 }
-                if (!neighbourHexData.GetIsWalkable()) continue;
+                if (!neighbourHexData.IsWalkable) continue;
                 // I think catch to allow vehicle driving over its own tiles 
-                if (neighbourHexData.GetIsOccupied() && neighbourHexData.GetOccupier() != EntityCommander.GetEntityInCommand().EntityGUID)
+                if (neighbourHexData.IsOccupied && neighbourHexData.HexOccupier != EntityCommander.GetEntityInCommand().EntityGUID)
                 {
                     continue;
                 }
@@ -260,7 +260,7 @@ public class MultiGridPathfinder : MonoBehaviour
             else if (EntityCommander.GetEntityInCommand().EntityType == EntitySpawner.EntityType.Unit)
             {
                 // Check if otherHex is walkable
-                if (!neighbourHexData.GetIsWalkable() || neighbourHexData.GetIsOccupied())
+                if (!neighbourHexData.IsWalkable || neighbourHexData.IsOccupied)
                 {
                     continue;
                 }
@@ -373,9 +373,9 @@ public class MultiGridPathfinder : MonoBehaviour
             // --- Inside your loop ---
             foreach (HexData otherHexData in otherGrid.GetHexesInRange(currentWorldPos, connectionRange + 1f))
             {
-                if (!otherHexData.GetIsWalkable()) continue;
-                if (!otherHexData.GetIsClimbable()) continue;
-                if (otherHexData.GetIsOccupied()) continue;
+                if (!otherHexData.IsWalkable) continue;
+                if (!otherHexData.IsClimbable) continue;
+                if (otherHexData.IsOccupied) continue;
                 
                 // 1. Get the top surface position
                 Vector3 checkPos = currentNode.GridBaseReference.GetHexTopSurfacePosition(otherHexData.GridCoordinates, otherHexData.Height);

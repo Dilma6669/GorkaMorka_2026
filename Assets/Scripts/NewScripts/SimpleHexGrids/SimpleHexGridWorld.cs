@@ -82,9 +82,12 @@ public class SimpleHexGridWorld : SimpleHexGridBase
                     Vector2Int coords = new Vector2Int(q, r);
                     float offsetX = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 10000f;
                     float offsetY = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 20000f;
-                    bool isRocky;
                     float finalHeight = _hexGeneratorTerrain.GenerateHeight(coords.x + offsetX, coords.y + offsetY);
-                    HexData hex = new HexData(coords, finalHeight + baseHeight, true, true, false);
+                    HexData hex = new HexData(coords, finalHeight + baseHeight)
+                    {
+                        IsClimbable = true
+                    };
+
                     HexagonsInGrid[coords] = hex;
                 }
             }

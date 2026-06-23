@@ -84,9 +84,9 @@ public class HexGridVisualizerInteroior : HexGridVisualizerBase
             if (visualTile != null)
             {
                 visualTile.Initialize(_targetGridBase, coords, hexDataPair.Value.Height,
-                    hexDataPair.Value.GetIsWalkable(),
-                    hexDataPair.Value.GetIsClimbable(), hexDataPair.Value.GetIsOccupied(),
-                    hexDataPair.Value.GetIsCommandSeat());
+                    hexDataPair.Value.IsWalkable,
+                    hexDataPair.Value.IsClimbable, hexDataPair.Value.IsOccupied,
+                    hexDataPair.Value.IsCommandSeat);
                 visualTiles.Add(coords, visualTile); // Store the reference
             }
             else
@@ -94,25 +94,25 @@ public class HexGridVisualizerInteroior : HexGridVisualizerBase
                 //  Debug.LogWarning($"HexGridVisualizer: Hex Prefab '{hexPrefab.name}' is missing a HexVisualTile component! Cannot control its visuals.", hexPrefab);
             }
 
-            if (!hexDataPair.Value.GetIsWalkable())
+            if (!hexDataPair.Value.IsWalkable)
             {
                 visualTile.ColourLocked = false; // Ensure we can change it
                 visualTile.SetBaseColor(unwalkableColor);
                 visualTile.ColourLocked = true;
             }
-            else if (hexDataPair.Value.GetIsClimbable())
+            else if (hexDataPair.Value.IsClimbable)
             {
                 visualTile.ColourLocked = false;
                 visualTile.SetBaseColor(climbableColor);
                 // visualTile.ColourLocked = true;
             }
-            else if (hexDataPair.Value.GetIsOccupied())
+            else if (hexDataPair.Value.IsOccupied)
             {
                 // visualTile.ColourLocked = false;
                 visualTile.SetBaseColor(occupiedColour);
                 //visualTile.ColourLocked = true;
             }
-            else if (hexDataPair.Value.GetIsCommandSeat())
+            else if (hexDataPair.Value.IsCommandSeat)
             {
                 // visualTile.ColourLocked = false;
                 visualTile.SetBaseColor(commandSeatColour);

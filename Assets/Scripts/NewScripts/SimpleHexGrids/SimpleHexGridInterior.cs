@@ -72,20 +72,17 @@ public class SimpleHexGridInterior : SimpleHexGridBase
                 {
                     continue; // Skips adding this coordinate to the dictionary
                 }
-                
-                // Use the new tile properties
-                float hexHeight = tile.Height * activeMapSettingsBase.singleHexHeightAdjustment;
-                bool isWalkable = tile.IsWalkable;
-                bool isClimbable = tile.IsClimbable;
-                bool isCommandSeat = tile.IsCommandSeat;
-
-                // Only create the hex if it's 'walkable' or has a type (or keep it if you want to allow gaps)
-                // If you want to skip empty tiles, check for a 'none' state here.
             
                 Vector2Int hexCoords = new Vector2Int(q, r - rowOffset);
-            
+                float hexHeight = tile.Height * activeMapSettingsBase.singleHexHeightAdjustment;
+                
                 // Pass the data to your HexData constructor
-                HexagonsInGrid.Add(hexCoords, new HexData(hexCoords, hexHeight, isWalkable, isClimbable, isCommandSeat));
+                HexagonsInGrid.Add(hexCoords, new HexData(hexCoords,hexHeight)
+                {
+                    IsWalkable = tile.IsWalkable,
+                    IsClimbable = tile.IsClimbable,
+                    IsCommandSeat = tile.IsCommandSeat
+                });
                 Debug.Log($"Row(q): {q} | Col(r): {r} | Calculated Offset: {rowOffset} | Final Coords: {q}, {r - rowOffset}");
             }
         }
@@ -115,7 +112,9 @@ public class SimpleHexGridInterior : SimpleHexGridBase
                 // Now, GetHexWorldPosition requires the height.
                 Vector3 worldPosition = GetHexWorldPosition(gridCoords, 0);
                 
-                HexagonsInGrid.Add(gridCoords, new HexData(gridCoords,0, true, true, false));
+                HexagonsInGrid.Add(gridCoords, new HexData(gridCoords,0){
+                    IsClimbable = true
+                });
             }
         }
         

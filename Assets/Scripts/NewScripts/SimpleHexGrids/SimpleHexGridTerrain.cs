@@ -88,7 +88,11 @@ public class SimpleHexGridTerrain : SimpleHexGridBase
                     float offsetY = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 20000f;
                     bool isRocky;
                     float finalHeight = _hexGeneratorTerrain.GenerateHeight(coords.x + offsetX, coords.y + offsetY);
-                    HexData hex = new HexData(coords, finalHeight + baseHeight, true, true, false);
+                    HexData hex = new HexData(coords, finalHeight + baseHeight)
+                    {
+                        IsClimbable = true
+                    };
+                    
                     HexagonsInGrid[coords] = hex;
                 }
             }

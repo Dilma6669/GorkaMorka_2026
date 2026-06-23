@@ -63,8 +63,8 @@ public class PopulaterTerrain : MonoBehaviour
         {
             if (simpleHexGridTerrain.HexagonsInGrid.TryGetValue(update.key, out HexData hexData))
             {
-                hexData.SetIsOccupied(true);
-                hexData.SetOccupier(update.obj.name);
+                hexData.IsOccupied = true;
+                hexData.HexOccupier = update.obj.name;
                 simpleHexGridTerrain.HexagonsInGrid[update.key] = hexData;
             }
         }
