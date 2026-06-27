@@ -938,7 +938,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1284890846}
   - component: {fileID: 1284890853}
-  - component: {fileID: 1284890854}
   - component: {fileID: 1284890847}
   - component: {fileID: 1284890848}
   - component: {fileID: 1284890849}
@@ -1093,10 +1092,18 @@ MonoBehaviour:
   startingLevel: 5
   currentLevel: 0
   _masterSeed: 99
-  CurrentGalaxyCoords: {x: 0, y: 0}
-  CurrentSystemCoords: {x: 0, y: 0}
-  CurrentWorldCoords: {x: 0, y: 0}
-  CurrentTerrainCoords: {x: 0, y: 0}
+  lastJumpedGalaxyCoords:
+    isSet: 0
+    coords: {x: 0, y: 0}
+  lastJumpedSystemCoords:
+    isSet: 0
+    coords: {x: 0, y: 0}
+  lastJumpedWorldCoords:
+    isSet: 0
+    coords: {x: 0, y: 0}
+  lastJumpedTerrainCoords:
+    isSet: 0
+    coords: {x: 0, y: 0}
   levels:
   - type: 2
     levelRoot: {fileID: 331045504827902750}
@@ -1106,18 +1113,6 @@ MonoBehaviour:
     levelRoot: {fileID: 818372194}
   - type: 5
     levelRoot: {fileID: 912065775}
---- !u!114 &1284890854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1284890845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9393a991f40d46a08c144a9d64023806, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1284890855
 MonoBehaviour:
   m_ObjectHideFlags: 0

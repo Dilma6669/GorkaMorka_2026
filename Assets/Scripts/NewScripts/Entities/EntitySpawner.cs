@@ -209,7 +209,12 @@ public class EntitySpawner : MonoBehaviour
         
         entityData.SetLevelCoords(new LevelPositionPair()
         {
-            level = HexGridManager.GridType.Terrain,
+            level = HexGridManager.GridType.Galaxy,
+            coords = Vector2Int.zero
+        });
+        entityData.SetLevelCoords(new LevelPositionPair()
+        {
+            level = HexGridManager.GridType.System,
             coords = null
         });
         entityData.SetLevelCoords(new LevelPositionPair()
@@ -219,13 +224,29 @@ public class EntitySpawner : MonoBehaviour
         });
         entityData.SetLevelCoords(new LevelPositionPair()
         {
+            level = HexGridManager.GridType.Terrain,
+            coords = null
+        });
+        
+        entityData.SetLastJumpLevelCoords(new LevelPositionPair()
+        {
+            level = HexGridManager.GridType.Galaxy,
+            coords = Vector2Int.zero
+        });
+        entityData.SetLastJumpLevelCoords(new LevelPositionPair()
+        {
             level = HexGridManager.GridType.System,
             coords = null
         });
-        entityData.SetLevelCoords(new LevelPositionPair()
+        entityData.SetLastJumpLevelCoords(new LevelPositionPair()
         {
-            level = HexGridManager.GridType.Galaxy,
-            coords = gameLevelManager.GetGlobalGalaxyCoords()
+            level = HexGridManager.GridType.World,
+            coords = null
+        });
+        entityData.SetLastJumpLevelCoords(new LevelPositionPair()
+        {
+            level = HexGridManager.GridType.Terrain,
+            coords = null
         });
 
         entityData.entityGUID = DataManager.RegisterData(entityData);

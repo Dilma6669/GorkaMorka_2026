@@ -30,9 +30,10 @@ public class GameLevelManager : MonoBehaviour
     [SerializeField] private NullableVector2Int lastJumpedWorldCoords;
     [SerializeField] private NullableVector2Int lastJumpedTerrainCoords;
 
-// Getters
-    public Vector2Int? GetGlobalGalaxyCoords() =>
-        lastJumpedGalaxyCoords.isSet ? (Vector2Int?)lastJumpedGalaxyCoords.coords : null;
+    public Vector2Int? GetGlobalGalaxyCoords()
+    {
+        return lastJumpedGalaxyCoords.isSet ? (Vector2Int?)lastJumpedGalaxyCoords.coords : null;
+    }
 
     public Vector2Int? GetGlobalSystemCoords() =>
         lastJumpedSystemCoords.isSet ? (Vector2Int?)lastJumpedSystemCoords.coords : null;
@@ -50,18 +51,22 @@ public class GameLevelManager : MonoBehaviour
         coords = entityData.GetLastJumpLevelCoords(HexGridManager.GridType.Galaxy);
         lastJumpedGalaxyCoords.isSet = coords.HasValue;
         if (coords.HasValue) lastJumpedGalaxyCoords.coords = coords.Value;
+        //Debug.Log($"Setting lastJumpedGalaxyCoords.coords = {lastJumpedGalaxyCoords.coords} | coords.HasValue = {coords.HasValue}");
 
         coords = entityData.GetLastJumpLevelCoords(HexGridManager.GridType.System);
         lastJumpedSystemCoords.isSet = coords.HasValue;
         if (coords.HasValue) lastJumpedSystemCoords.coords = coords.Value;
+        //Debug.Log($"Setting lastJumpedSystemCoords.coords = {lastJumpedSystemCoords.coords} | coords.HasValue = {coords.HasValue}");
 
         coords = entityData.GetLastJumpLevelCoords(HexGridManager.GridType.World);
         lastJumpedWorldCoords.isSet = coords.HasValue;
         if (coords.HasValue) lastJumpedWorldCoords.coords = coords.Value;
+        //Debug.Log($"Setting lastJumpedWorldCoords.coords = {lastJumpedWorldCoords.coords} | coords.HasValue = {coords.HasValue}");
 
         coords = entityData.GetLastJumpLevelCoords(HexGridManager.GridType.Terrain);
         lastJumpedTerrainCoords.isSet = coords.HasValue;
         if (coords.HasValue) lastJumpedTerrainCoords.coords = coords.Value;
+        //Debug.Log($"Setting lastJumpedTerrainCoords.coords = {lastJumpedTerrainCoords.coords} | coords.HasValue = {coords.HasValue}");
     }
 
 
@@ -89,38 +94,13 @@ public class GameLevelManager : MonoBehaviour
         Random.InitState(MasterSeed);
 
         EntityData entityData = entitySpawner.CreateUnitDataOnActiveGrid();
-
-        entityData.SetLastJumpLevelCoords(new LevelPositionPair()
-        {
-            level = HexGridManager.GridType.Galaxy,
-            coords = null
-        });
-        entityData.SetLastJumpLevelCoords(new LevelPositionPair()
-        {
-            level = HexGridManager.GridType.System,
-            coords = null
-        });
-        entityData.SetLastJumpLevelCoords(new LevelPositionPair()
-        {
-            level = HexGridManager.GridType.World,
-            coords = null
-        });
-        entityData.SetLastJumpLevelCoords(new LevelPositionPair()
-        {
-            level = HexGridManager.GridType.Terrain,
-            coords = null
-        });
-
-
-        DataManager.UpdateData(entityData.entityGUID, entityData);
+        
         SetGlobalLastJumpedCoords(entityData);
 
-        int seed = GenerateSeed();
-
-        SwitchToLevel(startingLevel, seed);
+        SwitchToLevel(startingLevel);
     }
 
-    public void SwitchToLevel(HexGridManager.GridType targetLevel, int seed)
+    public void SwitchToLevel(HexGridManager.GridType targetLevel)
     {
         entitySpawner.DestroyAllActiveEntities();
         hexOverlayManager.ClearAll();
@@ -180,7 +160,7 @@ public class GameLevelManager : MonoBehaviour
                             });
                             entityData.SetLastJumpLevelCoords(new LevelPositionPair()
                             {
-                                level = HexGridManager.GridType.World,
+                                level = HexGridManager.GridType.Terrain,
                                 coords = null
                             });
                         }
@@ -203,7 +183,7 @@ public class GameLevelManager : MonoBehaviour
                             });
                             entityData.SetLastJumpLevelCoords(new LevelPositionPair()
                             {
-                                level = HexGridManager.GridType.World,
+                                level = HexGridManager.GridType.Terrain,
                                 coords = null
                             });
                         }
@@ -226,16 +206,18 @@ public class GameLevelManager : MonoBehaviour
                             });
                             entityData.SetLastJumpLevelCoords(new LevelPositionPair()
                             {
-                                level = HexGridManager.GridType.World,
+                                level = HexGridManager.GridType.Terrain,
                                 coords = EntityCommander.GetEntityInCommand().CurrentGridCoordinates
                             });
                         }
                         DataManager.UpdateData(entityData.entityGUID, entityData);
-                        SetGlobalLastJumpedCoords(entityData);
                     }
+                    SetGlobalLastJumpedCoords(entityData);
                 }
+                
             }
         }
+        
 
         
         EntityCommander.SetEntityToCommand(null);
@@ -255,7 +237,7 @@ public class GameLevelManager : MonoBehaviour
             }
         }
 
-        ActiveGrid.GridGUID = seed;
+        ActiveGrid.GridGUID = GenerateSeed();
         if (ActiveGrid.Populater != null)
         {
             ActiveGrid.Populater.ClearAll();
@@ -263,7 +245,7 @@ public class GameLevelManager : MonoBehaviour
         
         Debug.Log($"Switched to: {targetLevel}");
         
-        GenerateNewGridOnActiveGrid(seed);
+        GenerateNewGridOnActiveGrid(ActiveGrid.GridGUID);
     }
 
     public void GenerateNewGridOnActiveGrid(int newSeed)
@@ -289,8 +271,8 @@ public class GameLevelManager : MonoBehaviour
         
         // Use the entity's current location to jump
         HexGridManager.GridType childLevel = ActiveGrid.GridType - 1;
-        int seed = GenerateSeed();
-        SwitchToLevel(childLevel, seed);
+
+        SwitchToLevel(childLevel);
     }
 
     [ContextMenu("Move up level")]
@@ -302,12 +284,17 @@ public class GameLevelManager : MonoBehaviour
         HexGridManager.GridType parentLevel = ActiveGrid.GridType + 1;
         
         int seed = GenerateSeed();
-        SwitchToLevel(parentLevel, seed);
+        SwitchToLevel(parentLevel);
     }
     
     public int GenerateSeed()
     {
         string seedString = MasterSeed.ToString();
+
+        Debug.Log($"fuck GetGlobalGalaxyCoords() = {GetGlobalGalaxyCoords()}");
+        Debug.Log($"fuck GetGlobalSystemCoords() = {GetGlobalSystemCoords()}");
+        Debug.Log($"fuck GetGlobalWorldCoords() = {GetGlobalWorldCoords()}");
+        Debug.Log($"fuck GetGlobalTerrainCoords() = {GetGlobalTerrainCoords()}");
 
         // The null checks are already handled by your Getters
         if (GetGlobalGalaxyCoords() is Vector2Int g) seedString += $"|G:{g.x},{g.y}";
@@ -315,6 +302,8 @@ public class GameLevelManager : MonoBehaviour
         if (GetGlobalWorldCoords() is Vector2Int w) seedString += $"|W:{w.x},{w.y}";
         if (GetGlobalTerrainCoords() is Vector2Int t) seedString += $"|T:{t.x},{t.y}";
 
+        Debug.Log($"GENERATOR: Created Seed = {seedString}");
+        
         return seedString.GetHashCode();
     }
 }
