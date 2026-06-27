@@ -6,17 +6,26 @@ using Random = UnityEngine.Random;
 
 public class GameLevelManager : MonoBehaviour
 {
+    public static GameLevelManager Instance { get; private set; }
+    
     private EntitySpawner entitySpawner;
     private HexOverlayManager hexOverlayManager;
-    public HexGridManager.GridType startingLevel;
-
+    
     public static SimpleHexGridBase ActiveGrid { get; private set; }
-
-    public HexGridManager.GridType currentLevel;
-    public static HexGridManager.GridType CurrentLevel;
-
+    
     // The Inspector will see this field
     [SerializeField] private int _masterSeed = 99;
+    
+    [Header("Skybox materials")]
+    public Material galaxySkybox;
+    public Material systemSkybox;
+    public Material worldSkybox;
+    public Material terrainSkybox;
+    
+    [Header("Level settings")]
+    public HexGridManager.GridType startingLevel;
+    public HexGridManager.GridType currentLevel;
+    public static HexGridManager.GridType CurrentLevel;
 
     // This is the static property the rest of your code uses
     public static int MasterSeed
@@ -25,15 +34,18 @@ public class GameLevelManager : MonoBehaviour
         private set => Instance._masterSeed = value;
     }
 
+    [Header("Portal settings")]
     [SerializeField] private NullableVector2Int lastJumpedGalaxyCoords;
     [SerializeField] private NullableVector2Int lastJumpedSystemCoords;
     [SerializeField] private NullableVector2Int lastJumpedWorldCoords;
     [SerializeField] private NullableVector2Int lastJumpedTerrainCoords;
+    
+    [Header("Level gameObjects")]
+    public List<LevelData> levels;
+    
 
-    public Vector2Int? GetGlobalGalaxyCoords()
-    {
-        return lastJumpedGalaxyCoords.isSet ? (Vector2Int?)lastJumpedGalaxyCoords.coords : null;
-    }
+    public Vector2Int? GetGlobalGalaxyCoords() =>
+        lastJumpedGalaxyCoords.isSet ? (Vector2Int?)lastJumpedGalaxyCoords.coords : null;
 
     public Vector2Int? GetGlobalSystemCoords() =>
         lastJumpedSystemCoords.isSet ? (Vector2Int?)lastJumpedSystemCoords.coords : null;
@@ -68,19 +80,7 @@ public class GameLevelManager : MonoBehaviour
         if (coords.HasValue) lastJumpedTerrainCoords.coords = coords.Value;
         //Debug.Log($"Setting lastJumpedTerrainCoords.coords = {lastJumpedTerrainCoords.coords} | coords.HasValue = {coords.HasValue}");
     }
-
-
-    [System.Serializable]
-    public struct LevelData
-    {
-        public HexGridManager.GridType type;
-        public GameObject levelRoot;
-    }
-
-    public List<LevelData> levels;
-
-    public static GameLevelManager Instance { get; private set; }
-
+    
     private void Awake()
     {
         Instance = this;
@@ -244,6 +244,8 @@ public class GameLevelManager : MonoBehaviour
         }
         
         Debug.Log($"Switched to: {targetLevel}");
+
+        ApplySkybox(targetLevel);
         
         GenerateNewGridOnActiveGrid(ActiveGrid.GridGUID);
     }
@@ -306,7 +308,42 @@ public class GameLevelManager : MonoBehaviour
         
         return seedString.GetHashCode();
     }
+    
+    public void ApplySkybox(HexGridManager.GridType levelType)
+    {
+        switch (levelType)
+        {
+            case HexGridManager.GridType.None:
+            case HexGridManager.GridType.Interior:
+                return;
+            case HexGridManager.GridType.Galaxy:
+                RenderSettings.skybox = galaxySkybox;
+                break;
+            case HexGridManager.GridType.System:
+                RenderSettings.skybox = systemSkybox;
+                break;
+            case HexGridManager.GridType.World:
+                RenderSettings.skybox = worldSkybox;
+                break;
+            case HexGridManager.GridType.Terrain:
+                RenderSettings.skybox = terrainSkybox;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(levelType), levelType, null);
+        }
+        
+        // This forces Unity to refresh the ambient light based on the new skybox
+        DynamicGI.UpdateEnvironment();
+    }
 }
+
+[System.Serializable]
+public struct LevelData
+{
+    public HexGridManager.GridType type;
+    public GameObject levelRoot;
+}
+
 
 [System.Serializable]
 public struct NullableVector2Int
