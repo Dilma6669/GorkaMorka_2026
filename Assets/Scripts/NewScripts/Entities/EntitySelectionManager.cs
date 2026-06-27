@@ -9,6 +9,7 @@ using UnityEngine.Serialization; // Required for List
 public class EntitySelectionManager : MonoBehaviour
 {
     private GameLevelManager gameLevelManager;
+    private EntitySpawner entitySpawner;
     
     [Header("Raycast Layers")]
     [Tooltip("Layer(s) containing your Unit GameObjects. Crucial for detecting unit clicks.")]
@@ -49,6 +50,7 @@ public class EntitySelectionManager : MonoBehaviour
         gameLevelManager = GetComponent<GameLevelManager>();
         hexOverlayManager = GetComponent<HexOverlayManager>();
         pathfinder = GetComponent<MultiGridPathfinder>();
+        entitySpawner = GetComponent<EntitySpawner>();
         camera = Camera.main;
     }
 
@@ -58,7 +60,7 @@ public class EntitySelectionManager : MonoBehaviour
     
         // If we have a commanded entity, but its grid is no longer active
         // OR the entity is null, we must wipe the selection.
-        if (commanded != null && commanded.currentGridBase != gameLevelManager.ActiveGrid)
+        if (commanded != null && commanded.currentGridBase != GameLevelManager.ActiveGrid)
         {
             EntityCommander.SetEntityToCommand(null);
             return; 
@@ -277,10 +279,10 @@ public class EntitySelectionManager : MonoBehaviour
         // --- NEW: Physics-less Fallback for Ground Grids ---
         if (closetHexSelected == null)
         {
-            if (gameLevelManager.ActiveGrid != null && gameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+            if (GameLevelManager.ActiveGrid != null && GameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 groundHexData = data;
-                groundGridSelected = gameLevelManager.ActiveGrid;
+                groundGridSelected = GameLevelManager.ActiveGrid;
             }
         }
         
@@ -470,11 +472,11 @@ public class EntitySelectionManager : MonoBehaviour
         // 2. If NO specific HexTile collider was hit, use the Math fallback
         if (closetHexHovered == null)
         {
-            if (gameLevelManager.ActiveGrid != null 
-                && gameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+            if (GameLevelManager.ActiveGrid != null 
+                && GameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
             {
                 _groundHexDataHovered = data;
-                _hoveredGroundGrid = gameLevelManager.ActiveGrid;
+                _hoveredGroundGrid = GameLevelManager.ActiveGrid;
             }
         }
 
@@ -665,16 +667,5 @@ public class EntitySelectionManager : MonoBehaviour
             SelectHex(coords, grid);
         }
     }
-    
-    [ContextMenu("Try Jump Through Portal")]
-    public void TryJumpThroughPortal()
-    {
-        Entity entity = EntityCommander.GetEntityInCommand();
-        if (entity == null) return;
-        
-        // Use the entity's current location to jump
-        LevelPortalManager.Instance.EnterPortal(entity.currentGridBase, entity.CurrentGridCoordinates);
-    }
-    
-    
+
 }

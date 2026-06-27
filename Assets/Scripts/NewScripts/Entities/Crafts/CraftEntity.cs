@@ -10,17 +10,6 @@ public class CraftEntity : Entity
     [SerializeField] private Entity Driver;
     
     CraftHeightController craftHeightController;
-
-    public override EntityData ExportData()
-    {
-        CraftData data = ScriptableObject.CreateInstance<CraftData>();
-        PopulateBaseData(data); // Fill name, health, etc.
-    
-        // Explicitly copy the unit-specific field
-        //data.isDriver = this.isDriver; 
-    
-        return data;
-    }
     
     private void Awake()
     {
@@ -56,6 +45,16 @@ public class CraftEntity : Entity
             newY, 
             hexSurfacePosition.z
         );
+        
+        if(DataManager.TryGetData(EntityGUID, out CraftData data))
+        {
+            data.SetLevelCoords(new LevelPositionPair()
+            {
+                level = gridBase.GridType,
+                coords = coords
+            });
+            DataManager.UpdateData(data.entityGUID, data);
+        }
     }
     
     public override void EntitySelected(bool isSelected)

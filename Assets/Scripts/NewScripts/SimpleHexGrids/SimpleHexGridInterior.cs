@@ -76,8 +76,9 @@ public class SimpleHexGridInterior : SimpleHexGridBase
                 Vector2Int hexCoords = new Vector2Int(q, r - rowOffset);
                 float hexHeight = tile.Height * activeMapSettingsBase.singleHexHeightAdjustment;
                 
-                // Pass the data to your HexData constructor
-                HexagonsInGrid.Add(hexCoords, new HexData(hexCoords,hexHeight)
+                // GridGUID: 0 - Interior, 1 - Terrain, 2 - World, 3 - System, 4 -Galaxy.
+                int GridGUID = 0;
+                HexagonsInGrid.Add(hexCoords, new HexData(GridGUID, hexCoords,hexHeight)
                 {
                     IsWalkable = tile.IsWalkable,
                     IsClimbable = tile.IsClimbable,
@@ -109,10 +110,10 @@ public class SimpleHexGridInterior : SimpleHexGridBase
             for (int r = r1; r <= r2; r++)
             {
                 Vector2Int gridCoords = new Vector2Int(q, r);
-                // Now, GetHexWorldPosition requires the height.
-                Vector3 worldPosition = GetHexWorldPosition(gridCoords, 0);
-                
-                HexagonsInGrid.Add(gridCoords, new HexData(gridCoords,0){
+         
+                // GridGUID: 0 - Interior, 1 - Terrain, 2 - World, 3 - System, 4 -Galaxy.
+                int GridGUID = 0;
+                HexagonsInGrid.Add(gridCoords, new HexData(GridGUID, gridCoords,0){
                     IsClimbable = true
                 });
             }

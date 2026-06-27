@@ -5,33 +5,41 @@ using UnityEngine;
 
 public class EntityManager
 {
-    private static Dictionary<string, Entity> entities = new Dictionary<string, Entity>();
+    private static Dictionary<string, Entity> globalEntitiesRegistry = new Dictionary<string, Entity>();
+    
 
-    public static string RegisterEntity(Entity entity)
+    public static void RegisterEntity(string dataGUID, Entity entity)
     {
-        // 2. Generate a real unique ID
-        string newGUID = entity.name + "_" +Guid.NewGuid();
-        entities[newGUID] = entity;
-        return newGUID; // Return it so the Entity knows its own ID
+        globalEntitiesRegistry[dataGUID] = entity;
     }
 
     public static void UnregisterEntity(string entityGUID)
     {
-        if (entities.ContainsKey(entityGUID))
+        if (globalEntitiesRegistry.ContainsKey(entityGUID))
         {
-            entities.Remove(entityGUID);
+            globalEntitiesRegistry.Remove(entityGUID);
         }
     }
 
     // 3. Proper Dictionary Look-up
     public static bool TryGetEntity(string entityGUID, out Entity entity)
     {
-        return entities.TryGetValue(entityGUID, out entity);
+        return globalEntitiesRegistry.TryGetValue(entityGUID, out entity);
     }
 
     // Accessor to check existence
     public static bool ContainsEntity(string entityGUID)
     {
-        return entities.ContainsKey(entityGUID);
+        return globalEntitiesRegistry.ContainsKey(entityGUID);
+    }
+    
+    public static Dictionary<string, Entity> GetAllEntities()
+    {
+        return globalEntitiesRegistry;
+    }
+
+    public static void ClearAll()
+    {
+        globalEntitiesRegistry.Clear();
     }
 }

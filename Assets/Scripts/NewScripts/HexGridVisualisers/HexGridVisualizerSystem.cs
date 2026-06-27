@@ -1,11 +1,13 @@
-﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class HexGridVisualizerTerrain : HexGridVisualizerBase
+public class HexGridVisualizerSystem : HexGridVisualizerBase
 {
-    private SimpleHexGridTerrain masterGrid;
+    private SimpleHexGridSystem masterGrid;
     private Dictionary<Vector2Int, bool> activeChunks = new Dictionary<Vector2Int, bool>();
 
+    private MaterialPropertyBlock propBlock;
+    
     [Header("GPU Landscape Settings")] 
     public Mesh highDetailMesh;
     public Mesh lowDetailMesh;
@@ -13,14 +15,12 @@ public class HexGridVisualizerTerrain : HexGridVisualizerBase
     public Material hexMaterial_LowRes;
     public float lodDistance = 200.0f;
 
-    private MaterialPropertyBlock propBlock;
-    
     private Camera camera;
     
     protected new void Awake()
     {
         base.Awake();
-        masterGrid = GetComponent<SimpleHexGridTerrain>();
+        masterGrid = GetComponent<SimpleHexGridSystem>();
         camera = Camera.main;
         propBlock = new MaterialPropertyBlock();
     }
@@ -33,6 +33,8 @@ public class HexGridVisualizerTerrain : HexGridVisualizerBase
     void Update()
     {
         Vector3 camPos = camera.transform.position;
+        // Seed the random generator with the MasterSeed for consistent results
+        Random.InitState(GameLevelManager.MasterSeed);
 
         foreach (var kvp in masterGrid.chunkVisualData)
         {
@@ -50,14 +52,15 @@ public class HexGridVisualizerTerrain : HexGridVisualizerBase
             }
         }
     }
-    
-    public void Clear()
-    {
-        activeChunks.Clear();
-    }
+
 
     public override void GenerateVisualGrid(SimpleHexGridBase gridBase)
     {
         // Data is now populated by the Master Grid during GeneratePhysicsProxy
+    }
+    
+    public void Clear()
+    {
+        activeChunks.Clear();
     }
 }

@@ -51,6 +51,8 @@ public class MultiGridPathfinder : MonoBehaviour
     public static float MaxRaycastPathDistance = 50.0f;
     public int MaxPathfindingNodeCount = 30;
     
+    private Dictionary<string, PathNode> _searchCache = new Dictionary<string, PathNode>();
+    
     public static MultiGridPathfinder Instance { get; private set; }
 
     private void Awake()
@@ -66,6 +68,8 @@ public class MultiGridPathfinder : MonoBehaviour
     /// <returns>A List of PathNodes representing the path, or null if no path is found.</returns>
     public List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
     {
+        _searchCache.Clear();
+        
         openSet = new List<PathNode> { startNode };
         closedSet = new HashSet<PathNode>();
 
@@ -332,19 +336,10 @@ public class MultiGridPathfinder : MonoBehaviour
             
             if (verticalDist <= maxVerticalDifference)
             {
-                if (currentWorldPos.y > neighbourWorldPos.y) // If jumping DOWN
+                if (currentNode.GridBaseReference.AllNodes.ContainsKey(coords))
                 {
-                    if (currentNode.GridBaseReference.AllNodes.TryGetValue(coords, out PathNode node))
-                    {
-                        neighbors.Add(node);
-                    }
-                }
-                else // If jumping UP or staying at the same height
-                {
-                    if (currentNode.GridBaseReference.AllNodes.TryGetValue(coords, out PathNode node))
-                    {
-                        neighbors.Add(node);
-                    } 
+                    // This is now LIGHTNING FAST because it hits the cache
+                    neighbors.Add(GetOrCreateNode(coords, currentNode.GridBaseReference));
                 }
             }
         }
@@ -352,107 +347,123 @@ public class MultiGridPathfinder : MonoBehaviour
         
         //******************************************************************************
         // --- 2. Inter-Grid Neighbors (JUMPING TO DIFFERENT GRID) ---
-        foreach (SimpleHexGridBase otherGrid in HexGridManager.Instance.GetAllGrids())
+        if (GameLevelManager.CurrentLevel == HexGridManager.GridType.Terrain)
         {
-            // Needs to be here coz This is meant for stop looking for nodes in the IntRA grid section
-            if (otherGrid == currentNode.GridBaseReference)
+            foreach (SimpleHexGridBase otherGrid in HexGridManager.Instance.GetAllGrids())
             {
-                continue;
-            }
-        
-            
-            // If its a vehicle we want to not allow the vehicle to pathfind over itself 
-            if (vehicleAlreadySelected != null)
-            {
-                if (vehicleAlreadySelected.InteriorGridBase == otherGrid)
+                // Needs to be here coz This is meant for stop looking for nodes in the IntRA grid section
+                if (otherGrid == currentNode.GridBaseReference)
                 {
                     continue;
                 }
-            }
-            
-            // --- Inside your loop ---
-            foreach (HexData otherHexData in otherGrid.GetHexesInRange(currentWorldPos, connectionRange + 1f))
-            {
-                if (!otherHexData.IsWalkable) continue;
-                if (!otherHexData.IsClimbable) continue;
-                if (otherHexData.IsOccupied) continue;
-                
-                // 1. Get the top surface position
-                Vector3 checkPos = currentNode.GridBaseReference.GetHexTopSurfacePosition(otherHexData.GridCoordinates, otherHexData.Height);
-                
-                Transform myTransform = EntityCommander.GetEntityInCommand().transform.root;
-            
-                // Instead of Physics.CheckSphere, use OverlapSphere to ignore self
-                Collider[] colliders = Physics.OverlapSphere(checkPos, 0.4f, obstacleLayer);
-            
-                bool isBlockedByOther = false;
-                foreach (var col in colliders)
+
+
+                // If its a vehicle we want to not allow the vehicle to pathfind over itself 
+                if (vehicleAlreadySelected != null)
                 {
-                    // FIX: Add a specific check for the vehicle's body AND its obstacle collider
-                    // If the hit collider belongs to our own vehicle/unit, ignore it!
-                    if (col.transform.root != myTransform)
+                    if (vehicleAlreadySelected.InteriorGridBase == otherGrid)
                     {
-                        // One final safety: ensure we aren't hitting our own child colliders
-                        if (!col.transform.IsChildOf(myTransform))
+                        continue;
+                    }
+                }
+
+                // --- Inside your loop ---
+                foreach (HexData otherHexData in otherGrid.GetHexesInRange(currentWorldPos, connectionRange + 1f))
+                {
+                    if (!otherHexData.IsWalkable) continue;
+                    if (!otherHexData.IsClimbable) continue;
+                    if (otherHexData.IsOccupied) continue;
+
+                    // 1. Get the top surface position
+                    Vector3 checkPos =
+                        currentNode.GridBaseReference.GetHexTopSurfacePosition(otherHexData.GridCoordinates,
+                            otherHexData.Height);
+
+                    Transform myTransform = EntityCommander.GetEntityInCommand().transform.root;
+
+                    // Instead of Physics.CheckSphere, use OverlapSphere to ignore self
+                    Collider[] colliders = Physics.OverlapSphere(checkPos, 0.4f, obstacleLayer);
+
+                    bool isBlockedByOther = false;
+                    foreach (var col in colliders)
+                    {
+                        // FIX: Add a specific check for the vehicle's body AND its obstacle collider
+                        // If the hit collider belongs to our own vehicle/unit, ignore it!
+                        if (col.transform.root != myTransform)
                         {
-                            isBlockedByOther = true;
-                            break;
+                            // One final safety: ensure we aren't hitting our own child colliders
+                            if (!col.transform.IsChildOf(myTransform))
+                            {
+                                isBlockedByOther = true;
+                                break;
+                            }
                         }
                     }
-                }
 
-                if (isBlockedByOther) continue;
-                
-                Vector3 currentSurfacePos = currentNode.GridBaseReference.GetHexTopSurfacePosition(currentNode.GridCoordinates, currentNode.GridBaseReference.GetHexData(currentNode.GridCoordinates).Height);
-                Vector3 otherSurfacePos = otherGrid.GetHexTopSurfacePosition(otherHexData.GridCoordinates, otherHexData.Height);
+                    if (isBlockedByOther) continue;
 
-                // Calculate distance
-                float horizontalDist = Vector2.Distance(
-                    new Vector2(currentSurfacePos.x, currentSurfacePos.z),
-                    new Vector2(otherSurfacePos.x, otherSurfacePos.z)
-                );
+                    Vector3 currentSurfacePos = currentNode.GridBaseReference.GetHexTopSurfacePosition(
+                        currentNode.GridCoordinates,
+                        currentNode.GridBaseReference.GetHexData(currentNode.GridCoordinates).Height);
+                    Vector3 otherSurfacePos =
+                        otherGrid.GetHexTopSurfacePosition(otherHexData.GridCoordinates, otherHexData.Height);
 
-                if (horizontalDist > connectionRange) continue;
+                    // Calculate distance
+                    float horizontalDist = Vector2.Distance(
+                        new Vector2(currentSurfacePos.x, currentSurfacePos.z),
+                        new Vector2(otherSurfacePos.x, otherSurfacePos.z)
+                    );
 
-                // Calculate TRUE height difference based on top surfaces
-                float heightDiff = currentSurfacePos.y - otherSurfacePos.y;
+                    if (horizontalDist > connectionRange) continue;
 
-                // Determine if the jump is valid
-                bool canJump = false;
-                if (horizontalDist <= connectionRange)
-                {
-                    if (heightDiff < 0) // We are jumping UP
+                    // Calculate TRUE height difference based on top surfaces
+                    float heightDiff = currentSurfacePos.y - otherSurfacePos.y;
+
+                    // Determine if the jump is valid
+                    bool canJump = false;
+                    if (horizontalDist <= connectionRange)
                     {
-                        if (Mathf.Abs(heightDiff) <= maxClimbHeight) canJump = true;
+                        if (heightDiff < 0) // We are jumping UP
+                        {
+                            if (Mathf.Abs(heightDiff) <= maxClimbHeight) canJump = true;
+                        }
+                        else // We are jumping DOWN (heightDiff is positive or zero)
+                        {
+                            if (heightDiff <= maxDropHeight) canJump = true;
+                        }
                     }
-                    else // We are jumping DOWN (heightDiff is positive or zero)
-                    {
-                        if (heightDiff <= maxDropHeight) canJump = true;
-                    }
-                }
 
-                if (canJump)
-                {if (otherGrid.AllNodes.TryGetValue(otherHexData.GridCoordinates, out PathNode node))
+                    if (canJump)
                     {
-                        neighbors.Add(node);
+                        if (currentNode.GridBaseReference.AllNodes.ContainsKey(otherHexData.GridCoordinates))
+                        {
+                            // This is now LIGHTNING FAST because it hits the cache
+                            neighbors.Add(GetOrCreateNode(otherHexData.GridCoordinates, currentNode.GridBaseReference));
+                        }
+                    }
+                    else
+                    {
+                        // ADD THIS:
+                        //  Debug.Log($"Pathfinder rejected jump: Grid={otherGrid.name}, Dist={horizontalDist}, HeightDiff={heightDiff}");
                     }
                 }
-                else 
-                {
-                    // ADD THIS:
-                  //  Debug.Log($"Pathfinder rejected jump: Grid={otherGrid.name}, Dist={horizontalDist}, HeightDiff={heightDiff}");
-                }
+                //******************************************************************************
             }
-            //******************************************************************************
         }
+
         return neighbors;
     }
     
     private PathNode GetOrCreateNode(Vector2Int coords, SimpleHexGridBase grid)
     {
-        // If you have a way to get existing nodes, do it here.
-        // Otherwise, this is the MINIMUM required to be "safe"
-        return new PathNode(coords, grid); 
+        string key = $"{grid.GetInstanceID()}_{coords.x}_{coords.y}";
+    
+        if (!_searchCache.TryGetValue(key, out PathNode node))
+        {
+            node = new PathNode(coords, grid);
+            _searchCache[key] = node;
+        }
+        return node;
     }
     
 

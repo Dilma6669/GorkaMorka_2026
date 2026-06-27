@@ -6,6 +6,7 @@ using UnityEngine; // Required for Vector2Int
 // WorldPosition is now retrieved dynamically from the SimpleHexGrid.
 public struct HexData
 {
+    public int HexGUID { get; set; }
     public Vector2Int GridCoordinates { get; set; }
     public float Height { get; set; }
     
@@ -17,11 +18,11 @@ public struct HexData
     
     public int SeedForChildLevel { get; set; }
     public HexGridManager.GridType DestinationLevelType { get; set; }
-    public bool IsPortal => DestinationLevelType != HexGridManager.GridType.None;
 
     // This constructor handles the basic coordinate/height data
-    public HexData(Vector2Int gridCoords, float height)
+    public HexData(int Level, Vector2Int gridCoords, float height)
     {
+        HexGUID = int.Parse($"{Level}{Random.Range(0, 999999)}");
         // 1. Set the mandatory fields
         GridCoordinates = gridCoords;
         Height = height;

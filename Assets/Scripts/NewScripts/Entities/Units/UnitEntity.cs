@@ -5,19 +5,19 @@ public class UnitEntity : Entity
 {
     public bool isDriver = false;
 
-    public override EntityData ExportData()
-    {
-        UnitData data = ScriptableObject.CreateInstance<UnitData>();
-        PopulateBaseData(data); // Fill name, health, etc.
-    
-        // Explicitly copy the unit-specific field
-        data.isDriver = this.isDriver; 
-    
-        return data;
-    }
-    
-    private void Awake()
-    {
-        
-    }
+    // public override void SnapToHex(SimpleHexGridBase gridBase, Vector2Int coords)
+    // {
+    //     base.SnapToHex(gridBase, coords);
+    //     
+    //     if(DataManager.TryGetData(EntityGUID, out UnitData data))
+    //     {
+    //         data.SetLevelCoords(new LevelPositionPair()
+    //         {
+    //             level = gridBase.GridType,
+    //             coords = coords
+    //         });
+    //         Debug.Log($"fuck entityData: {data.entityGUID}");
+    //         DataManager.UpdateData(data.entityGUID, data);
+    //     }
+    // }
 }

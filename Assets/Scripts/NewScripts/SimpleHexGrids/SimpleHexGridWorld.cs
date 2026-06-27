@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 public class SimpleHexGridWorld : SimpleHexGridBase
 {
-    private HexGeneratorWorld _hexGeneratorTerrain;
+    private HexGeneratorWorld _hexGeneratorWorld;
     private HexGridVisualizerWorld visualizer; // Made public for access
-    private PopulaterWorld _populaterTerrain;
     
     public MapSettingsWorld TerrainSettings => activeMapSettingsBase as MapSettingsWorld;
 
@@ -38,9 +37,9 @@ public class SimpleHexGridWorld : SimpleHexGridBase
     private new void Awake()
     {
         base.Awake();
-        _populaterTerrain = GetComponent<PopulaterWorld>();
+        Populater = GetComponent<PopulaterWorld>();
         visualizer = GetComponent<HexGridVisualizerWorld>();
-        _hexGeneratorTerrain = GetComponent<HexGeneratorWorld>();
+        _hexGeneratorWorld = GetComponent<HexGeneratorWorld>();
         camera = Camera.main;
 
         activeMapSettingsBase = activeMapSettingsBase as MapSettingsWorld;
@@ -80,19 +79,18 @@ public class SimpleHexGridWorld : SimpleHexGridBase
                 if (Mathf.Abs(q + r) <= activeMapSettingsBase.gridRadius)
                 {
                     Vector2Int coords = new Vector2Int(q, r);
-                    float offsetX = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 10000f;
-                    float offsetY = (_hexGeneratorTerrain.seed * _hexGeneratorTerrain.seedOffsetMultiplier) + 20000f;
-                    float finalHeight = _hexGeneratorTerrain.GenerateHeight(coords.x + offsetX, coords.y + offsetY);
-                    HexData hex = new HexData(coords, finalHeight + baseHeight)
+                    float offsetX = (_hexGeneratorWorld.seed * _hexGeneratorWorld.seedOffsetMultiplier) + 10000f;
+                    float offsetY = (_hexGeneratorWorld.seed * _hexGeneratorWorld.seedOffsetMultiplier) + 20000f;
+                    float finalHeight = _hexGeneratorWorld.GenerateHeight(coords.x + offsetX, coords.y + offsetY);
+                    // GridGUID: 0 - Interior, 1 - Terrain, 2 - World, 3 - System, 4 -Galaxy.
+                    int GridGUID = 2;
+                    HexData hex = new HexData(GridGUID, coords, finalHeight + baseHeight)
                     {
                         IsClimbable = true
                     };
                     
                     hex.DestinationLevelType = HexGridManager.GridType.Terrain;
                     hex.SeedForChildLevel = Random.Range(0, 999999);
-        
-                    // Register it immediately so the LevelPortalManager knows it exists
-                    LevelPortalManager.Instance.RegisterPortal(this, coords, hex.SeedForChildLevel);
 
                     HexagonsInGrid[coords] = hex;
                 }
@@ -102,22 +100,15 @@ public class SimpleHexGridWorld : SimpleHexGridBase
         GeneratePhysicsProxy();
         visualizer.GenerateVisualGrid(this);
         RegisterGridToSystem(true);
-        _populaterTerrain.PopulateWorld(_hexGeneratorTerrain.seed);
-        
+        if (Populater != null)
+        {
+            Populater.PopulateWorld(_hexGeneratorWorld.seed);
+        }
+
         AllNodes.Clear();
         foreach (var kvp in HexagonsInGrid)
         {
             AllNodes[kvp.Key] = new PathNode(kvp.Key, this);
-        }
-        
-        foreach (var hex in HexagonsInGrid.Values)
-        {
-            if (hex.IsPortal) 
-            {
-                // If the portal doesn't have a seed yet, assign one and register it
-                int portalSeed = Random.Range(0, 999999); 
-                LevelPortalManager.Instance.RegisterPortal(this, hex.GridCoordinates, portalSeed);
-            }
         }
     }
     
@@ -380,7 +371,10 @@ public class SimpleHexGridWorld : SimpleHexGridBase
                 if (col.enabled != targetVisibility)
                 {
                     col.enabled = targetVisibility;
-                    _populaterTerrain.SetVisibilityOfObjectsInChunk(chunk.Key, targetVisibility);
+                    if (Populater != null)
+                    {
+                        Populater.SetVisibilityOfObjectsInChunk(chunk.Key, targetVisibility);
+                    }
                 }
             }
         }
@@ -398,7 +392,7 @@ public class SimpleHexGridWorld : SimpleHexGridBase
     public override void SetSeed(int newSeed)
     {
         // Ensure your generator updates its internal seed value
-        _hexGeneratorTerrain.seed = newSeed;
+        _hexGeneratorWorld.seed = newSeed;
     }
     
     public override void ResetGrid()
@@ -413,7 +407,9 @@ public class SimpleHexGridWorld : SimpleHexGridBase
     
         visualizer.Clear();
         
-        // 3. Clear existing objects
-        _populaterTerrain.ClearAll();
+        if (Populater != null)
+        {
+            Populater.ClearAll();
+        }
     }
 }

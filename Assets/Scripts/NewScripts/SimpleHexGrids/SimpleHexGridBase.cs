@@ -8,11 +8,15 @@ using UnityEngine.Serialization;
 // Provides access to hex data and intra-grid neighbors. Generates a circular grid pattern.
 public abstract class SimpleHexGridBase : MonoBehaviour
 {
+    public int GridGUID;
+    
     public MapSettingsBase activeMapSettingsBase;
     
     [HideInInspector]
     public Entity gridEntity;
-
+    [HideInInspector]
+    public PopulaterBase Populater;
+    
     [Header("Grid Settings")] 
     public HexGridManager.GridType GridType;
 
@@ -42,6 +46,8 @@ public abstract class SimpleHexGridBase : MonoBehaviour
 
     protected void Awake()
     {
+        Populater = GetComponent<PopulaterBase>();
+        
         gridEntity = GetComponent<Entity>() ??
                  GetComponentInParent<Entity>() ??
                  GetComponentInChildren<Entity>();
@@ -168,7 +174,6 @@ public abstract class SimpleHexGridBase : MonoBehaviour
             Vector2Int neighborCoords = new Vector2Int(coords.x + qNeighbors[i], coords.y + rNeighbors[i]);
             if (!HexagonsInGrid.ContainsKey(neighborCoords))
             {
-              //  Debug.Log("fuck edge hexagon for grid = " + gameObject.name);
                 return true;
             }
         }

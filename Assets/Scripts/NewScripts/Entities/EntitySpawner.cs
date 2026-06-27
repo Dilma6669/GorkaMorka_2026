@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -51,43 +52,30 @@ public class EntitySpawner : MonoBehaviour
             Debug.LogError("UnitSpawner: Unit Prefab is not assigned!");
             return null;
         }
-
-        if (unitData.spawnGridBase == null)
-        {
-            unitData.spawnGridBase = gameLevelManager.ActiveGrid;
-        }
-
-        if (!unitData.spawnGridBase.IsValidCoordinates(unitData.spawnCoordinates))
-        {
-            Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {unitData.spawnCoordinates} are invalid on grid '{unitData.spawnGridBase.name}'.");
-            return null;
-        }
         
         // This rotates the car to face the positive X-axis upon creation.
         Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
         
-        
         float targetHeight = 0f;
-        if (unitData.spawnGridBase is SimpleHexGridTerrain groundGrid)
+        if (GameLevelManager.ActiveGrid is SimpleHexGridTerrain groundGrid)
         {
-            targetHeight = groundGrid.GetHexHeight(unitData.spawnCoordinates);
+            targetHeight = groundGrid.GetHexHeight((Vector2Int)unitData.GetLevelCoords(GameLevelManager.CurrentLevel)!);
         }
         else 
         {
             // Fallback for non-ground grids
-            targetHeight = unitData.spawnGridBase.HexagonsInGrid[unitData.spawnCoordinates].Height;
+            targetHeight = GameLevelManager.ActiveGrid.HexagonsInGrid[(Vector2Int)unitData.GetLevelCoords(GameLevelManager.CurrentLevel)!].Height;
         }
 
         // Now calculate position with the REAL height
-        Vector3 spawnPos = unitData.spawnGridBase.GetHexWorldPosition(unitData.spawnCoordinates, targetHeight);
+        Vector3 spawnPos = GameLevelManager.ActiveGrid.GetHexWorldPosition((Vector2Int)unitData.GetLevelCoords(GameLevelManager.CurrentLevel)!, targetHeight);
         
         
-        Debug.Log($"Spawning unit at: {unitData.spawnCoordinates} | Height: {targetHeight} | WorldPos: {spawnPos}");
+        Debug.Log($"Spawning unit at: {unitData.GetLevelCoords(GameLevelManager.CurrentLevel)} | Height: {targetHeight} | WorldPos: {spawnPos}");
         
         GameObject spawnedGameObject = Instantiate(unitPrefab, spawnPos, rotationToMatchGridCreation);
         
-        // This might fuck things up
-        spawnedGameObject.transform.SetParent(unitData.spawnGridBase.EntityContainer.transform);
+        spawnedGameObject.transform.SetParent(GameLevelManager.ActiveGrid.EntityContainer.transform);
         
         Entity newEntity = spawnedGameObject.GetComponent<Entity>();
         if (newEntity == null)
@@ -99,202 +87,272 @@ public class EntitySpawner : MonoBehaviour
             return null;
         }
 
-        newEntity.Initialize(EntityType.Unit, unitData);
-
-        // --- Important for Multi-Unit Spawning ---
-        // For now, the UnitCommander will just command the *last* unit spawned.
-        // In a later step, we will implement unit selection (clicking) to pick which unit to command.
-        EntitySelectionManager.SelectUnit(newEntity);
-
-        // --- End Multi-Unit Spawning adjustment ---
-        
-        newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
+        newEntity.Initialize(unitData);
 
         return newEntity;
     }
 
-    public Entity SpawnVehicle(VehicleData vehicleData)
-    {
-        if (unitPrefab == null)
-        {
-            Debug.LogError("EntitySpawner: Unit Prefab is not assigned!");
-            return null;
-        }
-        if (vehicleData.spawnGridBase == null)
-        {
-            Debug.LogError("EntitySpawner: Cannot spawn unit, target grid is null!");
-            return null;
-        }
-        if (!vehicleData.spawnGridBase.IsValidCoordinates(vehicleData.spawnCoordinates))
-        {
-            Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {vehicleData.spawnCoordinates} are invalid on grid '{vehicleData.spawnGridBase.name}'.");
-            return null;
-        }
-        
-        // This rotates the car to face the positive X-axis upon creation.
-        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
-        
-        float targetHeight = 0f;
-        if (vehicleData.spawnGridBase is SimpleHexGridTerrain groundGrid)
-        {
-            targetHeight = groundGrid.GetHexHeight(vehicleData.spawnCoordinates);
-        }
-        else 
-        {
-            // Fallback for non-ground grids
-            targetHeight = vehicleData.spawnGridBase.HexagonsInGrid[vehicleData.spawnCoordinates].Height;
-        }
+    // public Entity SpawnVehicle(VehicleData vehicleData)
+    // {
+    //     if (unitPrefab == null)
+    //     {
+    //         Debug.LogError("EntitySpawner: Unit Prefab is not assigned!");
+    //         return null;
+    //     }
+    //     if (vehicleData.spawnGridBase == null)
+    //     {
+    //         Debug.LogError("EntitySpawner: Cannot spawn unit, target grid is null!");
+    //         return null;
+    //     }
+    //     if (!vehicleData.spawnGridBase.IsValidCoordinates(vehicleData.spawnCoordinates))
+    //     {
+    //         Debug.LogError($"EntitySpawner: Cannot spawn unit, coordinates {vehicleData.spawnCoordinates} are invalid on grid '{vehicleData.spawnGridBase.name}'.");
+    //         return null;
+    //     }
+    //     
+    //     // This rotates the car to face the positive X-axis upon creation.
+    //     Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
+    //     
+    //     float targetHeight = 0f;
+    //     if (vehicleData.spawnGridBase is SimpleHexGridTerrain groundGrid)
+    //     {
+    //         targetHeight = groundGrid.GetHexHeight(vehicleData.spawnCoordinates);
+    //     }
+    //     else 
+    //     {
+    //         // Fallback for non-ground grids
+    //         targetHeight = vehicleData.spawnGridBase.HexagonsInGrid[vehicleData.spawnCoordinates].Height;
+    //     }
+    //
+    //     // Now calculate position with the REAL height
+    //     Vector3 spawnPos = vehicleData.spawnGridBase.GetHexWorldPosition(vehicleData.spawnCoordinates, targetHeight);
+    //     
+    //     
+    //     Debug.Log($"Spawning unit at: {vehicleData.spawnCoordinates} | Height: {targetHeight} | WorldPos: {spawnPos}");
+    //     
+    //     GameObject spawnedGameObject = Instantiate(vehiclePrefab, spawnPos, rotationToMatchGridCreation);
+    //    
+    //     // Vehicles are anchored to the grid that they are spawning on
+    //     spawnedGameObject.transform.SetParent(vehicleData.spawnGridBase.EntityContainer.transform);
+    //
+    //     Entity newEntity = spawnedGameObject.GetComponent<Entity>();
+    //     if (newEntity == null)
+    //     {
+    //         Debug.LogError($"EntitySpawner: The assigned vehiclePrefab '{vehiclePrefab.name}' does not have a Vehicle.cs component!", vehiclePrefab);
+    //         Destroy(spawnedGameObject); // Clean up if no Unit component
+    //         return null;
+    //     }
+    //
+    //     newEntity.Initialize(EntityType.Vehicle, vehicleData);
+    //     
+    //     
+    //     newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
+    //     DataManager.RegisterData(newEntity.EntityGUID, vehicleData);
+    //
+    //     return newEntity;
+    // }
 
-        // Now calculate position with the REAL height
-        Vector3 spawnPos = vehicleData.spawnGridBase.GetHexWorldPosition(vehicleData.spawnCoordinates, targetHeight);
-        
-        
-        Debug.Log($"Spawning unit at: {vehicleData.spawnCoordinates} | Height: {targetHeight} | WorldPos: {spawnPos}");
-        
-        GameObject spawnedGameObject = Instantiate(vehiclePrefab, spawnPos, rotationToMatchGridCreation);
-       
-        // Vehicles are anchored to the grid that they are spawning on
-        spawnedGameObject.transform.SetParent(vehicleData.spawnGridBase.EntityContainer.transform);
+    // public Entity SpawnCraft(CraftData craftData)
+    // {
+    //     if (craftPrefab == null)
+    //     {
+    //         Debug.LogError("EntitySpawner: Craft Prefab is not assigned!");
+    //         return null;
+    //     }
+    //
+    //     // Standard safety checks
+    //     if (craftData.spawnGridBase == null)
+    //     {
+    //         Debug.LogError("EntitySpawner: Cannot spawn craft, target grid is null!");
+    //         return null;
+    //     }
+    //
+    //     // Calculate spawn position (using the Craft's intended landing coordinates)
+    //     float targetHeight = craftData.spawnGridBase.HexagonsInGrid[craftData.spawnCoordinates].Height;
+    //     Vector3 spawnPos = craftData.spawnGridBase.GetHexWorldPosition(craftData.spawnCoordinates, targetHeight);
+    //
+    //     Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
+    //
+    //     // Spawn it (Parent it to your FloatingGridsContainer)
+    //     GameObject spawnedGameObject = Instantiate(craftPrefab, spawnPos, rotationToMatchGridCreation);
+    //     spawnedGameObject.transform.SetParent(FloatingGridsContainer.transform);
+    //
+    //     Entity newEntity = spawnedGameObject.GetComponent<Entity>();
+    //     if (newEntity == null)
+    //     {
+    //         Debug.LogError($"EntitySpawner: Prefab '{craftPrefab.name}' is missing an Entity component!");
+    //         Destroy(spawnedGameObject);
+    //         return null;
+    //     }
+    //
+    //     newEntity.Initialize(EntityType.Craft, craftData);
+    //     newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
+    //     DataManager.RegisterData(newEntity.EntityGUID, craftData);
+    //
+    //     return newEntity;
+    // }
 
-        Entity newEntity = spawnedGameObject.GetComponent<Entity>();
-        if (newEntity == null)
-        {
-            Debug.LogError($"EntitySpawner: The assigned vehiclePrefab '{vehiclePrefab.name}' does not have a Vehicle.cs component!", vehiclePrefab);
-            Destroy(spawnedGameObject); // Clean up if no Unit component
-            return null;
-        }
-
-        newEntity.Initialize(EntityType.Vehicle, vehicleData);
-        
-        
-        newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
-
-        return newEntity;
-    }
-
-    public Entity SpawnCraft(CraftData craftData)
-    {
-        if (craftPrefab == null)
-        {
-            Debug.LogError("EntitySpawner: Craft Prefab is not assigned!");
-            return null;
-        }
-
-        // Standard safety checks
-        if (craftData.spawnGridBase == null)
-        {
-            Debug.LogError("EntitySpawner: Cannot spawn craft, target grid is null!");
-            return null;
-        }
-
-        // Calculate spawn position (using the Craft's intended landing coordinates)
-        float targetHeight = craftData.spawnGridBase.HexagonsInGrid[craftData.spawnCoordinates].Height;
-        Vector3 spawnPos = craftData.spawnGridBase.GetHexWorldPosition(craftData.spawnCoordinates, targetHeight);
-    
-        Quaternion rotationToMatchGridCreation = Quaternion.Euler(0, 0, 0);
-    
-        // Spawn it (Parent it to your FloatingGridsContainer)
-        GameObject spawnedGameObject = Instantiate(craftPrefab, spawnPos, rotationToMatchGridCreation);
-        spawnedGameObject.transform.SetParent(FloatingGridsContainer.transform);
-
-        Entity newEntity = spawnedGameObject.GetComponent<Entity>();
-        if (newEntity == null)
-        {
-            Debug.LogError($"EntitySpawner: Prefab '{craftPrefab.name}' is missing an Entity component!");
-            Destroy(spawnedGameObject);
-            return null;
-        }
-
-        newEntity.Initialize(EntityType.Craft, craftData);
-        newEntity.EntityGUID = EntityManager.RegisterEntity(newEntity);
-
-        return newEntity;
-    }
-
-    // --- Editor Test Button ---
-    [ContextMenu("Spawn Default Unit")]
-    void TestSpawnDefaultUnit()
+    public EntityData CreateUnitDataOnActiveGrid()
     {
         if (gameLevelManager == null)
         {
             Debug.LogError("EntitySpawner: Default Spawn Grid is not set for TestSpawnDefaultUnit!");
-            return;
+            return null;
         }
 
         UnitData entityData = ScriptableObject.CreateInstance<UnitData>();
 
-        entityData.unitName = "Test Unit";
+        entityData.entityName = "Test Unit";
         entityData.maxHealth = 100;
         entityData.currentHealth = 100;
         entityData.baseMoveSpeed = 5;
-        entityData.spawnGridBase = gameLevelManager.ActiveGrid;
-        entityData.spawnCoordinates = new Vector2Int(-4,7);
         
-        SpawnUnit(entityData);
-    }
-    
-    [ContextMenu("Spawn Default Vehicle")]
-    void TestSpawnDefaultVehicle()
-    {
-        if (gameLevelManager == null)
+        entityData.SetLevelCoords(new LevelPositionPair()
         {
-            Debug.LogError("EntitySpawner: Default Spawn Grid is not set for TestSpawnDefaultUnit!");
-            return;
-        }
-        
-        VehicleData entityData = ScriptableObject.CreateInstance<VehicleData>();
+            level = HexGridManager.GridType.Terrain,
+            coords = null
+        });
+        entityData.SetLevelCoords(new LevelPositionPair()
+        {
+            level = HexGridManager.GridType.World,
+            coords = null
+        });
+        entityData.SetLevelCoords(new LevelPositionPair()
+        {
+            level = HexGridManager.GridType.System,
+            coords = null
+        });
+        entityData.SetLevelCoords(new LevelPositionPair()
+        {
+            level = HexGridManager.GridType.Galaxy,
+            coords = gameLevelManager.GetGlobalGalaxyCoords()
+        });
 
-        entityData.unitName = "Test Vehicle";
-        entityData.maxHealth = 100;
-        entityData.currentHealth = 100;
-        entityData.baseMoveSpeed = 5;
-        entityData.spawnGridBase = gameLevelManager.ActiveGrid;
-        entityData.spawnCoordinates = new Vector2Int(-17,10);
+        entityData.entityGUID = DataManager.RegisterData(entityData);
+        return entityData;
+    }
+    
+    public void SpawnModelsOnGrid(SimpleHexGridBase hexGridBase)
+    {
+        Debug.Log($"SpawnModelsOnGrid");
         
-        // This will now simply create a new unit each time the button is clicked.
-        SpawnVehicle(entityData);
-    }
-    
-    [ContextMenu("Spawn Default Craft")]
-    void TestSpawnDefaultCraft()
-    {
-        // Ensure you have an instance of CraftData, perhaps assigned in the inspector or created here
-        CraftData entityData = ScriptableObject.CreateInstance<CraftData>();
-        entityData.unitName = "Test Craft";
-        entityData.maxHealth = 100;
-        entityData.currentHealth = 100;
-        entityData.baseMoveSpeed = 5;
-        entityData.spawnGridBase = gameLevelManager.ActiveGrid;
-        entityData.spawnCoordinates = new Vector2Int(0,0);
-    
-        SpawnCraft(entityData);
-    }
-    
-    private void OnDestroy()
-    {
-     
-    }
-    
-    public void SpawnModels(SimpleHexGridBase hexGridBase)
-    {
-        // 1. Check if we have a unit coming through a portal
-        if (PendingEntityTransfer.Instance != null && PendingEntityTransfer.Instance.storedUnitData != null)
-        {
-            EntityData updatedData = PendingEntityTransfer.Instance.storedUnitData;
-            updatedData.spawnGridBase = hexGridBase;
-            updatedData.spawnCoordinates = Vector2Int.zero;
-            PendingEntityTransfer.Instance.storedUnitData = updatedData;
-            SpawnUnit(PendingEntityTransfer.Instance.storedUnitData as UnitData);
+        List<EntityData> dataListToUpdate = new List<EntityData>();
         
-            // IMPORTANT: Clear the transfer data so it doesn't spawn again!
-            PendingEntityTransfer.Instance.storedUnitData = null;
-        }
-        else
+        foreach (var data in DataManager.globalDataRegistry.Values)
         {
-            // 2. Otherwise, spawn initial defaults
-            Debug.Log("Spawner: No transfer found, spawning initial units.");
-            SpawnAllUnits(); 
+            List<LevelPositionPair> levelPositions = data.levelCoords;
+            
+            LevelPositionPair cachedEntityTerrainCoords = levelPositions.Find(p => p.level == HexGridManager.GridType.Terrain);
+            LevelPositionPair cachedEntityWorldCoords = levelPositions.Find(p => p.level == HexGridManager.GridType.World);
+            LevelPositionPair cachedEntitySystemCoords = levelPositions.Find(p => p.level == HexGridManager.GridType.System);
+            LevelPositionPair cachedEntityGalaxyCoords = levelPositions.Find(p => p.level == HexGridManager.GridType.Galaxy);
+
+            switch (hexGridBase.GridType)
+            {
+                case HexGridManager.GridType.None:
+                    break;
+                case HexGridManager.GridType.Interior:
+                    break;
+                case HexGridManager.GridType.Terrain:
+                {
+                    // Try load cached coords
+                    Vector2Int coordsToSpawn = cachedEntityTerrainCoords.coords != null
+                        ? (Vector2Int)cachedEntityTerrainCoords.coords
+                        : Vector2Int.zero;
+
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.Terrain,
+                        coords = coordsToSpawn
+                    });
+                    dataListToUpdate.Add(data);
+
+                    break;
+                }
+                case HexGridManager.GridType.World:
+                {
+                    // Try load cached coords
+                    Vector2Int coordsToSpawn = cachedEntityWorldCoords.coords != null
+                        ? (Vector2Int)cachedEntityWorldCoords.coords
+                        : Vector2Int.zero;
+
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.World,
+                        coords = coordsToSpawn
+                    });
+                    dataListToUpdate.Add(data);
+                    
+                    break;
+                }
+                case HexGridManager.GridType.System:
+                {
+                    // Try load cached coords
+                    Vector2Int coordsToSpawn = cachedEntitySystemCoords.coords != null
+                        ? (Vector2Int)cachedEntitySystemCoords.coords
+                        : Vector2Int.zero;
+
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.System,
+                        coords = coordsToSpawn
+                    });
+                    dataListToUpdate.Add(data);
+
+                    break;
+                }
+                case HexGridManager.GridType.Galaxy:
+                {
+                    Vector2Int coordsToSpawn = cachedEntityGalaxyCoords.coords != null
+                        ? (Vector2Int)cachedEntityGalaxyCoords.coords
+                        : Vector2Int.zero;
+
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.Galaxy,
+                        coords = coordsToSpawn
+                    });
+                    dataListToUpdate.Add(data);
+                    
+                    break;
+                }
+            }
         }
+
+        foreach (var data in dataListToUpdate)
+        {
+            DataManager.UpdateData(data.entityGUID, data);
+            
+            switch (data.entityType)
+            {
+                case EntityType.Unit:
+                    SpawnUnit(data as UnitData);
+                    break;
+                case EntityType.Vehicle:
+                   // SpawnVehicle(data as VehicleData);
+                    break;
+                case EntityType.Craft:
+                    // SpawnCraft(data as CraftData);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+    }
+    
+    public void DestroyAllActiveEntities()
+    {
+        // Destroy all current GameObjects in the scene
+        foreach (var entry in EntityManager.GetAllEntities())
+        {
+            if (entry.Value != null)
+            {
+                Destroy(entry.Value.gameObject);
+            }
+        }
+    
+        // Clear the tracking list
+        EntityManager.ClearAll(); 
     }
     
     public enum EntityType

@@ -9,19 +9,81 @@ using UnityEngine.Serialization;
 public abstract class Entity : MonoBehaviour
 {
     [Header("Entity Data")]
-    public string UnitName;
+    public string EntityGUID;
+    public string EntityName;
     public int MaxHealth;
     public int CurrentHealth;
     public float BaseMoveSpeed;
     public EntitySpawner.EntityType EntityType;
-    public string EntityGUID;
+    public List<LevelPositionPair> LevelCoords = new List<LevelPositionPair>();
+    public List<LevelPositionPair> LastJumpCoords = new List<LevelPositionPair>();
     
+    [SerializeField] private NullableVector2Int LevelGalaxyCoords;
+    [SerializeField] private NullableVector2Int LevelSystemCoords;
+    [SerializeField] private NullableVector2Int LevelWorldCoords;
+    [SerializeField] private NullableVector2Int LevelTerrainCoords;
+    
+    [SerializeField] private NullableVector2Int LastJumpGalaxyCoords;
+    [SerializeField] private NullableVector2Int LastJumpSystemCoords;
+    [SerializeField] private NullableVector2Int LastJumpWorldCoords;
+    [SerializeField] private NullableVector2Int LastJumpTerrainCoords;
+
+    private void UpdateEntityLevelCoords()
+    {
+        if (DataManager.TryGetData(EntityGUID, out UnitData data))
+        {
+            Vector2Int? coords = null;
+            
+            coords = data.GetLevelCoords(HexGridManager.GridType.Galaxy);
+            LevelGalaxyCoords.isSet = coords != null;
+            if (coords.HasValue) LevelGalaxyCoords.coords = coords.Value;
+
+            coords = data.GetLevelCoords(HexGridManager.GridType.System);
+            LevelSystemCoords.isSet = coords != null;
+            if (coords.HasValue) LevelSystemCoords.coords = coords.Value;
+
+            coords = data.GetLevelCoords(HexGridManager.GridType.World);
+            LevelWorldCoords.isSet = coords != null;
+            if (coords.HasValue) LevelWorldCoords.coords = coords.Value;
+
+            coords = data.GetLevelCoords(HexGridManager.GridType.Terrain);
+            LevelTerrainCoords.isSet = coords != null;
+            if (coords.HasValue) LevelTerrainCoords.coords = coords.Value;
+        }
+    }
+    
+    private void UpdateEntityLastJumpCoords()
+    {
+        if (DataManager.TryGetData(EntityGUID, out UnitData data))
+        {
+            Vector2Int? coords = null;
+            
+            coords = data.GetLastJumpLevelCoords(HexGridManager.GridType.Galaxy);
+            LastJumpGalaxyCoords.isSet = coords != null;
+            if (coords.HasValue) LastJumpGalaxyCoords.coords = coords.Value;
+
+            coords = data.GetLastJumpLevelCoords(HexGridManager.GridType.System);
+            LastJumpSystemCoords.isSet = coords != null;
+            if (coords.HasValue) LastJumpSystemCoords.coords = coords.Value;
+
+            coords = data.GetLastJumpLevelCoords(HexGridManager.GridType.World);
+            LastJumpWorldCoords.isSet = coords != null;
+            if (coords.HasValue) LastJumpWorldCoords.coords = coords.Value;
+
+            coords = data.GetLastJumpLevelCoords(HexGridManager.GridType.Terrain);
+            LastJumpTerrainCoords.isSet = coords != null;
+            if (coords.HasValue) LastJumpTerrainCoords.coords = coords.Value;
+        }
+    }
+
     [FormerlySerializedAs("CurrentGrid")]
     [Header("Grid State")]
     [Tooltip("The SimpleHexGrid this unit is currently occupying.")]
     public SimpleHexGridBase currentGridBase;
     [Tooltip("The axial coordinates of the hex this unit is currently occupying.")]
     public Vector2Int CurrentGridCoordinates;
+    [Tooltip("The seed for this hexagon thats used to generate the child Level")]
+    public int CurrentHexGUID;
     
     [Header("Movement Components")]
     [Tooltip("Reference to the PathMover component on this GameObject.")]
@@ -34,16 +96,32 @@ public abstract class Entity : MonoBehaviour
     
     public float CurrentGroundY { get; set; }
     
-    protected virtual void PopulateBaseData(EntityData data)
+    public virtual void ImportDataToEntity(EntityData data)
     {
-        data.unitName = this.UnitName;
-        data.maxHealth = this.MaxHealth;
-        data.currentHealth = this.CurrentHealth;
-        data.baseMoveSpeed = this.BaseMoveSpeed;
-        data.entityType = this.EntityType;
+        this.EntityGUID = data.entityGUID;
+        this.EntityName = data.entityName;
+        this.MaxHealth = data.maxHealth;
+        this.CurrentHealth = data.currentHealth;
+        this.BaseMoveSpeed = data.baseMoveSpeed;
+        this.EntityType = data.entityType;
+        this.LevelCoords = data.levelCoords;
+        this.LastJumpCoords = data.lastJumpLevelCoords;
     }
 
-    public abstract EntityData ExportData();
+// 3. SyncFrom pulls state directly from another instance
+    public virtual void SyncFrom(Entity other)
+    {
+        this.EntityGUID = other.EntityGUID;
+        this.EntityName = other.EntityName;
+        this.MaxHealth = other.MaxHealth;
+        this.CurrentHealth = other.CurrentHealth;
+        this.BaseMoveSpeed = other.BaseMoveSpeed;
+        this.EntityType = other.EntityType;
+        this.LevelCoords = other.LevelCoords;
+        this.LastJumpCoords = other.LastJumpCoords;
+        
+        // Keep the GUID/Type stable, but copy the dynamic state
+    }
     
     void Awake()
     {
@@ -71,26 +149,16 @@ public abstract class Entity : MonoBehaviour
     /// </summary>
     /// <param name="grid">The SimpleHexGrid to spawn on.</param>
     /// <param name="coords">The axial coordinates on the grid.</param>
-    public virtual void Initialize(EntitySpawner.EntityType entityType, EntityData entityData)
+    public virtual void Initialize(EntityData entityData)
     {
-        if (entityData.spawnGridBase == null)
-        {
-            Debug.LogError($"Unit '{name}': Attempted to initialize with a null grid.", this);
-            return;
-        }
-        if (!entityData.spawnGridBase.IsValidCoordinates(entityData.spawnCoordinates))
-        {
-            Debug.LogWarning($"Unit '{name}': Attempted to initialize on invalid coordinates {entityData.spawnCoordinates} on grid '{entityData.spawnGridBase.name}'.", this);
-            return;
-        }
+        ImportDataToEntity(entityData);
 
-        EntityType = entityType;
-        UnitName = entityData.unitName;
-        MaxHealth = entityData.maxHealth;
-        CurrentHealth = entityData.currentHealth;
-        BaseMoveSpeed = entityData.baseMoveSpeed;
-        
-        SnapToHex(entityData.spawnGridBase, entityData.spawnCoordinates); // Snap to the initial position
+        Vector2Int? coordsToSnapTo = entityData.GetLevelCoords(GameLevelManager.CurrentLevel);
+        if (coordsToSnapTo == null)
+        {
+            coordsToSnapTo = Vector2Int.zero;
+        }
+        SnapToHex(GameLevelManager.ActiveGrid, (Vector2Int)coordsToSnapTo); // Snap to the initial position
         
         // Ensure we specifically look for the component
         EntityPathMover = GetComponent<IEntityPathMover>();
@@ -99,6 +167,8 @@ public abstract class Entity : MonoBehaviour
         {
             Debug.LogError($"Unit '{name}': PathMover component not found on this object!", this);
         }
+
+        EntityManager.RegisterEntity(entityData.entityGUID, this);
             
         Debug.Log($"Unit '{name}' initialized on grid '{currentGridBase.name}' at {CurrentGridCoordinates}.");
     }
@@ -107,6 +177,7 @@ public abstract class Entity : MonoBehaviour
     {
         currentGridBase = gridBase;
         CurrentGridCoordinates = coords;
+        CurrentHexGUID = gridBase.HexagonsInGrid[coords].HexGUID;
         transform.SetParent(gridBase.EntityContainer.transform);
 
         HexData hexData = gridBase.GetHexData(CurrentGridCoordinates);
@@ -115,12 +186,6 @@ public abstract class Entity : MonoBehaviour
         Vector3 hexSurfacePosition = gridBase.GetHexTopSurfacePosition(coords, hexData.Height);
 
         CurrentGroundY = hexSurfacePosition.y + entityHeightOffset;
-        
-        if (hexData.IsPortal) {
-            Debug.Log("Unit is now standing on a portal!");
-        }
-        
-        Debug.Log($"Snapping entity of type: {EntityType} to = {hexSurfacePosition}");
     
         // Apply the surface Y + the unit's "standing height" 
         // (Use a small offset for the unit's feet relative to the top of the hex)
@@ -129,6 +194,135 @@ public abstract class Entity : MonoBehaviour
             CurrentGroundY, 
             hexSurfacePosition.z
         );
+
+        SetLevelCoordsForEntity(gridBase, coords);
+    }
+
+    private void SetLevelCoordsForEntity(SimpleHexGridBase gridBase, Vector2Int coords)
+    {
+        Debug.Log($"*****************************");
+        if (DataManager.TryGetData(EntityGUID, out UnitData data))
+        {
+            if (gridBase.GridType == HexGridManager.GridType.Galaxy)
+            {
+                // If galaxy coords have changed, reset all other levels
+                if (coords != data.GetLevelCoords(HexGridManager.GridType.Galaxy))
+                {
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.System,
+                        coords = null
+                    });
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.World,
+                        coords = null
+                    });
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.Terrain,
+                        coords = null
+                    });
+                }
+
+                // Set the Galaxy position
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.Galaxy,
+                    coords = coords
+                });
+            }
+
+            if (gridBase.GridType == HexGridManager.GridType.System)
+            {
+                // If galaxy coords have changed, reset all other levels
+                if (coords != data.GetLevelCoords(HexGridManager.GridType.System))
+                {
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.World,
+                        coords = null
+                    });
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.Terrain,
+                        coords = null
+                    });
+                }
+
+                // Set the System position
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.Galaxy,
+                    coords = data.GetLevelCoords(HexGridManager.GridType.Galaxy)
+                });
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.System,
+                    coords = coords
+                });
+            }
+
+            if (gridBase.GridType == HexGridManager.GridType.World)
+            {
+                if (coords != data.GetLevelCoords(HexGridManager.GridType.World))
+                {
+                    data.SetLevelCoords(new LevelPositionPair()
+                    {
+                        level = HexGridManager.GridType.Terrain,
+                        coords = null
+                    });
+                }
+
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.Galaxy,
+                    coords = data.GetLevelCoords(HexGridManager.GridType.Galaxy)
+                });
+
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.System,
+                    coords = data.GetLevelCoords(HexGridManager.GridType.System)
+                });
+
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.World,
+                    coords = coords
+                });
+            }
+
+            if (gridBase.GridType == HexGridManager.GridType.Terrain)
+            {
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.Galaxy,
+                    coords = data.GetLevelCoords(HexGridManager.GridType.Galaxy)
+                });
+
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.System,
+                    coords = data.GetLevelCoords(HexGridManager.GridType.System)
+                });
+
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.World,
+                    coords = data.GetLevelCoords(HexGridManager.GridType.World)
+                });
+
+                data.SetLevelCoords(new LevelPositionPair()
+                {
+                    level = HexGridManager.GridType.Terrain,
+                    coords = coords
+                });
+            }
+            DataManager.UpdateData(data.entityGUID, data);
+            UpdateEntityLevelCoords();
+            UpdateEntityLastJumpCoords();
+        }
     }
 
     /// <summary>

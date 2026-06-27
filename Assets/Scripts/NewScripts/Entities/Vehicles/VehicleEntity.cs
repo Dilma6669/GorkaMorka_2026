@@ -12,17 +12,6 @@ public class VehicleEntity : Entity
 
     [SerializeField] private Entity Driver;
     [SerializeField] private bool showArcs;
-
-    public override EntityData ExportData()
-    {
-        VehicleData data = ScriptableObject.CreateInstance<VehicleData>();
-        PopulateBaseData(data); // Fill name, health, etc.
-    
-        // Explicitly copy the unit-specific field
-        //data.isDriver = this.isDriver; 
-    
-        return data;
-    }
     
     private void Start()
     {

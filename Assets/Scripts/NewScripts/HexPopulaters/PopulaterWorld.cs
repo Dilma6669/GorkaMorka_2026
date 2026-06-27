@@ -1,25 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PopulaterWorld : MonoBehaviour
+public class PopulaterWorld : PopulaterBase
 {
-    SimpleHexGridTerrain simpleHexGridTerrain;
-    
-    public GameObject treePrefab;
-    public GameObject rockPrefab;
-    
-    // Key is the chunkID, Value is a list of all objects in that chunk
-    private Dictionary<Vector2Int, List<CullableObject>> allObjects = new();
+    SimpleHexGridWorld simpleHexGridWorld;
     
     private void Awake()
     {
-        simpleHexGridTerrain = GetComponent<SimpleHexGridTerrain>();
+        simpleHexGridWorld = GetComponent<SimpleHexGridWorld>();
     }
      
-    public void PopulateWorld(int worldSeed)
+    public override void PopulateWorld(int worldSeed)
     {
         ClearAll();
-        Random.InitState(worldSeed);
+        //Random.InitState(worldSeed);
 
         // float totalThreshold = simpleHexGridTerrain.TerrainSettings.treePercentage + simpleHexGridTerrain.TerrainSettings.rockPercentage;
         //
@@ -55,46 +49,18 @@ public class PopulaterWorld : MonoBehaviour
         //     }
         // }
     }
-
-    private void AssignParentChunkIDToObject(GameObject terrainObject, HexData hexData)
+    
+    protected override void AssignParentChunkIDToObject(GameObject terrainObject, HexData hexData)
     {
         CullableObject cullableObject = terrainObject.GetComponent<CullableObject>();
         if (cullableObject != null)
         {
-            Vector2Int chunkID = simpleHexGridTerrain.GetChunkID(hexData.GridCoordinates);
+            Vector2Int chunkID = simpleHexGridWorld.GetChunkID(hexData.GridCoordinates);
 
             cullableObject.parentChunkID = chunkID;
             RegisterObject(chunkID, cullableObject);
             
             cullableObject.SetVisibility(false); 
         }
-    }
-
-    private void RegisterObject(Vector2Int chunkID, CullableObject cullableObject)
-    {
-        // If the chunk doesn't exist in our dictionary yet, create the list
-        if (!allObjects.ContainsKey(chunkID))
-        {
-            allObjects[chunkID] = new List<CullableObject>();
-        }
-        
-        allObjects[chunkID].Add(cullableObject);
-    }
-
-    public void SetVisibilityOfObjectsInChunk(Vector2Int chunkID, bool isVisible)
-    {
-        if (allObjects.TryGetValue(chunkID, out List<CullableObject> objectsInChunk))
-        {
-            foreach (CullableObject obj in objectsInChunk)
-            {
-                obj.SetVisibility(isVisible);
-            }
-        }
-    }
-    
-
-    public void ClearAll() 
-    {
-        allObjects.Clear();
     }
 }
