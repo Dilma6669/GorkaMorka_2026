@@ -27,15 +27,6 @@ public class MapSettingsTerrain : MapSettingsBase
     [Tooltip("0 = all rocks, 1 = all dunes")]
     public float terrainSmoothness = 0.8f;
     
-    [Header("Population Settings")]
-    [Range(0f, 1f)]
-    [Tooltip("Percentage of total hexes to have trees (0.0 to 1.0)")]
-    public float treePercentage = 0.1f;
-
-    [Range(0f, 1f)]
-    [Tooltip("Percentage of total hexes to have rocks (0.0 to 1.0)")]
-    public float rockPercentage = 0.1f;
-    
     [Header("Water Settings")]
     public float waterLevel = 1.0f;
 }

@@ -227,7 +227,7 @@ public class EntitySelectionManager : MonoBehaviour
 
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         int mask = LayerMask.GetMask(layerNames);
-        RaycastHit[] hits = Physics.RaycastAll(ray, MultiGridPathfinder.MaxRaycastPathDistance, mask);
+        RaycastHit[] hits = Physics.RaycastAll(ray, pathfinder.MaxRaycastPathDistance, mask);
 
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
@@ -279,7 +279,7 @@ public class EntitySelectionManager : MonoBehaviour
         // --- NEW: Physics-less Fallback for Ground Grids ---
         if (closetHexSelected == null)
         {
-            if (GameLevelManager.ActiveGrid != null && GameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+            if (GameLevelManager.ActiveGrid != null && GameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, pathfinder.MaxRaycastPathDistance))
             {
                 groundHexData = data;
                 groundGridSelected = GameLevelManager.ActiveGrid;
@@ -388,7 +388,7 @@ public class EntitySelectionManager : MonoBehaviour
         
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         int mask = LayerMask.GetMask(layerNames);
-        RaycastHit[] hits = Physics.RaycastAll(ray, MultiGridPathfinder.MaxRaycastPathDistance, mask);
+        RaycastHit[] hits = Physics.RaycastAll(ray, pathfinder.MaxRaycastPathDistance, mask);
 
         float minUnitDist = float.MaxValue;
         float minHexDist = float.MaxValue;
@@ -473,7 +473,7 @@ public class EntitySelectionManager : MonoBehaviour
         if (closetHexHovered == null)
         {
             if (GameLevelManager.ActiveGrid != null 
-                && GameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, MultiGridPathfinder.MaxRaycastPathDistance))
+                && GameLevelManager.ActiveGrid.TryGetHexFromRay(ray, out HexData data, pathfinder.MaxRaycastPathDistance))
             {
                 _groundHexDataHovered = data;
                 _hoveredGroundGrid = GameLevelManager.ActiveGrid;
@@ -546,7 +546,7 @@ public class EntitySelectionManager : MonoBehaviour
                 Vector3 targetWorldPos = hexGridBase.GetHexWorldPosition(targetCoords, 0);
 
                 // If target is further than your limit, clear path and exit
-                if (Vector3.Distance(startPos, targetWorldPos) > MultiGridPathfinder.MaxRaycastPathDistance)
+                if (Vector3.Distance(startPos, targetWorldPos) > pathfinder.MaxRaycastPathDistance)
                 {
                     CachedMovementPath = null;
                     hexOverlayManager.ClearAll(); // Clear visuals if we were too far

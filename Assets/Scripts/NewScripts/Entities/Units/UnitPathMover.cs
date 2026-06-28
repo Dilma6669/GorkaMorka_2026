@@ -159,18 +159,14 @@ public class UnitPathMover : MonoBehaviour, IEntityPathMover
         
 
         // Calculate the absolute difference
+        bool canSkip = (currentPath.Count > skipCount) && !skipNode.IsNearObstacle;
+
         if (Mathf.Abs(currentHeight - nextHeight) <= heightThreshold)
         {
-            targetIndex = nextIndex;
-            
-            // If skip node is same height as current
-            if (currentPath.Count > skipCount)
-            {
-                targetIndex = skipIndex;
-            }
-
+            // If skip is safe, use skipIndex, otherwise use nextIndex
+            targetIndex = canSkip ? skipIndex : nextIndex;
         }
-        else // If next node is much larger/lower height than current
+        else
         {
             targetIndex = nextIndex;
             targetJumping = true;

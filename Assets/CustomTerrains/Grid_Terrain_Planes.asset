@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca8ad0e8e3b14e7f9b42df7b3105e936, type: 3}
+  m_Name: Grid_Terrain_Planes
+  m_EditorClassIdentifier: 
+  gridRadius: 50
+  worldLevel: 3
+  hexSize: 1
+  entireGridHeightOffset: 0
+  singleHexHeightAdjustment: 1
+  meshChunkSize: 70
+  duneScale: 0.01
+  duneHeight: 11
+  duneOctaves: 3
+  dunePersistence: 0.01
+  rockScale: 0.02
+  rockHeight: 7
+  rockThreshold: 0.7
+  rockSharpness: 0.1
+  terrainSmoothness: 0.8
+  treePercentage: 0.036
+  rockPercentage: 0.02
+  waterLevel: 1

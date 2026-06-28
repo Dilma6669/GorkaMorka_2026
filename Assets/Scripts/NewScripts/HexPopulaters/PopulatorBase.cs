@@ -7,11 +7,15 @@ public abstract class PopulaterBase : MonoBehaviour
     [Tooltip("Percentage of total hexes that will have an object (0.5 = 50% of hexes)")]
     public float spawnDensity = 0.5f;
     
+    protected SimpleHexGridBase hexGrid;
+    
     [System.Serializable]
     public struct SpawnableObject
     {
         public GameObject prefab;
-        [Range(0f, 1f)] public float spawnWeight; // Chance relative to others
+        [Range(0f, 1f)] public float spawnWeight;
+        [Tooltip("If checked, objects of this type will block movement on this hex.")]
+        public bool occupiesHex;
     }
     
     public List<SpawnableObject> spawnableObjects;
@@ -19,20 +23,33 @@ public abstract class PopulaterBase : MonoBehaviour
     // Key is the chunkID, Value is a list of all objects in that chunk
     private Dictionary<Vector2Int, List<CullableObject>> allObjects = new();
 
-    public abstract void PopulateWorld(int worldSeed);
+    public abstract void PopulateObjects(int worldSeed);
 
-    protected abstract void AssignParentChunkIDToObject(GameObject terrainObject, HexData hexData);
+    protected void AssignParentChunkIDToObject(GameObject terrainObject, HexData hexData)
+    {
+        CullableObject cullableObject = terrainObject.GetComponent<CullableObject>();
+        if (cullableObject != null)
+        {
+            Vector2Int chunkID = hexGrid.GetChunkID(hexData.GridCoordinates);
+
+            cullableObject.parentChunkID = chunkID;
+            RegisterObject(chunkID, cullableObject);
+            
+            cullableObject.SetVisibility(false); 
+        }
+    }
     
-    protected GameObject GetRandomPrefab(float roll)
+    protected SpawnableObject GetRandomPrefab(float roll)
     {
         float cumulative = 0f;
         foreach (var item in spawnableObjects)
         {
             cumulative += item.spawnWeight;
-            if (roll <= cumulative) return item.prefab;
+            if (roll <= cumulative) return item;
         }
-        return null;
+        return default;
     }
+    
 
     protected void RegisterObject(Vector2Int chunkID, CullableObject cullableObject)
     {

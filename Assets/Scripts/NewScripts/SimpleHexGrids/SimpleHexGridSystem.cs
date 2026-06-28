@@ -6,12 +6,12 @@ public class SimpleHexGridSystem : SimpleHexGridBase
     private HexGeneratorSystem _hexGenerator;
     private HexGridVisualizerSystem visualizer; // Made public for access
     
-    public MapSettingsWorld TerrainSettings => activeMapSettingsBase as MapSettingsWorld;
+    public MapSettingsSystem TerrainSettings => activeMapSettingsBase as MapSettingsSystem;
 
     public float baseHeight = 0f;
     public float entityPlacementHeightOffset = 0.05f;
 
-    [Header("Physics Settings")] public int chunkSize = 10;
+    [Header("Physics Settings")]
     public Dictionary<Vector2Int, ChunkDataComponent> physicsChunks = new Dictionary<Vector2Int, ChunkDataComponent>();
     
     [Tooltip("The arc spread distance from the camera to show terrain meshes.")]
@@ -37,12 +37,12 @@ public class SimpleHexGridSystem : SimpleHexGridBase
     private new void Awake()
     {
         base.Awake();
-        Populater = GetComponent<PopulaterWorld>();
+        Populater = GetComponent<PopulaterGalaxy>();
         visualizer = GetComponent<HexGridVisualizerSystem>();
         _hexGenerator = GetComponent<HexGeneratorSystem>();
         camera = Camera.main;
 
-        activeMapSettingsBase = activeMapSettingsBase as MapSettingsWorld;
+        activeMapSettingsBase = activeMapSettingsBase as MapSettingsSystem;
     }
     
 
@@ -102,7 +102,7 @@ public class SimpleHexGridSystem : SimpleHexGridBase
         RegisterGridToSystem(true);
         if (Populater != null)
         {
-            Populater.PopulateWorld(_hexGenerator.seed);
+            Populater.PopulateObjects(_hexGenerator.seed);
         }
 
         AllNodes.Clear();
@@ -384,8 +384,8 @@ public class SimpleHexGridSystem : SimpleHexGridBase
     public override Vector2Int GetChunkID(Vector2Int gridCoords)
     {
         return new Vector2Int(
-            Mathf.FloorToInt((float)gridCoords.x / chunkSize),
-            Mathf.FloorToInt((float)gridCoords.y / chunkSize)
+            Mathf.FloorToInt((float)gridCoords.x / activeMapSettingsBase.meshChunkSize),
+            Mathf.FloorToInt((float)gridCoords.y / activeMapSettingsBase.meshChunkSize)
         );
     }
     

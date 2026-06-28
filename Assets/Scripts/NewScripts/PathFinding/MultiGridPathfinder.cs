@@ -48,7 +48,7 @@ public class MultiGridPathfinder : MonoBehaviour
     [Tooltip("The layer used for Vehicle and Unit colliders to block pathfinding.")]
     public LayerMask obstacleLayer;
 
-    public static float MaxRaycastPathDistance = 50.0f;
+    public float MaxRaycastPathDistance = 300.0f;
     public int MaxPathfindingNodeCount = 30;
     
     private Dictionary<string, PathNode> _searchCache = new Dictionary<string, PathNode>();
@@ -339,7 +339,14 @@ public class MultiGridPathfinder : MonoBehaviour
                 if (currentNode.GridBaseReference.AllNodes.ContainsKey(coords))
                 {
                     // This is now LIGHTNING FAST because it hits the cache
-                    neighbors.Add(GetOrCreateNode(coords, currentNode.GridBaseReference));
+                   // neighbors.Add(GetOrCreateNode(coords, currentNode.GridBaseReference));
+                    
+                    PathNode newNode = GetOrCreateNode(coords, currentNode.GridBaseReference);
+
+                    // Check if any neighbor of this 'newNode' is blocked
+                    newNode.IsNearObstacle = CheckIfAnyNeighborIsBlocked(newNode);
+
+                    neighbors.Add(newNode);
                 }
             }
         }
@@ -438,7 +445,12 @@ public class MultiGridPathfinder : MonoBehaviour
                         if (currentNode.GridBaseReference.AllNodes.ContainsKey(otherHexData.GridCoordinates))
                         {
                             // This is now LIGHTNING FAST because it hits the cache
-                            neighbors.Add(GetOrCreateNode(otherHexData.GridCoordinates, currentNode.GridBaseReference));
+                            PathNode newNode = GetOrCreateNode(otherHexData.GridCoordinates, currentNode.GridBaseReference);
+
+                            // Check if any neighbor of this 'newNode' is blocked
+                            newNode.IsNearObstacle = CheckIfAnyNeighborIsBlocked(newNode);
+
+                            neighbors.Add(newNode);
                         }
                     }
                     else
@@ -481,5 +493,20 @@ public class MultiGridPathfinder : MonoBehaviour
         }
         path.Reverse(); // Reverse to get path from start to end
         return path;
+    }
+    
+    private bool CheckIfAnyNeighborIsBlocked(PathNode node)
+    {
+        List<Vector2Int> neighbors = node.GridBaseReference.GetHexNeighbors(node.GridCoordinates);
+        foreach (var nCoords in neighbors)
+        {
+            HexData data = node.GridBaseReference.GetHexData(nCoords);
+            // If a neighbor is occupied or blocked, this node is dangerous to skip
+            if (data.IsOccupied || !data.IsWalkable) 
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

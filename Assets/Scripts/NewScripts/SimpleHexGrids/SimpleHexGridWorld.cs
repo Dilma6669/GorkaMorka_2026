@@ -11,7 +11,7 @@ public class SimpleHexGridWorld : SimpleHexGridBase
     public float baseHeight = 0f;
     public float entityPlacementHeightOffset = 0.05f;
 
-    [Header("Physics Settings")] public int chunkSize = 10;
+    [Header("Physics Settings")] 
     public Dictionary<Vector2Int, ChunkDataComponent> physicsChunks = new Dictionary<Vector2Int, ChunkDataComponent>();
     
     [Tooltip("The arc spread distance from the camera to show terrain meshes.")]
@@ -37,7 +37,7 @@ public class SimpleHexGridWorld : SimpleHexGridBase
     private new void Awake()
     {
         base.Awake();
-        Populater = GetComponent<PopulaterWorld>();
+        Populater = GetComponent<PopulaterGalaxy>();
         visualizer = GetComponent<HexGridVisualizerWorld>();
         _hexGeneratorWorld = GetComponent<HexGeneratorWorld>();
         camera = Camera.main;
@@ -102,7 +102,7 @@ public class SimpleHexGridWorld : SimpleHexGridBase
         RegisterGridToSystem(true);
         if (Populater != null)
         {
-            Populater.PopulateWorld(_hexGeneratorWorld.seed);
+            Populater.PopulateObjects(_hexGeneratorWorld.seed);
         }
 
         AllNodes.Clear();
@@ -384,8 +384,8 @@ public class SimpleHexGridWorld : SimpleHexGridBase
     public override Vector2Int GetChunkID(Vector2Int gridCoords)
     {
         return new Vector2Int(
-            Mathf.FloorToInt((float)gridCoords.x / chunkSize),
-            Mathf.FloorToInt((float)gridCoords.y / chunkSize)
+            Mathf.FloorToInt((float)gridCoords.x / activeMapSettingsBase.meshChunkSize),
+            Mathf.FloorToInt((float)gridCoords.y / activeMapSettingsBase.meshChunkSize)
         );
     }
     

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 077492e6a27649319981956954e3b6a0, type: 3}
+  m_Name: Grid_Interior_01
+  m_EditorClassIdentifier: 
+  gridRadius: 5
+  worldLevel: 3
+  hexSize: 1
+  entireGridHeightOffset: 0
+  singleHexHeightAdjustment: 1
+  meshChunkSize: 70

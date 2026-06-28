@@ -14,7 +14,8 @@ public class PathNode : IComparable<PathNode> // Implement IComparable for poten
     public float GCost;   // Cost from the starting node to this node.
     public float HCost;   // Heuristic cost (estimated cost) from this node to the target node.
     public PathNode Parent; // The node that immediately preceded this node on the cheapest path found so far.
-
+    public bool IsNearObstacle;
+    
     // Calculated total cost for A* (G + H)
     public float FCost => GCost + HCost;
 
@@ -27,6 +28,7 @@ public class PathNode : IComparable<PathNode> // Implement IComparable for poten
         GCost = float.MaxValue; // Initialize GCost to a very large number
         HCost = 0;              // Heuristic cost will be calculated later
         Parent = null;
+        IsNearObstacle = false;
     }
 
     // --- Identity and Comparison Overrides ---
